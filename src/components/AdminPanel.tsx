@@ -885,40 +885,57 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         {activeTab === 'site-copy' && (
           <VisualCopyEditor
             settings={siteSettings}
-            onSave={async (updated) => {
+            onPublishToGitHub={async (updated) => {
               setSiteSettings(updated);
               setIsSavingSettings(true);
               setSettingsStatus(null);
               try {
+                // 1. Update local storage & broadcast
                 await updateSiteSettings(updated);
-                appendSecurityLog('Updated Website Copy via Visual WYSIWYG');
+                appendSecurityLog('Saved Copy Changes in Visual Editor');
+
+                // 2. Commit & Push to GitHub directly
+                const cfg = getGitHubConfig();
+                if (!cfg.token.trim() || !cfg.owner.trim() || !cfg.repo.trim()) {
+                  setSettingsStatus({
+                    type: 'error',
+                    text: 'Saved locally! Connect your GitHub token in the "GitHub Sync" tab to publish globally to clients.',
+                  });
+                  return;
+                }
+
                 setSettingsStatus({
                   type: 'success',
-                  text: 'Site copy updated in real-time! Client displays synchronized.',
+                  text: 'Publishing live to GitHub repository...',
                 });
 
-                // Check if auto-commit on save is active
-                const cfg = getGitHubConfig();
-                if (cfg.token && cfg.owner && cfg.repo && cfg.autoCommitOnSave) {
-                  const pushRes = await pushPortfolioToGitHub(
-                    { siteSettings: updated, showreels, graphics },
-                    cfg
-                  );
-                  if (pushRes.success) {
-                    appendSecurityLog('Auto-committed to GitHub on save', pushRes.commitUrl);
-                  }
+                const pushRes = await pushPortfolioToGitHub(
+                  { siteSettings: updated, showreels, graphics },
+                  cfg
+                );
+
+                if (pushRes.success) {
+                  appendSecurityLog('Published to GitHub via Visual Editor', pushRes.commitUrl);
+                  setSettingsStatus({
+                    type: 'success',
+                    text: 'Published live to GitHub! Clients across all devices will now see the latest updates.',
+                  });
+                } else {
+                  setSettingsStatus({
+                    type: 'error',
+                    text: `GitHub publish failed: ${pushRes.message || 'Repository error'}`,
+                  });
                 }
               } catch (err: any) {
                 setSettingsStatus({
                   type: 'error',
-                  text: err.message || 'Failed to save settings.',
+                  text: err.message || 'Failed to publish changes.',
                 });
               } finally {
                 setIsSavingSettings(false);
               }
             }}
-            onPushToGitHub={handleTopPushLive}
-            isSaving={isSavingSettings}
+            isPublishing={isSavingSettings}
             status={settingsStatus}
           />
         )}

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Check, Copy, ExternalLink } from 'lucide-react';
+import { Mail, Check, Copy, ExternalLink, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { ROTATING_ROLES } from '../data/portfolioData';
+import { SiteSettings } from '../types';
 
 interface FooterBarProps {
   onOpenAdmin?: () => void;
+  settings?: SiteSettings;
 }
 
-export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin }) => {
+export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin, settings }) => {
   const [roleIndex, setRoleIndex] = useState(0);
-  const email = 'zelopte@gmail.com';
+  const email = settings?.contactEmail || 'cheddarc19@gmail.com';
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   useEffect(() => {
@@ -26,6 +28,10 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin }) => {
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
+  const instagramUrl = settings?.socialInstagram || 'https://instagram.com/zolepto';
+  const linkedinUrl = settings?.socialLinkedin || 'https://linkedin.com/in/zolepto';
+  const xUrl = settings?.socialX || 'https://x.com/zolepto';
+
   const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
     email
   )}&su=${encodeURIComponent('Project Inquiry — Zolepto')}&body=${encodeURIComponent(
@@ -35,7 +41,7 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin }) => {
   return (
     <footer
       id="site-footer"
-      className="bg-white border-t border-zinc-200 py-8 px-4 sm:px-6 lg:px-8 relative z-10"
+      className="bg-white border-t border-zinc-200 py-10 px-4 sm:px-6 lg:px-8 relative z-10"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm">
         {/* Left: copyright 2026, Zolepto, and rotating role */}
@@ -69,41 +75,75 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin }) => {
           </div>
         </div>
 
-        {/* Right side: direct email actions + discreet admin lock icon */}
-        <div className="flex items-center gap-2 flex-wrap justify-center">
+        {/* Center/Right: Social Buttons for IG, LinkedIn, X, and Gmail */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          {/* Instagram */}
           <a
-            id="direct-click-email"
-            href={`mailto:${email}?subject=Project%20Inquiry%20—%20Zolepto`}
-            className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-800 hover:text-zinc-950 transition-all text-xs sm:text-sm font-mono cursor-pointer"
-            title="Open default email app"
+            id="footer-social-ig"
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors text-xs font-semibold"
+            title="Follow on Instagram"
           >
-            <Mail className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-900 transition-colors" />
-            <span className="group-hover:underline underline-offset-4 font-medium">
-              {email}
-            </span>
+            <Instagram className="w-3.5 h-3.5 text-zinc-500 hover:text-pink-600 transition-colors" />
+            <span>IG</span>
           </a>
 
+          {/* LinkedIn */}
           <a
-            id="direct-gmail-web-btn"
+            id="footer-social-linkedin"
+            href={linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors text-xs font-semibold"
+            title="Connect on LinkedIn"
+          >
+            <Linkedin className="w-3.5 h-3.5 text-zinc-500 hover:text-blue-600 transition-colors" />
+            <span>LinkedIn</span>
+          </a>
+
+          {/* X (formerly Twitter) */}
+          <a
+            id="footer-social-x"
+            href={xUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors text-xs font-semibold"
+            title="Follow on X"
+          >
+            <Twitter className="w-3.5 h-3.5 text-zinc-500 hover:text-zinc-950 transition-colors" />
+            <span>X</span>
+          </a>
+
+          {/* Direct Gmail */}
+          <a
+            id="footer-social-gmail"
             href={gmailWebUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 transition-all text-xs font-mono cursor-pointer"
-            title="Open in Gmail web composer directly"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors text-xs font-semibold"
+            title="Compose message via Gmail"
           >
+            <Mail className="w-3.5 h-3.5 text-zinc-500 hover:text-red-500 transition-colors" />
             <span>Gmail</span>
-            <ExternalLink className="w-3 h-3 text-zinc-400" />
+            <ExternalLink className="w-2.5 h-2.5 text-zinc-400" />
           </a>
 
+          {/* Copy email button */}
           <button
             id="copy-footer-email-btn"
             type="button"
             onClick={handleCopyEmail}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-700 hover:text-zinc-950 transition-all text-xs font-mono cursor-pointer"
-            title="Copy email to clipboard"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-600 hover:text-zinc-900 transition-colors text-xs font-mono cursor-pointer"
+            title={`Copy ${email} to clipboard`}
           >
-            {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-zinc-400" />}
-            <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
+            {copiedEmail ? (
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+            ) : (
+              <Copy className="w-3.5 h-3.5 text-zinc-400" />
+            )}
+            <span>{copiedEmail ? 'Copied' : email}</span>
           </button>
         </div>
       </div>

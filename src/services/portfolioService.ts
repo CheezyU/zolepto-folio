@@ -161,7 +161,10 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
 
   // Re-check on focus or tab active
   const handleFocus = () => fetchGlobalShowreels();
-  const pollInterval = setInterval(fetchGlobalShowreels, 25000);
+  const handleVisibility = () => {
+    if (document.visibilityState === 'visible') fetchGlobalShowreels();
+  };
+  const pollInterval = setInterval(fetchGlobalShowreels, 10000);
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
@@ -172,6 +175,7 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
   window.addEventListener('storage', handleUpdate);
   window.addEventListener(PORTFOLIO_EVENT, handleUpdate);
   window.addEventListener('focus', handleFocus);
+  document.addEventListener('visibilitychange', handleVisibility);
 
   return () => {
     isCleanedUp = true;
@@ -179,6 +183,7 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
     window.removeEventListener('storage', handleUpdate);
     window.removeEventListener(PORTFOLIO_EVENT, handleUpdate);
     window.removeEventListener('focus', handleFocus);
+    document.removeEventListener('visibilitychange', handleVisibility);
   };
 }
 
@@ -213,7 +218,10 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
   fetchGlobalGraphics();
 
   const handleFocus = () => fetchGlobalGraphics();
-  const pollInterval = setInterval(fetchGlobalGraphics, 25000);
+  const handleVisibility = () => {
+    if (document.visibilityState === 'visible') fetchGlobalGraphics();
+  };
+  const pollInterval = setInterval(fetchGlobalGraphics, 10000);
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
@@ -224,6 +232,7 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
   window.addEventListener('storage', handleUpdate);
   window.addEventListener(PORTFOLIO_EVENT, handleUpdate);
   window.addEventListener('focus', handleFocus);
+  document.addEventListener('visibilitychange', handleVisibility);
 
   return () => {
     isCleanedUp = true;
@@ -231,6 +240,7 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
     window.removeEventListener('storage', handleUpdate);
     window.removeEventListener(PORTFOLIO_EVENT, handleUpdate);
     window.removeEventListener('focus', handleFocus);
+    document.removeEventListener('visibilitychange', handleVisibility);
   };
 }
 

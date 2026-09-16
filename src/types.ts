@@ -82,6 +82,11 @@ export interface SiteSettings {
   step4Subtitle?: string;
   step4Description?: string;
   step4Note?: string;
+  // Social Media Links
+  socialInstagram?: string;
+  socialLinkedin?: string;
+  socialX?: string;
+  socialGmail?: string;
 }
 
 export interface SecurityLogEntry {

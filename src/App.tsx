@@ -243,7 +243,7 @@ function MainApp() {
         </main>
 
         {/* Footer with copyright, rotating role, email, and admin link */}
-        <FooterBar onOpenAdmin={navigateToAdmin} />
+        <FooterBar onOpenAdmin={navigateToAdmin} settings={siteSettings} />
       </motion.div>
 
       {/* Video Modal Theater - Mounted at top-level outside motion.div */}

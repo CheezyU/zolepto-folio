@@ -1,12 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-16T18:44:58.763Z",
-  "repoSource": {
-    "owner": "CheezyU",
-    "repo": "zolepto-folio",
-    "branch": "main",
-    "filePath": "public/content.json"
-  },
+  "lastUpdated": "2026-09-16T17:00:00.000Z",
   "siteSettings": {
     "heroTitleLine1": "Your visual storyteller",
     "heroTitleLine2": "& content creation director.",
@@ -19,25 +13,7 @@
     "aboutBio2": "I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.",
     "contactEmail": "zelopte@gmail.com",
     "featuredReelYoutubeId": "aqz-KE-bpKQ",
-    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel",
-    "workshopHeading": "How the story unfolds.",
-    "workshopSubtitle": "No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.",
-    "step1Title": "Identifying You",
-    "step1Subtitle": "The Core Signal & Creative DNA",
-    "step1Description": "Before a single clip is dragged to the timeline or a cut is made, we identify you. Who you are, what your voice stands for, who your real audience is, and the psychological hook that makes your content undeniably yours. We don’t copy trends or use cookie-cutter templates—we locate your authentic edge and reverse-engineer the entire narrative around it.",
-    "step1Note": "“Who you are > fancy transitions. This is where real retention is born.”",
-    "step2Title": "Deconstructing the Narrative",
-    "step2Subtitle": "Ruthless Dissection & Trimming the Fat",
-    "step2Description": "Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.",
-    "step2Note": "✂ Cut the safety filler. If it doesn’t push the story forward, it dies here.",
-    "step3Title": "Emotional Rhythm & Subconscious Sound",
-    "step3Subtitle": "The Kinetic Pulse & Visceral Foley",
-    "step3Description": "Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.",
-    "step3Note": "Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧",
-    "step4Title": "Visual Prestige & Delivery",
-    "step4Subtitle": "Color Science, Key-Art & Cultural Authority",
-    "step4Description": "The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.",
-    "step4Note": "✦ Ready for export. Approved for master release across all formats."
+    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel"
   },
   "showreels": [
     {
@@ -53,12 +29,7 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
       "description": "Precision match-cuts timed to an aggressive synthetic beat. Engineered for maximum visual impact across digital billboards and high-fidelity displays.",
       "role": "Pacing, Speed Ramping, Kinetic SFX, Color Cast",
-      "tags": [
-        "Automotive",
-        "Speed Ramping",
-        "Bass Design",
-        "Commercial"
-      ],
+      "tags": ["Automotive", "Speed Ramping", "Bass Design", "Commercial"],
       "metrics": "94% Client Brand Recall"
     },
     {
@@ -74,195 +45,48 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=1200&q=80",
       "description": "Deliberate, breath-controlled atmospheric pacing. Allowing stark Arctic silhouettes to command tension through room tone and nuanced audio foley.",
       "role": "Documentary Story Arc, Scene Assembly, 35mm Grain Emulation",
-      "tags": [
-        "Documentary",
-        "Narrative",
-        "Atmospheric Foley",
-        "DaVinci Resolve"
-      ],
-      "metrics": "Winner: Best Editing — Indie Vision 2025"
+      "tags": ["Documentary", "Narrative", "Atmospheric Foley", "DaVinci Resolve"]
     },
     {
       "id": "vid-3",
-      "title": "CHRONO MATRIX — High Retention Viral Breakdown",
-      "client": "Veritas Media (1.8M Subs)",
-      "category": "short-form",
-      "categoryLabel": "High-Retention Short Form",
-      "duration": "0:58",
+      "title": "NEO-SHIBUYA — Kinetic Streetwear Campaign",
+      "client": "Kinetix Apparel Tokyo",
+      "category": "social",
+      "categoryLabel": "Digital High-Retention",
+      "duration": "0:30",
       "year": "2026",
-      "youtubeId": "ScMzIvxBSi4",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/ScMzIvxBSi4?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
-      "description": "Micro-hook retention architecture: visual pattern interrupts every 2.4 seconds, kinetic motion typography, and sound-driven visual cues.",
-      "role": "Retention Script Pacing, Motion Graphics, Sound Stems",
-      "tags": [
-        "Short-Form",
-        "Kinetic Typography",
-        "Retention Editing",
-        "After Effects"
-      ],
-      "metrics": "8.7M Views on TikTok & YouTube Shorts"
-    },
-    {
-      "id": "vid-4",
-      "title": "NEON SHADOWS — Electronic Music Official Visualizer",
-      "client": "Kuro Records / Artist: KAIROS",
-      "category": "motion",
-      "categoryLabel": "Motion & Music",
-      "duration": "2:24",
-      "year": "2025",
-      "youtubeId": "kJQP7kiw5Fk",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/kJQP7kiw5Fk?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80",
-      "description": "Seamless audiovisual synchronization. Glitch aesthetics, kinetic waveform tracking, and typography that vibrates with sub-bass frequencies.",
-      "role": "Audio Reactive Visuals, Rhythm Cutting, Color Shifts",
-      "tags": [
-        "Music Video",
-        "Audio Reactive",
-        "Glitch Art",
-        "Cinema 4D"
-      ],
-      "metrics": "1.2M Streams Visual Identity"
-    },
-    {
-      "id": "vid-5",
-      "title": "VELOCITY ARCHITECTURE — Luxury Interior Film",
-      "client": "Studio Archetype Zürich",
-      "category": "commercial",
-      "categoryLabel": "Commercial / Brand",
-      "duration": "1:30",
-      "year": "2025",
-      "youtubeId": "Bey4XXJAqS8",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/Bey4XXJAqS8?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
-      "description": "Fluid camera stabilization smoothing, balanced geometric compositions, and serene classical sound design highlighting concrete and light.",
-      "role": "Editorial Pacing, Architectural Color Grade, Audio Sculpting",
-      "tags": [
-        "Architecture",
-        "Minimalist Pacing",
-        "Neutral Grade",
-        "Commercial"
-      ],
-      "metrics": "Featured on Dezeen & ArchDaily"
-    },
-    {
-      "id": "vid-6",
-      "title": "THE LAST VOYAGE — Cinematic Sci-Fi Teaser",
-      "client": "Orbit Independent Cinema",
-      "category": "narrative",
-      "categoryLabel": "Cinematic Narrative",
-      "duration": "1:15",
-      "year": "2026",
-      "youtubeId": "L_LUpnjgPso",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/L_LUpnjgPso?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
-      "description": "Deep-space claustrophobia constructed entirely through silence, sudden rhythmic cuts, and deep sub-bass drops that shake the theater.",
-      "role": "Trailer Editing, Sound Design, VFX Composite Timing",
-      "tags": [
-        "Sci-Fi",
-        "Film Trailer",
-        "Dynamic Contrast",
-        "After Effects"
-      ],
-      "metrics": "Official Selection Cannes Short Film Corner"
+      "youtubeId": "dQw4w9WgXcQ",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
+      "description": "Engineered for 9-second hook retention. Dynamic zoom transitions and typography sync that stopped 1.8M TikTok & Instagram scrollers.",
+      "role": "9:16 Re-Framing, Glitch Typography, Bass Punch",
+      "tags": ["TikTok / Reels", "High Retention", "Kinetic Typography"]
     }
   ],
   "graphics": [
     {
-      "id": "graph-1",
-      "title": "OBLIVION DAWN — Cinematic Film Key-Art",
-      "client": "Blackstone Pictures",
+      "id": "art-1",
+      "title": "ECLIPSE PROTOCOL — Key Visual Poster",
+      "client": "Indie Sci-Fi Studio",
       "category": "key-art",
-      "categoryLabel": "Film Poster & Key Art",
-      "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=900&q=85",
+      "categoryLabel": "Theatrical Poster",
+      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80",
       "aspect": "portrait",
       "year": "2026",
-      "description": "High-contrast monochrome typographic movie poster featuring brutalist kerning and atmospheric fog treatment.",
-      "tools": [
-        "Photoshop",
-        "Illustrator",
-        "Grain Texturing"
-      ]
+      "description": "Minimalist brutalist composition with heavy typographic hierarchy and custom distorted gradients.",
+      "tools": ["Photoshop", "Illustrator", "Cinema 4D"]
     },
     {
-      "id": "graph-2",
-      "title": "THE 100-HOUR HEIST — High-CTR YouTube Master Thumbnail",
-      "client": "Chronos Investigative",
-      "category": "thumbnails",
-      "categoryLabel": "YouTube High-CTR Thumbnail",
-      "imageUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=85",
+      "id": "art-2",
+      "title": "CHRONO DRIFT — YouTube 4K Hero Thumbnail",
+      "client": "Velocity Gaming (1.2M Subs)",
+      "category": "thumbnail",
+      "categoryLabel": "High-CTR Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
       "aspect": "landscape",
       "year": "2026",
-      "description": "Designed with visual contrast hierarchies, color-isolated silhouettes, and subtle depth lighting to maximize click-through rate.",
-      "tools": [
-        "Photoshop",
-        "Custom 3D Lighting",
-        "Color Separation"
-      ]
-    },
-    {
-      "id": "graph-3",
-      "title": "MONOLITH 04 — Editorial Title Card & Identity System",
-      "client": "Zolepto Visual Series",
-      "category": "styleframes",
-      "categoryLabel": "Styleframe & Typography",
-      "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=900&q=85",
-      "aspect": "square",
-      "year": "2025",
-      "description": "Minimalist brand styleframe exploring severe Swiss typography against deep obsidian backgrounds.",
-      "tools": [
-        "Figma",
-        "Illustrator",
-        "Blender"
-      ]
-    },
-    {
-      "id": "graph-4",
-      "title": "ECHOES OF REYKJAVIK — Vinyl Album Key-Art & Package",
-      "client": "Solen Records Scandinavia",
-      "category": "key-art",
-      "categoryLabel": "Album Cover & Packaging",
-      "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=900&q=85",
-      "aspect": "portrait",
-      "year": "2025",
-      "description": "Embossed typography and monochrome grain plate artwork for an ambient soundscape release.",
-      "tools": [
-        "Photoshop",
-        "Paper Mockup Engine",
-        "Letterpress Effect"
-      ]
-    },
-    {
-      "id": "graph-5",
-      "title": "NEURAL HORIZONS — Documentary Title Sequence Styleframe",
-      "client": "Future Mind Institute",
-      "category": "styleframes",
-      "categoryLabel": "Motion Styleframe",
-      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=85",
-      "aspect": "landscape",
-      "year": "2026",
-      "description": "Experimental fluid gradient mapping rendered in pure grayscale to establish the visual rules for a 6-part motion title sequence.",
-      "tools": [
-        "After Effects",
-        "Photoshop",
-        "Displacement Mapping"
-      ]
-    },
-    {
-      "id": "graph-6",
-      "title": "ALGORITHM APOCALYPSE — Viral Thumbnail Suite",
-      "client": "NextEra Tech Lab",
-      "category": "thumbnails",
-      "categoryLabel": "YouTube Thumbnail Suite",
-      "imageUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=85",
-      "aspect": "landscape",
-      "year": "2026",
-      "description": "3-tier visual hierarchy tested at 100px mobile size for instant recognition and retention curiosity.",
-      "tools": [
-        "Photoshop",
-        "Subject Cutouts",
-        "Light Glow Engineering"
-      ]
+      "description": "High-contrast visual focal point engineered for maximum click-through rate on competitive browse feeds.",
+      "tools": ["Photoshop", "Lightroom", "Color Science"]
     }
   ]
 }

@@ -71,6 +71,16 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             Portfolio
           </button>
 
+          <button
+            id="nav-blueprint"
+            onClick={() => handleLinkClick('process')}
+            className={`text-sm font-medium transition-colors cursor-pointer ${
+              isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-300 hover:text-white'
+            }`}
+          >
+            Blueprint
+          </button>
+
           {/* Explicit requirement: text for "about" which scrolls users into personal background/story */}
           <button
             id="nav-about"
@@ -143,6 +153,13 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
           >
             Portfolio
+          </button>
+          <button
+            id="mobile-nav-blueprint"
+            onClick={() => handleLinkClick('process')}
+            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+          >
+            Workshop Blueprint
           </button>
           <button
             id="mobile-nav-about"

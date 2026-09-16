@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Globe,
   Sparkles,
@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   AlertCircle,
   RotateCcw,
-  Check,
   Send,
   Lock,
   ArrowUpRight,
@@ -14,30 +13,34 @@ import {
   Scissors,
   Volume2,
   Eye,
+  RefreshCw,
+  Share2,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
 import { DEFAULT_SITE_SETTINGS } from '../../services/siteSettingsService';
 
 interface VisualCopyEditorProps {
   settings: SiteSettings;
-  onSave: (updated: SiteSettings) => Promise<void>;
-  onPushToGitHub?: () => void;
-  isSaving: boolean;
+  onPublishToGitHub: (updated: SiteSettings) => Promise<void>;
+  isPublishing: boolean;
   status: { type: 'success' | 'error'; text: string } | null;
 }
 
-type EditorSection = 'hero' | 'about' | 'workshop' | 'consultation';
+type EditorSection = 'hero' | 'about' | 'workshop' | 'socials' | 'consultation';
 
 export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
   settings: initialSettings,
-  onSave,
-  onPushToGitHub,
-  isSaving,
+  onPublishToGitHub,
+  isPublishing,
   status,
 }) => {
   const [form, setForm] = useState<SiteSettings>({ ...initialSettings });
   const [activeSection, setActiveSection] = useState<EditorSection>('hero');
   const [hasChanges, setHasChanges] = useState(false);
+
+  useEffect(() => {
+    setForm({ ...initialSettings });
+  }, [initialSettings]);
 
   // Safety length limits configuration
   const LIMITS = {
@@ -73,9 +76,8 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onSave(form);
+  const handlePublish = async () => {
+    await onPublishToGitHub(form);
     setHasChanges(false);
   };
 
@@ -125,7 +127,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
           </p>
         </div>
 
-        {/* Action Controls */}
+        {/* Action Controls: ONE SINGLE MASTER BUTTON */}
         <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
@@ -138,32 +140,25 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
           </button>
 
           <button
+            id="editor-publish-github-btn"
             type="button"
-            onClick={handleSubmit}
-            disabled={isSaving}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+            onClick={handlePublish}
+            disabled={isPublishing}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white text-xs font-bold tracking-wide transition-all disabled:opacity-50 cursor-pointer shadow-md"
+            title="Commit and publish all changes directly to GitHub"
           >
-            {isSaving ? (
-              <span>Saving...</span>
+            {isPublishing ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Publishing to GitHub...</span>
+              </>
             ) : (
               <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span>Save Live Changes</span>
+                <Send className="w-4 h-4" />
+                <span>Publish to GitHub</span>
               </>
             )}
           </button>
-
-          {onPushToGitHub && (
-            <button
-              type="button"
-              onClick={onPushToGitHub}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
-              title="Commit directly to GitHub & trigger real-time client deployment"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>Push to GitHub</span>
-            </button>
-          )}
         </div>
       </div>
 
@@ -191,7 +186,8 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
           { id: 'hero', label: '01. Hero & Identity', icon: Globe },
           { id: 'about', label: '02. About Story & Bio', icon: Sparkles },
           { id: 'workshop', label: '03. Workshop Blueprint', icon: Layers },
-          { id: 'consultation', label: "04. Let's Create (Fixed)", icon: Lock },
+          { id: 'socials', label: '04. Social Links', icon: Share2 },
+          { id: 'consultation', label: "05. Let's Create (Fixed)", icon: Lock },
         ].map((sec) => {
           const Icon = sec.icon;
           const isActive = activeSection === sec.id;
@@ -800,7 +796,86 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       )}
 
       {/* ================================================================ */}
-      {/* SECTION 4: LET'S CREATE TOGETHER (FIXED DESIGN NOTICE)          */}
+      {/* SECTION 4: SOCIAL PROFILES & DIRECT FOOTER BUTTONS              */}
+      {/* ================================================================ */}
+      {activeSection === 'socials' && (
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#fafafa] border border-zinc-200 shadow-sm space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-zinc-200">
+            <div>
+              <h3 className="font-display font-bold text-lg text-zinc-900 flex items-center gap-2">
+                <span>Social Profiles & Quick Contact Links</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Global Footer Links
+                </span>
+              </h3>
+              <p className="text-xs text-zinc-500 font-mono mt-1">
+                Configure direct URLs for the footer action buttons (Instagram, LinkedIn, X/Twitter, Gmail).
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-zinc-700">
+                Instagram URL
+              </label>
+              <input
+                type="text"
+                value={form.socialInstagram || ''}
+                onChange={(e) => handleChange('socialInstagram', e.target.value)}
+                placeholder="https://instagram.com/yourhandle"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
+              />
+              <p className="text-[10px] text-zinc-400">Direct link to your Instagram profile</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-zinc-700">
+                LinkedIn URL
+              </label>
+              <input
+                type="text"
+                value={form.socialLinkedin || ''}
+                onChange={(e) => handleChange('socialLinkedin', e.target.value)}
+                placeholder="https://linkedin.com/in/yourhandle"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
+              />
+              <p className="text-[10px] text-zinc-400">Direct link to your LinkedIn profile</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-zinc-700">
+                X (Twitter) URL
+              </label>
+              <input
+                type="text"
+                value={form.socialX || ''}
+                onChange={(e) => handleChange('socialX', e.target.value)}
+                placeholder="https://x.com/yourhandle"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
+              />
+              <p className="text-[10px] text-zinc-400">Direct link to your X account</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-zinc-700">
+                Gmail / Contact Address
+              </label>
+              <input
+                type="text"
+                value={form.socialGmail || ''}
+                onChange={(e) => handleChange('socialGmail', e.target.value)}
+                placeholder="cheddarc19@gmail.com"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
+              />
+              <p className="text-[10px] text-zinc-400">Used for direct Gmail composer links</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================ */}
+      {/* SECTION 5: LET'S CREATE TOGETHER (FIXED DESIGN NOTICE)          */}
       {/* ================================================================ */}
       {activeSection === 'consultation' && (
         <div className="p-8 rounded-3xl bg-white border border-zinc-200 shadow-sm space-y-6">

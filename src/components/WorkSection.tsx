@@ -246,15 +246,19 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
           </motion.div>
         )}
 
-        {/* Showcase Cards Container */}
+        {/* Showcase Cards Container with Subtle Fade-off & Mobile Inset */}
         <div className="relative">
+          {/* Subtle Mobile Edge Fade-Off Masks */}
+          <div className="pointer-events-none absolute top-0 bottom-4 left-0 w-6 sm:w-10 bg-gradient-to-r from-[#fafafa] to-transparent z-10 md:hidden" />
+          <div className="pointer-events-none absolute top-0 bottom-4 right-0 w-8 sm:w-14 bg-gradient-to-l from-[#fafafa] to-transparent z-10 md:hidden" />
+
           <motion.div
             key={currentTab}
             initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             ref={sliderRef}
-            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-none -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0"
+            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-none -mx-4 sm:-mx-6 md:mx-0 px-5 sm:px-8 md:px-0 scroll-pl-5 sm:scroll-pl-8"
           >
             {unifiedItems.map((item) => {
               if (item.type === 'video') {
@@ -264,7 +268,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     key={`vid-${video.id}`}
                     id={`video-card-${video.id}`}
                     onClick={() => onOpenVideoModal(video)}
-                    className="group shrink-0 w-[85vw] sm:w-[360px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="group shrink-0 w-[78vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     {/* Video Thumbnail */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
@@ -337,7 +341,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     key={`graph-${graphic.id}`}
                     id={`graphic-card-${graphic.id}`}
                     onClick={() => setSelectedGraphic(graphic)}
-                    className="group shrink-0 w-[85vw] sm:w-[360px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="group shrink-0 w-[78vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     {/* Graphic Preview */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
@@ -395,6 +399,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                 );
               }
             })}
+            {/* End spacer for smooth mobile snap padding */}
+            <div className="w-2 sm:w-4 shrink-0 md:hidden pointer-events-none" aria-hidden="true" />
           </motion.div>
 
           {/* Mobile slide indicator */}

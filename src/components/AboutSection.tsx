@@ -103,9 +103,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
 
   return (
     <section
-      id="about"
+      id="blueprint-about"
       className="py-24 sm:py-32 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-8 sm:-mt-12 z-30 border-t border-zinc-200/90 bg-[#fafafa] shadow-[0_-24px_50px_rgba(0,0,0,0.06)] overflow-hidden"
     >
+      {/* Anchor targets */}
+      <div id="process" className="absolute -top-24 pointer-events-none" />
+      <div id="blueprint" className="absolute -top-24 pointer-events-none" />
+
       {/* Blueprint Ambient Grid Watermark */}
       <div className="absolute inset-0 pointer-events-none blueprint-sheet opacity-60" />
 
@@ -125,98 +129,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ============================================================ */}
-        {/* TOP EDITORIAL: PERSONAL STORY & PHILOSOPHY */}
+        {/* 1. THE BLUEPRINT WORKSHOP PROCESS: FREE FLOW & PROGRESSION   */}
+        {/* PLACED FIRST AS REQUESTED ABOVE ABOUT ME                     */}
         {/* ============================================================ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Main Title & Headline */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-5 space-y-5"
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-zinc-200 shadow-2xs font-mono text-xs text-zinc-600">
-              <span className="w-2 h-2 rounded-full bg-zinc-900" />
-              <span>WHO WE ARE & HOW WE WORK</span>
-            </div>
-
-            <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.12]">
-              Crafting edits that audiences refuse to skip.
-            </h2>
-
-            {/* Hand-drawn sticky note decoration */}
-            <div className="relative inline-block mt-2">
-              <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200/70 text-amber-950 max-w-sm rotate-[-1deg] shadow-2xs">
-                {/* Washi tape strip */}
-                <div className="absolute -top-3 left-8 px-3 py-0.5 bg-amber-100/90 border border-amber-300/50 text-[10px] font-mono text-amber-800 rounded-xs uppercase tracking-wider -rotate-2">
-                  DIRECTOR NOTE
-                </div>
-                <p className="font-handwriting text-xl sm:text-2xl leading-snug text-zinc-800 pt-1">
-                  “When people watch a great video, they don't notice the cuts—they feel the momentum.”
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <button
-                id="about-cta-start"
-                onClick={onStartBooking}
-                className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-xs uppercase tracking-wider transition-all duration-200 shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Work 1-on-1 With Me</span>
-                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Philosophy & Bio */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="lg:col-span-7 space-y-6 text-zinc-700 text-base sm:text-lg leading-relaxed font-normal"
-          >
-            <blockquote className="font-display text-xl sm:text-2xl text-zinc-950 font-medium leading-snug border-l-2 border-zinc-950 pl-5">
-              {quote}
-            </blockquote>
-
-            <p className="text-zinc-600">
-              {bio1}
-            </p>
-
-            <p className="text-zinc-600">
-              {bio2}
-            </p>
-
-            {/* Timeline Craft Specs Bar */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-xs text-zinc-500 border-t border-zinc-200">
-              <div>
-                <span className="block text-zinc-400 text-[10px]">TIMELINE NLE</span>
-                <span className="font-medium text-zinc-800">Premiere & DaVinci</span>
-              </div>
-              <div>
-                <span className="block text-zinc-400 text-[10px]">COLOR SCIENCE</span>
-                <span className="font-medium text-zinc-800">YRGB 35mm Emulation</span>
-              </div>
-              <div>
-                <span className="block text-zinc-400 text-[10px]">SOUND FOLEY</span>
-                <span className="font-medium text-zinc-800">Logic Pro & Stems</span>
-              </div>
-              <div>
-                <span className="block text-zinc-400 text-[10px]">PACKAGING</span>
-                <span className="font-medium text-zinc-800">High-CTR Key-Art</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ============================================================ */}
-        {/* THE BLUEPRINT WORKSHOP PROCESS: FREE FLOW & HAND-DRAWN       */}
-        {/* NO HARD CARD BOUNDARIES — NATURAL WORKSHOP BREAKDOWN         */}
-        {/* ============================================================ */}
-        <div id="process" className="mt-28 pt-20 border-t border-zinc-200/90 relative">
+        <div>
           {/* Blueprint Header */}
           <div className="max-w-3xl mb-16 relative">
             <div className="inline-flex items-center gap-2 mb-3">
@@ -249,7 +165,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
             </div>
           </div>
 
-          {/* FREE-FLOW PROGRESSION CONTAINER: No hard card borders! */}
+          {/* FREE-FLOW PROGRESSION CONTAINER: No hard card borders */}
           <div className="relative space-y-16 sm:space-y-24">
             {/* Hand-drawn connecting path running through the steps (visible on md screens) */}
             <div className="hidden lg:block absolute left-[38px] top-12 bottom-16 w-0.5 border-l-2 border-dashed border-zinc-300 pointer-events-none" />
@@ -344,7 +260,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
 
                       {/* Hand-drawn Commentary Annotation with rough doodle */}
                       <div className="pt-2 flex items-center gap-3">
-                        {/* Hand-drawn arrow SVG */}
                         <svg
                           className="w-7 h-7 text-zinc-400 flex-shrink-0"
                           viewBox="0 0 24 24"
@@ -365,7 +280,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                     </div>
                   </div>
 
-                  {/* Free-flowing subtle hand-drawn separator (no rigid card edges) */}
+                  {/* Free-flowing subtle hand-drawn separator */}
                   {idx < PROCESS_STEPS.length - 1 && (
                     <div className="mt-12 sm:mt-16 pt-2 flex items-center gap-4 text-zinc-300">
                       <div className="w-2 h-2 rounded-full bg-zinc-300" />
@@ -385,7 +300,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
           {/* Blueprint Workshop Summary Stamp Footer */}
           <div className="mt-20 pt-12 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              {/* Stamp-like circle */}
               <div className="w-14 h-14 rounded-full border-2 border-dashed border-zinc-900 flex items-center justify-center p-1 text-center rotate-[-6deg]">
                 <span className="font-mono text-[9px] font-bold text-zinc-900 leading-tight">
                   HUMAN
@@ -411,6 +325,96 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
               <span>Begin With Step 01</span>
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:rotate-45" />
             </button>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* 2. ABOUT ME: PERSONAL STORY, PHILOSOPHY & CRAFT SPECS        */}
+        {/* PLACED AFTER THE WORKSHOP BLUEPRINT                          */}
+        {/* ============================================================ */}
+        <div id="about" className="mt-28 pt-20 border-t border-zinc-200/90 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* Main Title & Headline */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-5 space-y-5"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-zinc-200 shadow-2xs font-mono text-xs text-zinc-600">
+                <span className="w-2 h-2 rounded-full bg-zinc-900" />
+                <span>ABOUT ME & THE STUDIO</span>
+              </div>
+
+              <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.12]">
+                Crafting edits that audiences refuse to skip.
+              </h2>
+
+              {/* Hand-drawn sticky note decoration */}
+              <div className="relative inline-block mt-2">
+                <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200/70 text-amber-950 max-w-sm rotate-[-1deg] shadow-2xs">
+                  <div className="absolute -top-3 left-8 px-3 py-0.5 bg-amber-100/90 border border-amber-300/50 text-[10px] font-mono text-amber-800 rounded-xs uppercase tracking-wider -rotate-2">
+                    DIRECTOR NOTE
+                  </div>
+                  <p className="font-handwriting text-xl sm:text-2xl leading-snug text-zinc-800 pt-1">
+                    “When people watch a great video, they don't notice the cuts—they feel the momentum.”
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  id="about-cta-start"
+                  onClick={onStartBooking}
+                  className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-semibold text-xs uppercase tracking-wider transition-all duration-200 shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>Work 1-on-1 With Me</span>
+                  <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Philosophy & Bio */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="lg:col-span-7 space-y-6 text-zinc-700 text-base sm:text-lg leading-relaxed font-normal"
+            >
+              <blockquote className="font-display text-xl sm:text-2xl text-zinc-950 font-medium leading-snug border-l-2 border-zinc-950 pl-5">
+                {quote}
+              </blockquote>
+
+              <p className="text-zinc-600">
+                {bio1}
+              </p>
+
+              <p className="text-zinc-600">
+                {bio2}
+              </p>
+
+              {/* Timeline Craft Specs Bar */}
+              <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-xs text-zinc-500 border-t border-zinc-200">
+                <div>
+                  <span className="block text-zinc-400 text-[10px]">TIMELINE NLE</span>
+                  <span className="font-medium text-zinc-800">Premiere & DaVinci</span>
+                </div>
+                <div>
+                  <span className="block text-zinc-400 text-[10px]">COLOR SCIENCE</span>
+                  <span className="font-medium text-zinc-800">YRGB 35mm Emulation</span>
+                </div>
+                <div>
+                  <span className="block text-zinc-400 text-[10px]">SOUND FOLEY</span>
+                  <span className="font-medium text-zinc-800">Logic Pro & Stems</span>
+                </div>
+                <div>
+                  <span className="block text-zinc-400 text-[10px]">PACKAGING</span>
+                  <span className="font-medium text-zinc-800">High-CTR Key-Art</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>

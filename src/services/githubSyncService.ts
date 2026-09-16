@@ -181,50 +181,82 @@ export async function pushPortfolioToGitHub(
   const apiUrl = `https://api.github.com/repos/${encodeURIComponent(cleanOwner)}/${encodeURIComponent(cleanRepo)}/contents/${filePath}`;
 
   try {
-    // 1. Fetch current file SHA if file already exists
-    let existingSha: string | undefined;
-    const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}`, {
-      headers: {
-        Authorization: `Bearer ${config.token.trim()}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-    });
-
-    if (checkRes.ok) {
-      const fileData = await checkRes.json();
-      existingSha = fileData.sha;
-    }
-
-    // 2. Put file to GitHub (create or update commit)
-    const commitBody: any = {
-      message: `Update portfolio content via Zolepto Studio [${new Date().toLocaleDateString()}]`,
-      content: base64Content,
-      branch,
+    // Helper to fetch freshest SHA directly from GitHub without cache
+    const fetchLatestSha = async (): Promise<string | undefined> => {
+      try {
+        const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}&_nocache=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            Authorization: `Bearer ${config.token.trim()}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+          },
+        });
+        if (checkRes.ok) {
+          const fileData = await checkRes.json();
+          return fileData.sha;
+        }
+      } catch {
+        // ignore
+      }
+      return undefined;
     };
-    if (existingSha) {
-      commitBody.sha = existingSha;
+
+    let existingSha = await fetchLatestSha();
+    let attempts = 0;
+    const maxAttempts = 3;
+    let putRes: Response | null = null;
+    let result: any = null;
+
+    // Retry loop: If GitHub reports a 409 SHA mismatch, automatically re-fetch latest SHA and retry immediately
+    while (attempts < maxAttempts) {
+      attempts++;
+
+      const commitBody: any = {
+        message: `Update portfolio content via Zolepto Studio [${new Date().toLocaleDateString()}]`,
+        content: base64Content,
+        branch,
+      };
+      if (existingSha) {
+        commitBody.sha = existingSha;
+      }
+
+      putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${config.token.trim()}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+        body: JSON.stringify(commitBody),
+      });
+
+      if (putRes.ok) {
+        result = await putRes.json();
+        break;
+      }
+
+      // If 409 Conflict (e.g. public/content.json does not match sha), refresh sha and retry
+      if (putRes.status === 409 && attempts < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, 350));
+        existingSha = await fetchLatestSha();
+        continue;
+      }
+
+      // Other failure or reached max attempts
+      break;
     }
 
-    const putRes = await fetch(apiUrl, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${config.token.trim()}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-      body: JSON.stringify(commitBody),
-    });
-
-    if (!putRes.ok) {
-      const errData = await putRes.json().catch(() => ({}));
-      const reason = errData.message || putRes.statusText;
+    if (!putRes || !putRes.ok) {
+      const errData = putRes ? await putRes.json().catch(() => ({})) : {};
+      const reason = errData.message || (putRes ? putRes.statusText : 'Request failed');
       return { success: false, message: `Failed to commit to GitHub: ${reason}` };
     }
 
-    const result = await putRes.json();
-    const commitUrl = result.commit?.html_url || `https://github.com/${cleanOwner}/${cleanRepo}/commits/${branch}`;
+    const commitUrl = result?.commit?.html_url || `https://github.com/${cleanOwner}/${cleanRepo}/commits/${branch}`;
 
     // Cache the pushed payload in local vault so current device has instant confirmation
     try {
@@ -265,9 +297,43 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
   const config = getGitHubConfig();
   const timestamp = Date.now();
 
-  // Tier 1: Try GitHub Raw if repository is public and configured (bypasses Vercel build delay completely!)
+  // Tier 1: Try direct GitHub API (no CDN cache delay!) or GitHub Raw
   if (config.owner && config.repo) {
-    const rawUrl = `https://raw.githubusercontent.com/${encodeURIComponent(config.owner.trim())}/${encodeURIComponent(config.repo.trim())}/${encodeURIComponent(config.branch.trim() || 'main')}/${config.filePath.trim() || 'public/content.json'}?_nocache=${timestamp}`;
+    const owner = config.owner.trim();
+    const repo = config.repo.trim();
+    const branch = config.branch.trim() || 'main';
+    const filePath = config.filePath.trim() || 'public/content.json';
+
+    // 1A. GitHub REST API: Zero CDN cache, instant real-time data
+    try {
+      const apiUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${filePath}?ref=${encodeURIComponent(branch)}&_nocache=${timestamp}`;
+      const headers: Record<string, string> = {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+      };
+      if (config.token.trim()) {
+        headers['Authorization'] = `Bearer ${config.token.trim()}`;
+      }
+
+      const apiRes = await fetch(apiUrl, { cache: 'no-store', headers });
+      if (apiRes.ok) {
+        const fileObj = await apiRes.json();
+        if (fileObj && fileObj.content && fileObj.encoding === 'base64') {
+          const rawDecoded = decodeURIComponent(escape(atob(fileObj.content.replace(/\s/g, ''))));
+          const parsed = JSON.parse(rawDecoded);
+          if (parsed && parsed.siteSettings && (parsed.showreels || parsed.graphics)) {
+            return parsed as PortfolioContentPayload;
+          }
+        }
+      }
+    } catch {
+      // Continue to raw/content.json fallback
+    }
+
+    // 1B. Fallback to GitHub Raw endpoint
+    const rawUrl = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${filePath}?_nocache=${timestamp}`;
     try {
       const rawRes = await fetch(rawUrl, {
         cache: 'no-store',

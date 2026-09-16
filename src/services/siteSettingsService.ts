@@ -45,6 +45,10 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   step4Description:
     'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.',
   step4Note: '✦ Ready for export. Approved for master release across all formats.',
+  socialInstagram: 'https://instagram.com/zolepto',
+  socialLinkedin: 'https://linkedin.com/in/zolepto',
+  socialX: 'https://x.com/zolepto',
+  socialGmail: 'cheddarc19@gmail.com',
 };
 
 export function getLocalSettings(): SiteSettings {
@@ -123,8 +127,14 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
     fetchGlobalSettings();
   };
 
-  // Periodic real-time poll every 25 seconds for live client synchronization
-  const interval = setInterval(fetchGlobalSettings, 25000);
+  const handleVisibility = () => {
+    if (document.visibilityState === 'visible') {
+      fetchGlobalSettings();
+    }
+  };
+
+  // Periodic real-time poll every 10 seconds for instant live client synchronization
+  const interval = setInterval(fetchGlobalSettings, 10000);
 
   const handleLocalUpdate = () => {
     if (isCleanedUp) return;
@@ -134,6 +144,7 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
   window.addEventListener('storage', handleLocalUpdate);
   window.addEventListener(SETTINGS_EVENT, handleLocalUpdate);
   window.addEventListener('focus', handleFocus);
+  document.addEventListener('visibilitychange', handleVisibility);
 
   return () => {
     isCleanedUp = true;
@@ -141,6 +152,7 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
     window.removeEventListener('storage', handleLocalUpdate);
     window.removeEventListener(SETTINGS_EVENT, handleLocalUpdate);
     window.removeEventListener('focus', handleFocus);
+    document.removeEventListener('visibilitychange', handleVisibility);
   };
 }
 

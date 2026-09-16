@@ -699,7 +699,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 type="text"
                 value={
                   form.step3Note ||
-                  'Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧'
+                  'Subconscious audio cues [40Hz - 12kHz] — spatial depth & tactile rhythm'
                 }
                 maxLength={LIMITS.stepNote}
                 onChange={(e) => handleChange('step3Note', e.target.value, LIMITS.stepNote)}
@@ -890,7 +890,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 type="text"
                 value={form.web3formsAccessKey || ''}
                 onChange={(e) => handleChange('web3formsAccessKey', e.target.value)}
-                placeholder="64d852a4-5696-414c-a11b-10f845dca889"
+                placeholder="cce7d17a-a640-443a-b066-33c06020b08e"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
               />
               <p className="text-[10px] text-zinc-500">

@@ -22,26 +22,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const availability = settings?.availabilityStatus || 'Available for incoming projects!';
   const showDot = settings?.showAvailabilityDot ?? true;
 
-  // Real-time timecode ticker for director authenticity
-  const [timecode, setTimecode] = useState('00:04:18:12');
-
-  useEffect(() => {
-    let frame = 12;
-    let sec = 18;
-    const interval = setInterval(() => {
-      frame += 1;
-      if (frame >= 24) {
-        frame = 0;
-        sec += 1;
-      }
-      const fStr = frame.toString().padStart(2, '0');
-      const sStr = (sec % 60).toString().padStart(2, '0');
-      setTimecode(`00:04:${sStr}:${fStr}`);
-    }, 1000 / 24);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section
       id="hero"
@@ -80,7 +60,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-wrap items-center justify-between gap-3 mb-8 sm:mb-12"
+          className="flex items-center gap-3 mb-8 sm:mb-12"
         >
           {/* Availability Status Pill - Customizable in Admin */}
           <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
@@ -94,132 +74,27 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {availability}
             </span>
           </div>
-
-          {/* Real-time Studio Timecode Monitor */}
-          <div className="hidden sm:flex items-center gap-3 font-mono text-[11px] text-zinc-400 bg-white/5 backdrop-blur-md px-3.5 py-1 rounded-md border border-white/10">
-            <span className="flex items-center gap-1.5 text-rose-500 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-              LIVE TIMELINE
-            </span>
-            <span className="text-zinc-600">|</span>
-            <span className="text-white font-medium">{timecode}</span>
-            <span className="text-zinc-600">|</span>
-            <span>PRORES 422HQ</span>
-          </div>
         </motion.div>
 
         {/* Main Grid: Left Headline & Story / Right Personal Identity Showcase ("Where we show our self") */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           
-          {/* Left Column: Bold Display Typography & CTAs */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 24, filter: 'blur(12px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08]">
-                {line1} <br />
-                <span className="text-zinc-400 font-semibold">{line2}</span>
-              </h1>
-            </motion.div>
-
-            {/* Breathable narrative description */}
-            <motion.p
-              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-base sm:text-lg text-zinc-300 max-w-xl font-body leading-relaxed font-normal"
-            >
-              {subtitle}
-            </motion.p>
-
-            {/* Primary Actions with Hand-Drawn Annotation */}
-            <motion.div
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="pt-2 flex flex-wrap items-center gap-4 relative"
-            >
-              <button
-                id="hero-play-reel-btn"
-                onClick={onPlayFeatured}
-                className="group inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-white text-zinc-950 font-semibold text-xs sm:text-sm tracking-wide hover:bg-zinc-100 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md cursor-pointer"
-              >
-                <div className="w-6 h-6 rounded-full bg-zinc-950 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <Play className="w-3 h-3 fill-current ml-0.5" />
-                </div>
-                <span>Watch 2026 Showreel</span>
-              </button>
-
-              <button
-                id="hero-start-cta"
-                onClick={() => onNavigate('start')}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-white text-xs sm:text-sm tracking-wide font-semibold transition-all duration-200 hover:border-white/30 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
-              >
-                <span>Start a Project</span>
-                <ArrowUpRight className="w-4 h-4 text-zinc-400" />
-              </button>
-
-              {/* Hand-drawn scribble annotation */}
-              <div className="hidden xl:flex items-center gap-1.5 pl-2 text-zinc-400">
-                <svg
-                  className="w-4 h-4 text-zinc-500 rotate-[-15deg]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-                <span className="font-handwriting text-lg text-zinc-400 font-medium">
-                  headphones recommended 🎧
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Minimalist Trust & Credibility Metrics */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.45 }}
-              className="pt-6 border-t border-white/10 flex flex-wrap items-center gap-6 text-xs font-mono text-zinc-400"
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-white font-display text-sm">140M+</span>
-                <span>Organic Views</span>
-              </div>
-              <div className="h-3 w-px bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-white font-display text-sm">4+ Years</span>
-                <span>Timeline Craft</span>
-              </div>
-              <div className="h-3 w-px bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-white font-display text-sm">1-on-1</span>
-                <span>Direct Direction</span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right Column: Clean circular profile placeholder for future professional photo */}
+          {/* Avatar Column: In mobile view, comes FIRST so the creator's face builds immediate identity & trust */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 flex items-center justify-center lg:justify-end"
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="order-first lg:order-last lg:col-span-5 flex items-center justify-center lg:justify-end"
           >
             <div className="relative group flex flex-col items-center">
-              {/* Circular mock profile container - ready for future <img> */}
+              {/* Circular profile container - ready for future professional photo / avatar */}
               <div
                 id="hero-profile-avatar-slot"
-                className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border border-white/20 hover:border-white/40 transition-colors flex items-center justify-center overflow-hidden"
+                className="relative w-32 h-32 sm:w-44 sm:h-44 lg:w-72 lg:h-72 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/5"
               >
                 {/* Mock torso half-body headshot silhouette */}
                 <svg
-                  className="w-full h-full text-zinc-500/40 hover:text-zinc-500/60 transition-colors transform translate-y-3"
+                  className="w-full h-full text-zinc-400/50 hover:text-zinc-300/70 transition-colors transform translate-y-2 sm:translate-y-3"
                   viewBox="0 0 200 200"
                   fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg"
@@ -232,9 +107,85 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {/* Shoulders / Torso half-body */}
                   <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
                 </svg>
+
+                {/* Subtle active status dot on avatar */}
+                <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs" title="Online / Direct Direction" />
               </div>
             </div>
           </motion.div>
+
+          {/* Left Column: Bold Display Typography & CTAs */}
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 24, filter: 'blur(12px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
+                {line1} <br />
+                <span className="text-zinc-400 font-semibold">{line2}</span>
+              </h1>
+            </motion.div>
+
+            {/* Breathable narrative description */}
+            <motion.p
+              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-sm sm:text-base md:text-lg text-zinc-300 max-w-xl font-body leading-relaxed font-normal"
+            >
+              {subtitle}
+            </motion.p>
+
+            {/* Primary Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 relative"
+            >
+              <button
+                id="hero-play-reel-btn"
+                onClick={onPlayFeatured}
+                className="group inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white text-zinc-950 font-semibold text-xs sm:text-sm tracking-wide hover:bg-zinc-100 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md cursor-pointer"
+              >
+                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-zinc-950 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                  <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current ml-0.5" />
+                </div>
+                <span>Watch 2026 Showreel</span>
+              </button>
+
+              <button
+                id="hero-start-cta"
+                onClick={() => onNavigate('start')}
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-white text-xs sm:text-sm tracking-wide font-semibold transition-all duration-200 hover:border-white/30 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
+              >
+                <span>Start a Project</span>
+                <ArrowUpRight className="w-4 h-4 text-zinc-400" />
+              </button>
+            </motion.div>
+
+            {/* Minimalist Trust & Credibility Metrics - Non-stacking 3-column horizontal grid on mobile */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.45 }}
+              className="pt-5 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-6 text-left"
+            >
+              <div className="space-y-0.5">
+                <span className="block font-bold text-white font-display text-base sm:text-lg tracking-tight">14M+</span>
+                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">Organic Views</span>
+              </div>
+              <div className="space-y-0.5 border-l border-white/10 pl-2.5 sm:pl-6">
+                <span className="block font-bold text-white font-display text-base sm:text-lg tracking-tight">4+ Years</span>
+                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">Multimedia & Creation</span>
+              </div>
+              <div className="space-y-0.5 border-l border-white/10 pl-2.5 sm:pl-6">
+                <span className="block font-bold text-white font-display text-base sm:text-lg tracking-tight">1-on-1</span>
+                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">Direct Direction</span>
+              </div>
+            </motion.div>
+          </div>
 
         </div>
       </div>

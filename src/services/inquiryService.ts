@@ -291,7 +291,10 @@ export async function saveInquiry(
 
   // 4. Web3Forms Free Plan Email Dispatch
   let emailSent = false;
-  const accessKey = (customWeb3FormsKey && customWeb3FormsKey.trim()) || '64d852a4-5696-414c-a11b-10f845dca889';
+  const accessKey =
+    (customWeb3FormsKey && customWeb3FormsKey.trim() && customWeb3FormsKey !== '64d852a4-5696-414c-a11b-10f845dca889'
+      ? customWeb3FormsKey.trim()
+      : 'cce7d17a-a640-443a-b066-33c06020b08e');
 
   try {
     const payload = {

@@ -358,19 +358,16 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
 
               {/* Row 3: Reference Links / Footage Source (Optional) */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="form-links" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Footage Links / References <span className="text-zinc-400 font-normal lowercase">(optional)</span>
-                  </label>
-                  <span className="text-[11px] font-mono text-zinc-400">Drive, Dropbox, YouTube</span>
-                </div>
+                <label htmlFor="form-links" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                  Reference Links <span className="text-zinc-400 font-normal lowercase">(optional)</span>
+                </label>
                 <input
                   id="form-links"
                   name="links"
                   type="url"
                   value={formData.links || ''}
                   onChange={handleChange}
-                  placeholder="https://drive.google.com/... or https://youtube.com/..."
+                  placeholder="https://..."
                   className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all"
                 />
               </div>

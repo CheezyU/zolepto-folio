@@ -149,6 +149,14 @@ function MainApp() {
   };
 
   const handleScrollTo = (sectionId: string) => {
+    if (sectionId === 'footer' || sectionId === 'contact' || sectionId === 'site-footer') {
+      const footerEl = document.getElementById('footer') || document.getElementById('site-footer') || document.getElementById('start');
+      if (footerEl) {
+        footerEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        return;
+      }
+    }
+
     if (sectionId === 'showreels') {
       setActiveWorkTab('showreels');
       scrollToWork();
@@ -250,6 +258,7 @@ function MainApp() {
             activeTab={activeWorkTab}
             onTabChange={setActiveWorkTab}
             onOpenVideoModal={(p) => setActiveTheaterProject(p)}
+            onNavigateToCreate={() => scrollToSection('start')}
           />
 
           {/* About & Personal Background / Story Section (with Blueprint Workshop & Identifying You) */}

@@ -27,10 +27,10 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
   return (
     <header
       id="top-sticky-header"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-zinc-200/80 py-3.5 shadow-xs'
-          : 'bg-[#0d0e12]/70 backdrop-blur-md border-b border-white/10 py-4 sm:py-5'
+          ? 'bg-white/95 backdrop-blur-md border-b border-zinc-200/90 py-3 shadow-xs text-zinc-900'
+          : 'bg-[#0d0e12]/90 backdrop-blur-md border-b border-white/10 py-3.5 sm:py-4 text-white'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-300 hover:text-white'
             }`}
           >
-            Blueprint
+            Our Process
           </button>
 
           {/* Explicit requirement: text for "about" which scrolls users into personal background/story */}
@@ -100,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-300 hover:text-white'
             }`}
           >
-            Contact
+            Contact & Info
           </button>
 
           {/* Explicit requirement: "Start" which scrolls visitors into fill up form to book consultation or project request */}
@@ -159,7 +159,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             onClick={() => handleLinkClick('process')}
             className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
           >
-            Workshop Blueprint
+            Our Process
           </button>
           <button
             id="mobile-nav-about"
@@ -180,7 +180,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             onClick={() => handleLinkClick('footer')}
             className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-900 bg-zinc-50 hover:bg-zinc-100 transition-colors"
           >
-            Contact & Info (Bottom)
+            Contact & Info
           </button>
         </div>
       )}

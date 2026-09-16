@@ -7,6 +7,7 @@ import {
   Layers,
   Volume2,
   Film,
+  ArrowDownRight,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MAIN_SHOWREEL } from '../data/portfolioData';
@@ -18,6 +19,7 @@ interface WorkSectionProps {
   activeTab?: 'all' | 'showreels' | 'design';
   onTabChange?: (tab: 'all' | 'showreels' | 'design') => void;
   onOpenVideoModal: (project: VideoProject) => void;
+  onNavigateToCreate?: () => void;
 }
 
 type MainTab = 'all' | 'showreels' | 'design';
@@ -28,10 +30,12 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
   activeTab = 'all',
   onTabChange,
   onOpenVideoModal,
+  onNavigateToCreate,
 }) => {
   const [currentTab, setCurrentTab] = useState<MainTab>(activeTab);
   const [isPlayingMaster, setIsPlayingMaster] = useState(false);
   const [selectedGraphic, setSelectedGraphic] = useState<GraphicProject | null>(null);
+  const [showCustomPrompt, setShowCustomPrompt] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -59,6 +63,26 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [selectedGraphic]);
+
+  // Dismiss custom inquiry tooltip on outside click or Escape
+  useEffect(() => {
+    if (!showCustomPrompt) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowCustomPrompt(false);
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('#what-i-build-question-badge') && !target.closest('#custom-inquiry-tooltip')) {
+        setShowCustomPrompt(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCustomPrompt]);
 
   // Handle switching tabs while strictly keeping work section comfortably in viewport
   const handleTabClick = (tab: MainTab) => {
@@ -120,10 +144,113 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
           transition={{ duration: 0.6 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-14 gap-6"
         >
-          <div>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
-              What I Build
-            </h2>
+          <div className="relative">
+            <div className="flex items-center gap-3">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
+                What I Build
+              </h2>
+
+              {/* Hand-drawn Question Mark Button Badge */}
+              <div className="relative inline-block">
+                <button
+                  id="what-i-build-question-badge"
+                  type="button"
+                  onClick={() => setShowCustomPrompt((prev) => !prev)}
+                  className="relative group p-1 text-zinc-500 hover:text-zinc-950 transition-all duration-200 focus:outline-none cursor-pointer hover:scale-105 active:scale-95"
+                  title="Can't find what you're looking for?"
+                  aria-label="Can't find what you're looking for?"
+                >
+                  <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 100 100" fill="none">
+                    {/* Hand-drawn sketchy circular ring */}
+                    <path
+                      d="M 50,10 C 74,8 92,26 90,52 C 88,76 72,92 48,91 C 24,90 10,74 11,50 C 12,26 28,11 52,10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                    {/* Hand-drawn question mark */}
+                    <path
+                      d="M 40,36 C 40,28 47,23 53,23 C 60,23 65,27 65,34 C 65,42 53,46 53,54"
+                      stroke="currentColor"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                    <circle cx="53" cy="67" r="3.5" fill="currentColor" />
+                  </svg>
+                </button>
+
+                {/* Hand-drawn Tooltip popover with Let's Go button */}
+                <AnimatePresence>
+                  {showCustomPrompt && (
+                    <>
+                      {/* Mobile backdrop for outside dismiss */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowCustomPrompt(false)}
+                        className="fixed inset-0 bg-black/50 backdrop-blur-xs z-[80] sm:hidden"
+                      />
+
+                      <motion.div
+                        id="custom-inquiry-tooltip"
+                        initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+                        className="fixed bottom-6 left-4 right-4 sm:bottom-auto sm:left-0 sm:right-auto sm:top-full sm:mt-3 z-[90] sm:w-84 max-w-sm mx-auto sm:mx-0 p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white shadow-[0_25px_60px_rgba(0,0,0,0.5)] border border-zinc-800"
+                      >
+                        {/* Subtle desktop arrow indicator pointing up to the question mark */}
+                        <div className="hidden sm:block absolute -top-1.5 left-4 w-3 h-3 bg-zinc-950 border-t border-l border-zinc-800 rotate-45" />
+
+                        {/* Close button */}
+                        <button
+                          id="close-custom-inquiry-tooltip"
+                          type="button"
+                          onClick={() => setShowCustomPrompt(false)}
+                          className="absolute top-3 right-3 text-zinc-400 hover:text-white p-1 rounded-md transition-colors cursor-pointer"
+                          aria-label="Close message"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-zinc-800 text-[10px] font-mono text-zinc-300 uppercase tracking-wider font-semibold">
+                              Looking for something else?
+                            </span>
+                          </div>
+
+                          <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-body">
+                            Can't find what you're looking for? I'm versatile and adaptable—willing to step out of my comfort zone, try new styles, and do test work to see what clicks.
+                          </p>
+
+                          {/* "Let's Go" button underneath that triggers the "Let's Create Together" section */}
+                          <button
+                            id="what-i-build-lets-go-btn"
+                            type="button"
+                            onClick={() => {
+                              setShowCustomPrompt(false);
+                              if (onNavigateToCreate) {
+                                onNavigateToCreate();
+                              } else {
+                                const el = document.getElementById('start');
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                              }
+                            }}
+                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs font-semibold tracking-wide transition-all shadow-sm group/btn cursor-pointer"
+                          >
+                            <span>Let's Go</span>
+                            <ArrowDownRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:translate-y-0.5" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
             <p className="text-zinc-600 text-sm sm:text-base max-w-xl mt-2 font-normal leading-relaxed">
               See what your story could look and feel like when brought to life. Every project here was crafted hand-in-hand with creators—and yours can be next.
             </p>

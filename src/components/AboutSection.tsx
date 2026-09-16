@@ -77,7 +77,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
         'Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.',
       handwrittenNote:
         settings?.step3Note ||
-        'Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧',
+        'Subconscious audio cues [40Hz - 12kHz] — spatial depth & tactile rhythm',
       doodleType: 'sound-wave',
       accentColor: 'text-zinc-900',
       tagColor: 'bg-zinc-100 text-zinc-800',
@@ -133,28 +133,36 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
         {/* PLACED FIRST AS REQUESTED ABOVE ABOUT ME                     */}
         {/* ============================================================ */}
         <div>
-          {/* Blueprint Header */}
-          <div className="max-w-3xl mb-16 relative">
-            <div className="inline-flex items-center gap-2 mb-3">
-              <span className="px-2.5 py-1 rounded bg-zinc-900 text-white font-mono text-[11px] uppercase tracking-wider font-semibold">
-                WORKSHOP BLUEPRINT
-              </span>
-              <span className="text-zinc-400 font-mono text-xs">
-                // PROGRESSION & BREAKDOWN
-              </span>
+          {/* Blueprint Header - Centered & Emphasized */}
+          <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-24 relative">
+            <div className="inline-flex items-center justify-center gap-2 mb-4 px-3.5 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-800 font-mono text-[11px] uppercase tracking-widest font-semibold shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-900 animate-pulse" />
+              OUR PROCESS
             </div>
 
-            <h3 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950">
+            <h3 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-zinc-950 leading-[1.1] mb-2">
               {settings?.workshopHeading || 'How the story unfolds.'}
             </h3>
 
-            <p className="mt-3 text-base sm:text-lg text-zinc-600 font-body">
+            {/* Hand-drawn subtle scribble underline beneath headline */}
+            <div className="w-44 sm:w-60 h-2.5 mx-auto mb-4 text-zinc-300">
+              <svg viewBox="0 0 240 12" fill="none" className="w-full h-full">
+                <path
+                  d="M4 8.5C60 3.5 130 4 236 7C175 10 90 10.5 4 9"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+
+            <p className="mt-3 text-base sm:text-lg text-zinc-600 font-body max-w-2xl mx-auto leading-relaxed">
               {settings?.workshopSubtitle ||
                 'No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.'}
             </p>
 
             {/* Blueprint ruler simulation */}
-            <div className="mt-6 flex items-center gap-1 overflow-hidden opacity-40 select-none pointer-events-none text-[9px] font-mono text-zinc-400">
+            <div className="mt-6 flex items-center justify-center gap-1 overflow-hidden opacity-30 select-none pointer-events-none text-[9px] font-mono text-zinc-400 max-w-md mx-auto">
               <span>0IN</span>
               <span className="flex-1 border-b border-dashed border-zinc-400" />
               <span>|···|···|···|···|</span>
@@ -167,28 +175,25 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
 
           {/* FREE-FLOW PROGRESSION CONTAINER: No hard card borders */}
           <div className="relative space-y-16 sm:space-y-24">
-            {/* Hand-drawn connecting path running through the steps (visible on md screens) */}
-            <div className="hidden lg:block absolute left-[38px] top-12 bottom-16 w-0.5 border-l-2 border-dashed border-zinc-300 pointer-events-none" />
-
             {PROCESS_STEPS.map((step, idx) => {
               const isHovered = activeStepHover === step.id;
 
               return (
                 <motion.div
                   key={step.id}
-                  initial={{ opacity: 0, y: 28, filter: 'blur(4px)' }}
+                  initial={{ opacity: 0, y: 32, filter: 'blur(4px)' }}
                   whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.7, delay: idx * 0.1 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.7, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
                   onMouseEnter={() => setActiveStepHover(step.id)}
                   onMouseLeave={() => setActiveStepHover(null)}
                   className="relative group transition-all duration-300"
                 >
-                  {/* Organic layout: NO card border, purely breathable typography & hand-drawn annotations */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
+                  {/* Organic layout: NO hard card border, purely breathable typography & hand-drawn annotations */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start relative">
                     
-                    {/* Left Step Marker with Hand-Drawn Imperfect Circle */}
-                    <div className="lg:col-span-4 flex items-start gap-4">
+                    {/* Left Step Marker with Hand-Drawn Imperfect Circle & Real-time Animated Dashed Line */}
+                    <div className="lg:col-span-4 flex items-start gap-4 relative">
                       {/* Hand-Drawn Sketch Circle around number */}
                       <div className="relative flex-shrink-0 w-16 h-16 flex items-center justify-center">
                         <svg
@@ -197,13 +202,17 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                             isHovered ? 'scale-110 rotate-12 text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-700'
                           }`}
                         >
-                          {/* Organic imperfect hand-drawn circle path */}
-                          <path
+                          {/* Organic imperfect hand-drawn circle path with real-time drawing animation */}
+                          <motion.path
                             d="M 50,8 C 76,6 94,22 93,51 C 92,78 74,94 48,93 C 21,92 7,74 8,47 C 9,21 28,10 52,8"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="3.5"
                             strokeLinecap="round"
+                            initial={{ pathLength: 0.2 }}
+                            whileInView={{ pathLength: 1 }}
+                            viewport={{ once: false, amount: 0.3 }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
                           />
                         </svg>
                         <span className="font-display font-bold text-xl text-zinc-900 relative z-10">
@@ -211,10 +220,28 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                         </span>
                       </div>
 
-                      <div className="space-y-1 pt-1">
-                        <span className="font-mono text-[11px] text-zinc-400 block tracking-wider">
-                          {step.timecode}
-                        </span>
+                      {/* Real-time Animated Connecting Dashed Line connecting Phase 1 to Phase 4 */}
+                      {idx < PROCESS_STEPS.length - 1 && (
+                        <div className="absolute left-8 top-16 -bottom-16 sm:-bottom-24 w-1 -translate-x-1/2 overflow-visible pointer-events-none z-0">
+                          <svg className="w-4 h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 4 100">
+                            <motion.path
+                              d="M 2,0 L 2,100"
+                              vectorEffect="non-scaling-stroke"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeDasharray="6 6"
+                              strokeLinecap="round"
+                              className="text-zinc-400"
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              whileInView={{ pathLength: 1, opacity: 1 }}
+                              viewport={{ once: false, amount: 0.15 }}
+                              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+                            />
+                          </svg>
+                        </div>
+                      )}
+
+                      <div className="space-y-1 pt-1.5">
                         <h4 className="font-display text-xl sm:text-2xl font-bold text-zinc-950 group-hover:text-zinc-800 transition-colors">
                           {step.title}
                         </h4>
@@ -224,8 +251,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                       </div>
                     </div>
 
-                    {/* Right Narrative & Hand-drawn Workshop Note */}
-                    <div className="lg:col-span-8 space-y-4">
+                    {/* Right Narrative & Clean Workshop Annotations */}
+                    <div className="lg:col-span-8 space-y-4 relative">
                       {/* Blueprint phase tag */}
                       <div className="flex flex-wrap items-center gap-2.5">
                         <span className="font-mono text-xs text-zinc-600 bg-zinc-100 px-2.5 py-0.5 rounded">

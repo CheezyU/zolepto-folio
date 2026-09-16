@@ -28,9 +28,11 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin, settings }) =
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
-  const instagramUrl = settings?.socialInstagram || 'https://instagram.com/zolepto';
-  const linkedinUrl = settings?.socialLinkedin || 'https://linkedin.com/in/zolepto';
-  const xUrl = settings?.socialX || 'https://x.com/zolepto';
+  const instagramUrl =
+    settings?.socialInstagram || 'https://www.instagram.com/zoleptos.motion/';
+  const linkedinUrl =
+    settings?.socialLinkedin || 'https://www.linkedin.com/in/zolepto-haraya-936b622b7/';
+  const xUrl = settings?.socialX || 'https://x.com/Zolep138657';
 
   const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
     email
@@ -40,7 +42,8 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin, settings }) =
 
   return (
     <footer
-      id="site-footer"
+      id="footer"
+      data-section="site-footer"
       className="bg-white border-t border-zinc-200 py-10 px-4 sm:px-6 lg:px-8 relative z-10"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm">

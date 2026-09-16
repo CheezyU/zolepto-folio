@@ -147,6 +147,6 @@ export function getTotpRemainingSeconds(): number {
 /**
  * Builds standard otpauth URI for QR code generation
  */
-export function buildOtpAuthUri(secret: string, email = 'zelopte@gmail.com', issuer = 'Zolepto Studio'): string {
+export function buildOtpAuthUri(secret: string, email = 'zolepto@gmail.com', issuer = 'Zolepto Studio'): string {
   return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(email)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`;
 }

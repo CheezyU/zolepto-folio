@@ -40,17 +40,17 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   step3Subtitle: 'The Kinetic Pulse & Visceral Foley',
   step3Description:
     'Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.',
-  step3Note: 'Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧',
+  step3Note: 'Subconscious audio cues [40Hz - 12kHz] — spatial depth & tactile rhythm',
   step4Title: 'Visual Prestige & Delivery',
   step4Subtitle: 'Color Science, Key-Art & Cultural Authority',
   step4Description:
     'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.',
   step4Note: '✦ Ready for export. Approved for master release across all formats.',
-  socialInstagram: 'https://instagram.com/zolepto',
-  socialLinkedin: 'https://linkedin.com/in/zolepto',
-  socialX: 'https://x.com/zolepto',
+  socialInstagram: 'https://www.instagram.com/zoleptos.motion/',
+  socialLinkedin: 'https://www.linkedin.com/in/zolepto-haraya-936b622b7/',
+  socialX: 'https://x.com/Zolep138657',
   socialGmail: 'zolepto@gmail.com',
-  web3formsAccessKey: '64d852a4-5696-414c-a11b-10f845dca889',
+  web3formsAccessKey: 'cce7d17a-a640-443a-b066-33c06020b08e',
 };
 
 export function getLocalSettings(): SiteSettings {
@@ -58,6 +58,18 @@ export function getLocalSettings(): SiteSettings {
     const raw = localStorage.getItem(SITE_SETTINGS_KEY);
     if (!raw) return DEFAULT_SITE_SETTINGS;
     const parsed = JSON.parse(raw);
+    if (parsed.web3formsAccessKey === '64d852a4-5696-414c-a11b-10f845dca889' || !parsed.web3formsAccessKey) {
+      parsed.web3formsAccessKey = 'cce7d17a-a640-443a-b066-33c06020b08e';
+    }
+    if (parsed.socialInstagram === 'https://instagram.com/zolepto' || !parsed.socialInstagram) {
+      parsed.socialInstagram = 'https://www.instagram.com/zoleptos.motion/';
+    }
+    if (parsed.socialX === 'https://x.com/zolepto' || !parsed.socialX) {
+      parsed.socialX = 'https://x.com/Zolep138657';
+    }
+    if (parsed.socialLinkedin === 'https://linkedin.com/in/zolepto' || !parsed.socialLinkedin) {
+      parsed.socialLinkedin = 'https://www.linkedin.com/in/zolepto-haraya-936b622b7/';
+    }
     return { ...DEFAULT_SITE_SETTINGS, ...parsed };
   } catch {
     return DEFAULT_SITE_SETTINGS;

@@ -157,8 +157,10 @@ export async function pushPortfolioToGitHub(
 
   const cleanOwner = config.owner.trim();
   const cleanRepo = config.repo.trim();
-  const branch = config.branch.trim() || 'main';
-  const filePath = config.filePath.trim() || 'public/content.json';
+  let branch = config.branch.trim() || 'main';
+  const cleanFilePath = (config.filePath.trim() || 'public/content.json')
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '');
 
   const fullData: PortfolioContentPayload = {
     version: '1.0.0',
@@ -167,7 +169,7 @@ export async function pushPortfolioToGitHub(
       owner: cleanOwner,
       repo: cleanRepo,
       branch,
-      filePath,
+      filePath: cleanFilePath,
     },
     siteSettings: payload.siteSettings,
     showreels: payload.showreels,
@@ -178,43 +180,118 @@ export async function pushPortfolioToGitHub(
   // GitHub API requires content to be Base64 encoded UTF-8
   const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
 
-  const apiUrl = `https://api.github.com/repos/${encodeURIComponent(cleanOwner)}/${encodeURIComponent(cleanRepo)}/contents/${filePath}`;
+  const apiUrl = `https://api.github.com/repos/${encodeURIComponent(cleanOwner)}/${encodeURIComponent(cleanRepo)}/contents/${cleanFilePath}`;
 
   try {
-    // Helper to fetch freshest SHA directly from GitHub without cache
-    const fetchLatestSha = async (): Promise<string | undefined> => {
+    // Detect repository default branch to prevent branch-mismatch 404s
+    let repoDefaultBranch = branch;
+    try {
+      const repoRes = await fetch(
+        `https://api.github.com/repos/${encodeURIComponent(cleanOwner)}/${encodeURIComponent(cleanRepo)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${config.token.trim()}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      );
+      if (repoRes.ok) {
+        const repoData = await repoRes.json();
+        if (repoData && repoData.default_branch) {
+          repoDefaultBranch = repoData.default_branch;
+        }
+      }
+    } catch {
+      // Ignore repo inspection failure
+    }
+
+    // Helper to fetch freshest SHA across multiple endpoints without CORS-breaking headers
+    const fetchLatestSha = async (targetBranch: string): Promise<{ sha?: string; resolvedBranch: string }> => {
+      // 1. Direct contents API on target branch
       try {
-        const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}&_nocache=${Date.now()}`, {
+        const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(targetBranch)}&_t=${Date.now()}`, {
           cache: 'no-store',
           headers: {
             Authorization: `Bearer ${config.token.trim()}`,
             Accept: 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28',
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            Pragma: 'no-cache',
           },
         });
         if (checkRes.ok) {
           const fileData = await checkRes.json();
-          return fileData.sha;
+          if (fileData && typeof fileData.sha === 'string') {
+            return { sha: fileData.sha, resolvedBranch: targetBranch };
+          }
         }
       } catch {
-        // ignore
+        // continue
       }
-      return undefined;
+
+      // 2. Query contents API without ?ref (GitHub defaults to repo default branch)
+      try {
+        const checkRes = await fetch(`${apiUrl}?_t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            Authorization: `Bearer ${config.token.trim()}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        });
+        if (checkRes.ok) {
+          const fileData = await checkRes.json();
+          if (fileData && typeof fileData.sha === 'string') {
+            return { sha: fileData.sha, resolvedBranch: repoDefaultBranch };
+          }
+        }
+      } catch {
+        // continue
+      }
+
+      // 3. Fallback: inspect Git trees API
+      const branchesToTry = Array.from(new Set([targetBranch, repoDefaultBranch, 'main', 'master']));
+      for (const b of branchesToTry) {
+        try {
+          const treeRes = await fetch(
+            `https://api.github.com/repos/${encodeURIComponent(cleanOwner)}/${encodeURIComponent(cleanRepo)}/git/trees/${encodeURIComponent(b)}?recursive=1`,
+            {
+              headers: {
+                Authorization: `Bearer ${config.token.trim()}`,
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+              },
+            }
+          );
+          if (treeRes.ok) {
+            const treeData = await treeRes.json();
+            if (Array.isArray(treeData?.tree)) {
+              const fileItem = treeData.tree.find((item: any) => item.path === cleanFilePath);
+              if (fileItem && fileItem.sha) {
+                return { sha: fileItem.sha, resolvedBranch: b };
+              }
+            }
+          }
+        } catch {
+          // continue
+        }
+      }
+
+      return { resolvedBranch: targetBranch };
     };
 
-    let existingSha = await fetchLatestSha();
+    let { sha: existingSha, resolvedBranch } = await fetchLatestSha(branch);
+    branch = resolvedBranch || branch;
+
     let attempts = 0;
     const maxAttempts = 3;
     let putRes: Response | null = null;
     let result: any = null;
 
-    // Retry loop: If GitHub reports a 409 SHA mismatch, automatically re-fetch latest SHA and retry immediately
+    // Retry loop: Handles 409 SHA conflict or 422 missing SHA by re-discovering SHA and retrying
     while (attempts < maxAttempts) {
       attempts++;
 
-      const commitBody: any = {
+      const commitBody: Record<string, any> = {
         message: `Update portfolio content via Zolepto Studio [${new Date().toLocaleDateString()}]`,
         content: base64Content,
         branch,
@@ -239,20 +316,26 @@ export async function pushPortfolioToGitHub(
         break;
       }
 
-      // If 409 Conflict (e.g. public/content.json does not match sha), refresh sha and retry
-      if (putRes.status === 409 && attempts < maxAttempts) {
-        await new Promise((resolve) => setTimeout(resolve, 350));
-        existingSha = await fetchLatestSha();
+      const errData = await putRes.json().catch(() => ({}));
+      const errorMsg = (errData?.message || '').toLowerCase();
+
+      // If GitHub reports 409 (Conflict) OR 422 (e.g. "sha wasn't supplied"), re-fetch freshest SHA and retry
+      if ((putRes.status === 409 || putRes.status === 422 || errorMsg.includes('sha')) && attempts < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        const refetched = await fetchLatestSha(branch);
+        existingSha = refetched.sha;
+        if (refetched.resolvedBranch) {
+          branch = refetched.resolvedBranch;
+        }
         continue;
       }
 
-      // Other failure or reached max attempts
+      result = errData;
       break;
     }
 
     if (!putRes || !putRes.ok) {
-      const errData = putRes ? await putRes.json().catch(() => ({})) : {};
-      const reason = errData.message || (putRes ? putRes.statusText : 'Request failed');
+      const reason = result?.message || (putRes ? putRes.statusText : 'Request failed');
       return { success: false, message: `Failed to commit to GitHub: ${reason}` };
     }
 
@@ -306,12 +389,11 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
 
     // 1A. GitHub REST API: Zero CDN cache, instant real-time data
     try {
-      const apiUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${filePath}?ref=${encodeURIComponent(branch)}&_nocache=${timestamp}`;
+      const cleanPath = filePath.replace(/^\/+/, '').replace(/\/+$/, '');
+      const apiUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${cleanPath}?ref=${encodeURIComponent(branch)}&_t=${timestamp}`;
       const headers: Record<string, string> = {
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        Pragma: 'no-cache',
       };
       if (config.token.trim()) {
         headers['Authorization'] = `Bearer ${config.token.trim()}`;
@@ -333,15 +415,10 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
     }
 
     // 1B. Fallback to GitHub Raw endpoint
-    const rawUrl = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${filePath}?_nocache=${timestamp}`;
+    const cleanPath = filePath.replace(/^\/+/, '').replace(/\/+$/, '');
+    const rawUrl = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${cleanPath}?_t=${timestamp}`;
     try {
-      const rawRes = await fetch(rawUrl, {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          Pragma: 'no-cache',
-        },
-      });
+      const rawRes = await fetch(rawUrl, { cache: 'no-store' });
       if (rawRes.ok) {
         const rawData = await rawRes.json();
         if (rawData && rawData.siteSettings && (rawData.showreels || rawData.graphics)) {

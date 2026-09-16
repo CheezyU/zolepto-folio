@@ -2,11 +2,54 @@ import { SubmittedBooking } from '../types';
 
 const INQUIRIES_STORAGE_KEY = 'zolepto_submitted_inquiries';
 const INQUIRIES_EVENT = 'zolepto:inquiries-changed';
-export const PRIMARY_INBOX = 'cheddarc19@gmail.com';
-export const SECONDARY_INBOX = 'zelopte@gmail.com';
+
+/**
+ * Obfuscated inbox decoders to shield email addresses from automated scraper bots,
+ * regex crawlers, and spam harvesters scanning static JS bundles.
+ */
+function decodeSecureInbox(encoded: string): string {
+  try {
+    if (typeof atob !== 'undefined') {
+      return atob(encoded);
+    }
+    return Buffer.from(encoded, 'base64').toString('utf-8');
+  } catch {
+    return 'zolepto@gmail.com';
+  }
+}
+
+// Primary target: zolepto@gmail.com | Fallback target: cheddarc19@gmail.com
+export const PRIMARY_INBOX = decodeSecureInbox('em9sZXB0b0BnbWFpbC5jb20='); // zolepto@gmail.com
+export const SECONDARY_INBOX = decodeSecureInbox('Y2hlZGRhcmMxOUBnbWFpbC5jb20='); // cheddarc19@gmail.com
 
 // Primary & Secondary resilient cloud synchronization endpoints
 const CLOUD_INQUIRIES_ENDPOINT = 'https://kvdb.io/NpJTZs8GERZzanmJpGY1FL/inquiries';
+
+/**
+ * Strips script tags, HTML markup, and CRLF line breaks to block email header injection attacks
+ */
+export function sanitizeInput(input: string, allowMultiline = false): string {
+  if (!input) return '';
+  let clean = input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/[<>]/g, '')
+    .replace(/\0/g, '');
+
+  if (!allowMultiline) {
+    clean = clean.replace(/[\r\n]+/g, ' ');
+  }
+  return clean.trim();
+}
+
+/**
+ * Masks an email for safe display without exposing complete address to scrapers
+ */
+export function maskEmail(email: string): string {
+  if (!email || !email.includes('@')) return 'Protected Email';
+  const [user, domain] = email.split('@');
+  if (user.length <= 2) return `${user[0]}*@${domain}`;
+  return `${user.slice(0, 2)}${'*'.repeat(Math.min(4, user.length - 2))}${user.slice(-1)}@${domain}`;
+}
 
 /**
  * Format and dispatch an immediate rich alert to Discord, Slack, or any standard webhook
@@ -106,10 +149,11 @@ export async function testWebhookPing(webhookUrl: string): Promise<{ success: bo
 }
 
 /**
- * Dispatches the inquiry via browser background fallback iframe form
- * Native HTML form posts are NEVER blocked by CORS or adblockers.
+ * Dispatches the inquiry via browser background fallback iframe form to Web3Forms.
+ * Native HTML form posts are immunized against CORS shields and strict adblockers.
+ * Features Web3Forms native botcheck honeypot field.
  */
-function dispatchNativeBackgroundForm(inbox: string, inquiry: SubmittedBooking) {
+function dispatchWeb3FormsNativeForm(accessKey: string, inquiry: SubmittedBooking) {
   try {
     if (typeof document === 'undefined') return;
 
@@ -124,23 +168,25 @@ function dispatchNativeBackgroundForm(inbox: string, inquiry: SubmittedBooking) 
 
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = `https://formsubmit.co/${inbox}`;
+    form.action = 'https://api.web3forms.com/submit';
     form.target = 'zolepto-inquiry-sink';
     form.style.display = 'none';
 
     const fields: Record<string, string> = {
-      _subject: `New Project Inquiry [${inquiry.id}] — ${inquiry.fullName}`,
-      _replyto: inquiry.email,
-      _captcha: 'false',
-      _template: 'table',
-      name: inquiry.fullName,
-      email: inquiry.email,
-      project_scope: inquiry.projectType,
-      budget: inquiry.estimatedBudget || 'Flexible',
-      brief: inquiry.brief || 'None',
-      links: inquiry.links || 'None',
-      inquiry_id: inquiry.id,
-      submitted_at: inquiry.submittedAt,
+      access_key: accessKey,
+      name: sanitizeInput(inquiry.fullName),
+      email: sanitizeInput(inquiry.email),
+      subject: `New Project Inquiry [${sanitizeInput(inquiry.id)}] — ${sanitizeInput(inquiry.fullName)}`,
+      from_name: `Portfolio Inquiry (${sanitizeInput(inquiry.fullName)})`,
+      replyto: sanitizeInput(inquiry.email),
+      project_scope: sanitizeInput(inquiry.projectType),
+      budget: sanitizeInput(inquiry.estimatedBudget || 'Flexible / Open'),
+      brief: sanitizeInput(inquiry.brief || 'None provided', true),
+      links: sanitizeInput(inquiry.links || 'None provided', true),
+      inquiry_id: sanitizeInput(inquiry.id),
+      submitted_at: sanitizeInput(inquiry.submittedAt),
+      message: `NEW CLIENT INQUIRY DETAILS:\n\nClient Name: ${sanitizeInput(inquiry.fullName)}\nClient Email: ${sanitizeInput(inquiry.email)}\nScope of Work: ${sanitizeInput(inquiry.projectType)}\nTarget Budget: ${sanitizeInput(inquiry.estimatedBudget || 'Flexible / Open')}\nFootage / Reference Links: ${sanitizeInput(inquiry.links || 'None provided')}\n\nProject Brief & Vision:\n${sanitizeInput(inquiry.brief || 'None provided', true)}\n\nInquiry Reference ID: ${sanitizeInput(inquiry.id)}\nTimestamp: ${sanitizeInput(inquiry.submittedAt)}`,
+      botcheck: '', // Web3Forms built-in anti-spam honeypot: humans leave empty, bots fill it
     };
 
     for (const [k, v] of Object.entries(fields)) {
@@ -165,14 +211,37 @@ function dispatchNativeBackgroundForm(inbox: string, inquiry: SubmittedBooking) 
 
 /**
  * Saves an inquiry to the persistent global cloud store so it immediately reflects
- * on the Admin Panel on PC across devices, dispatches to webhooks, and forwards emails.
+ * on the Admin Panel on PC across devices, dispatches to webhooks, and forwards emails via Web3Forms.
  */
 export async function saveInquiry(
-  inquiry: SubmittedBooking,
-  customWebhookUrl?: string
+  inquiry: SubmittedBooking & { _bot_trap?: string; botcheck?: boolean | string },
+  customWebhookUrl?: string,
+  customWeb3FormsKey?: string
 ): Promise<{ id: string; emailSent: boolean; cloudSynced: boolean; webhookSent: boolean; error?: string }> {
+  // Anti-Bot Defense 1: If honeypot trap field or botcheck has any content, silently simulate success (bot trapped)
+  if (
+    (inquiry._bot_trap && inquiry._bot_trap.trim().length > 0) ||
+    Boolean(inquiry.botcheck)
+  ) {
+    console.warn('Spam bot intercepted by client honeypot trap.');
+    return { id: inquiry.id, emailSent: true, cloudSynced: false, webhookSent: false };
+  }
+
+  // Sanitize all inquiry fields
+  const cleanInquiry: SubmittedBooking = {
+    ...inquiry,
+    fullName: sanitizeInput(inquiry.fullName),
+    email: sanitizeInput(inquiry.email),
+    projectType: sanitizeInput(inquiry.projectType),
+    estimatedBudget: sanitizeInput(inquiry.estimatedBudget || ''),
+    brief: sanitizeInput(inquiry.brief || '', true),
+    links: sanitizeInput(inquiry.links || '', true),
+    id: sanitizeInput(inquiry.id),
+    submittedAt: sanitizeInput(inquiry.submittedAt),
+  };
+
   // 1. Save locally for immediate display
-  saveInquiryLocally(inquiry);
+  saveInquiryLocally(cleanInquiry);
 
   // 2. Persist to Global Cloud Store (so Admin Panel sees it live across devices and countries)
   let cloudSynced = false;
@@ -192,8 +261,8 @@ export async function saveInquiry(
       // fresh list
     }
 
-    const filtered = remoteList.filter((item) => item.id !== inquiry.id);
-    const updatedRemote = [inquiry, ...filtered];
+    const filtered = remoteList.filter((item) => item.id !== cleanInquiry.id);
+    const updatedRemote = [cleanInquiry, ...filtered];
 
     const putRes = await fetch(CLOUD_INQUIRIES_ENDPOINT, {
       method: 'POST',
@@ -214,85 +283,59 @@ export async function saveInquiry(
   let webhookSent = false;
   if (customWebhookUrl) {
     try {
-      webhookSent = await dispatchWebhookNotification(customWebhookUrl, inquiry);
+      webhookSent = await dispatchWebhookNotification(customWebhookUrl, cleanInquiry);
     } catch {
       // non-blocking
     }
   }
 
-  // 4. Multi-channel background email dispatch
+  // 4. Web3Forms Free Plan Email Dispatch
   let emailSent = false;
+  const accessKey = (customWeb3FormsKey && customWeb3FormsKey.trim()) || '64d852a4-5696-414c-a11b-10f845dca889';
 
-  // Method A: Formsubmit AJAX endpoint with urlencoded data + _captcha=false
-  const dispatchAjaxEmail = async (inbox: string) => {
-    try {
-      const params = new URLSearchParams({
-        _subject: `New Portfolio Inquiry [${inquiry.id}] — ${inquiry.fullName}`,
-        _replyto: inquiry.email,
-        _captcha: 'false',
-        _template: 'table',
-        'Client Name': inquiry.fullName,
-        'Client Email': inquiry.email,
-        'Project Scope': inquiry.projectType,
-        'Estimated Budget': inquiry.estimatedBudget || 'Flexible',
-        'Reference Links': inquiry.links || 'None',
-        'Project Brief': inquiry.brief || 'None provided',
-        'Inquiry ID': inquiry.id,
-        'Submitted At': inquiry.submittedAt,
-      });
-
-      const res = await fetch(`https://formsubmit.co/ajax/${inbox}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
-        },
-        body: params.toString(),
-      });
-
-      if (res.ok) {
-        emailSent = true;
-      }
-    } catch {
-      // Continue to next method
-    }
-  };
-
-  // Method B: Web3Forms fallback dispatch
-  const dispatchWeb3Forms = async () => {
-    try {
-      const res = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          access_key: '64d852a4-5696-414c-a11b-10f845dca889', // Reliable public key for inquiries
-          subject: `New Portfolio Inquiry [${inquiry.id}] — ${inquiry.fullName}`,
-          from_name: inquiry.fullName,
-          replyto: inquiry.email,
-          message: `Inquiry ID: ${inquiry.id}\nClient: ${inquiry.fullName}\nEmail: ${inquiry.email}\nScope: ${inquiry.projectType}\nBudget: ${inquiry.estimatedBudget}\nLinks: ${inquiry.links || 'None'}\n\nBrief:\n${inquiry.brief || 'None'}`,
-        }),
-      });
-      if (res.ok) {
-        emailSent = true;
-      }
-    } catch {
-      // Non-blocking
-    }
-  };
-
-  // Run AJAX email dispatches in parallel
-  await Promise.allSettled([
-    dispatchAjaxEmail(PRIMARY_INBOX),
-    dispatchAjaxEmail(SECONDARY_INBOX),
-    dispatchWeb3Forms(),
-  ]);
-
-  // Method C: Native browser invisible iframe form dispatch (immunized against CORS & tracking blocks)
   try {
-    dispatchNativeBackgroundForm(PRIMARY_INBOX, inquiry);
+    const payload = {
+      access_key: accessKey,
+      name: cleanInquiry.fullName,
+      email: cleanInquiry.email,
+      subject: `New Project Inquiry [${cleanInquiry.id}] — ${cleanInquiry.fullName}`,
+      from_name: `Portfolio Inquiry (${cleanInquiry.fullName})`,
+      replyto: cleanInquiry.email,
+      project_scope: cleanInquiry.projectType,
+      budget: cleanInquiry.estimatedBudget || 'Flexible / Open',
+      brief: cleanInquiry.brief || 'None provided',
+      links: cleanInquiry.links || 'None provided',
+      inquiry_id: cleanInquiry.id,
+      submitted_at: cleanInquiry.submittedAt,
+      message: `NEW CLIENT INQUIRY DETAILS:\n\nClient Name: ${cleanInquiry.fullName}\nClient Email: ${cleanInquiry.email}\nScope of Work: ${cleanInquiry.projectType}\nTarget Budget: ${cleanInquiry.estimatedBudget || 'Flexible / Open'}\nFootage / Reference Links: ${cleanInquiry.links || 'None provided'}\n\nProject Brief & Vision:\n${cleanInquiry.brief || 'None provided'}\n\nInquiry Reference ID: ${cleanInquiry.id}\nTimestamp: ${cleanInquiry.submittedAt}`,
+      botcheck: '', // Web3Forms built-in anti-spam honeypot: clean for real humans
+    };
+
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      const data = await res.json().catch(() => null);
+      if (data && data.success) {
+        emailSent = true;
+      }
+    }
+  } catch (err) {
+    console.warn('Web3Forms fetch dispatch failed, triggering native fallback:', err);
+  }
+
+  // Native background fallback for strict CORS or browser shields
+  try {
+    dispatchWeb3FormsNativeForm(accessKey, cleanInquiry);
   } catch {}
 
-  return { id: inquiry.id, emailSent, cloudSynced, webhookSent };
+  return { id: cleanInquiry.id, emailSent, cloudSynced, webhookSent };
 }
 
 /**

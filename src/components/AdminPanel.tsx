@@ -111,19 +111,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const handleTopPushLive = async () => {
     const cfg = getGitHubConfig();
-    if (!cfg.token.trim() || !cfg.owner.trim() || !cfg.repo.trim()) {
-      setActiveTab('github-sync');
-      return;
-    }
     setIsPushingTop(true);
-    setTopPushStatus('Committing to GitHub...');
+    setTopPushStatus('Publishing Live...');
     try {
       const res = await pushPortfolioToGitHub({ siteSettings, showreels, graphics }, cfg);
       if (res.success) {
-        setTopPushStatus('Live on GitHub!');
-        appendSecurityLog('GitHub Auto-Commit Live', res.commitUrl || 'Success');
+        setTopPushStatus('Live Worldwide!');
+        appendSecurityLog('Published Live Globally', res.commitUrl || 'Success');
       } else {
-        setTopPushStatus('Commit Failed');
+        setTopPushStatus('Publish Issue');
       }
       setTimeout(() => setTopPushStatus(null), 3500);
     } catch (e: any) {
@@ -891,23 +887,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               setIsSavingSettings(true);
               setSettingsStatus(null);
               try {
-                // 1. Update local storage & broadcast
+                // 1. Update published settings & broadcast
                 await updateSiteSettings(updated);
                 appendSecurityLog('Saved Copy Changes in Visual Editor');
 
-                // 2. Commit & Push to GitHub directly
+                // 2. Commit & Push directly to Global Cloud Store & GitHub
                 const cfg = getGitHubConfig();
-                if (!cfg.token.trim() || !cfg.owner.trim() || !cfg.repo.trim()) {
-                  setSettingsStatus({
-                    type: 'error',
-                    text: 'Saved locally! Connect your GitHub token in the "GitHub Sync" tab to publish globally to clients.',
-                  });
-                  return;
-                }
 
                 setSettingsStatus({
                   type: 'success',
-                  text: 'Publishing live to GitHub repository...',
+                  text: 'Publishing live worldwide to all clients...',
                 });
 
                 const pushRes = await pushPortfolioToGitHub(
@@ -916,15 +905,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 );
 
                 if (pushRes.success) {
-                  appendSecurityLog('Published to GitHub via Visual Editor', pushRes.commitUrl);
+                  appendSecurityLog('Published to Live Portfolio', pushRes.commitUrl);
                   setSettingsStatus({
                     type: 'success',
-                    text: 'Published live to GitHub! Clients across all devices will now see the latest updates.',
+                    text: pushRes.message || 'Published live! Clients across all devices and browsers will now see the latest updates.',
                   });
                 } else {
                   setSettingsStatus({
                     type: 'error',
-                    text: `GitHub publish failed: ${pushRes.message || 'Repository error'}`,
+                    text: `Publish error: ${pushRes.message || 'Unable to propagate changes'}`,
                   });
                 }
               } catch (err: any) {

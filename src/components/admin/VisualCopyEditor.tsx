@@ -859,32 +859,42 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-zinc-700">
-                Gmail / Contact Address
+                Primary Gmail / Contact Address
               </label>
               <input
                 type="text"
                 value={form.socialGmail || ''}
                 onChange={(e) => handleChange('socialGmail', e.target.value)}
-                placeholder="cheddarc19@gmail.com"
+                placeholder="zolepto@gmail.com"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
               />
-              <p className="text-[10px] text-zinc-400">Used for direct Gmail composer links</p>
+              <p className="text-[10px] text-zinc-400">Primary contact address (zolepto@gmail.com)</p>
             </div>
 
-            {/* FormSubmit Instant Email Forwarding */}
+            {/* Web3Forms Instant Email Forwarding */}
             <div className="space-y-1.5 sm:col-span-2 pt-3 border-t border-zinc-200">
-              <label className="block text-xs font-semibold text-zinc-700">
-                FormSubmit Inquiry Forwarding Email
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-semibold text-zinc-700">
+                  Web3Forms Free Plan Access Key
+                </label>
+                <a
+                  href="https://web3forms.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-zinc-500 hover:text-zinc-900 underline font-mono"
+                >
+                  Get free key at web3forms.com ↗
+                </a>
+              </div>
               <input
-                type="email"
-                value={form.formsubmitEmail || ''}
-                onChange={(e) => handleChange('formsubmitEmail', e.target.value)}
-                placeholder="cheddarc19@gmail.com"
+                type="text"
+                value={form.web3formsAccessKey || ''}
+                onChange={(e) => handleChange('web3formsAccessKey', e.target.value)}
+                placeholder="64d852a4-5696-414c-a11b-10f845dca889"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
               />
               <p className="text-[10px] text-zinc-500">
-                Every client brief is sent directly to this address via FormSubmit so you receive instant phone alerts via your Gmail app.
+                Inquiries are sent via Web3Forms free plan directly to your verified inbox (<strong className="font-mono text-zinc-800">zolepto@gmail.com</strong>) with dual honeypot traps and anti-spam protection.
               </p>
             </div>
           </div>

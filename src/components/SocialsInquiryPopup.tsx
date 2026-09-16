@@ -17,7 +17,7 @@ export const SocialsInquiryPopup: React.FC<SocialsInquiryPopupProps> = ({
   const instagramUrl = settings?.socialInstagram || 'https://instagram.com/zolepto';
   const linkedinUrl = settings?.socialLinkedin || 'https://linkedin.com/in/zolepto';
   const xUrl = settings?.socialX || 'https://x.com/zolepto';
-  const email = settings?.socialGmail || settings?.contactEmail || 'cheddarc19@gmail.com';
+  const email = settings?.socialGmail || settings?.contactEmail || 'zolepto@gmail.com';
   const mailUrl = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(
     'Quick Follow-up — Portfolio Inquiry'
   )}`;

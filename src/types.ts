@@ -87,7 +87,8 @@ export interface SiteSettings {
   socialLinkedin?: string;
   socialX?: string;
   socialGmail?: string;
-  // FormSubmit Forwarding Email
+  // Web3Forms Integration
+  web3formsAccessKey?: string;
   formsubmitEmail?: string;
 }
 

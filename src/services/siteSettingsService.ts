@@ -1,7 +1,8 @@
 import { SiteSettings } from '../types';
-import { loadLivePortfolioContent } from './githubSyncService';
+import { loadLivePortfolioContent, CONTENT_PUBLISHED_EVENT } from './githubSyncService';
 
 const SITE_SETTINGS_KEY = 'zolepto_site_settings';
+const DRAFT_SETTINGS_KEY = 'zolepto_site_settings_draft';
 const SETTINGS_EVENT = 'zolepto:site-settings-changed';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -18,7 +19,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     'I’m Zolepto Hiraya. For over four years, I’ve lived inside the timeline—obsessing over the millisecond a cut lands, why retention drops at forty-five seconds, and how subconscious sound design transforms an ordinary video into an unforgettable experience.',
   aboutBio2:
     'I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.',
-  contactEmail: 'zelopte@gmail.com',
+  contactEmail: 'zolepto@gmail.com',
   featuredReelYoutubeId: 'aqz-KE-bpKQ',
   featuredReelTitle: 'ZOLEPTO — 2026 Director & Editing Master Showreel',
   // Workshop Blueprint customizable steps
@@ -48,8 +49,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   socialInstagram: 'https://instagram.com/zolepto',
   socialLinkedin: 'https://linkedin.com/in/zolepto',
   socialX: 'https://x.com/zolepto',
-  socialGmail: 'cheddarc19@gmail.com',
-  formsubmitEmail: 'cheddarc19@gmail.com',
+  socialGmail: 'zolepto@gmail.com',
+  web3formsAccessKey: '64d852a4-5696-414c-a11b-10f845dca889',
 };
 
 export function getLocalSettings(): SiteSettings {
@@ -75,12 +76,37 @@ export function saveLocalSettings(settings: SiteSettings, dispatch = true) {
   }
 }
 
+export function getDraftSettings(): SiteSettings {
+  try {
+    const raw = localStorage.getItem(DRAFT_SETTINGS_KEY);
+    if (raw) {
+      return { ...getLocalSettings(), ...JSON.parse(raw) };
+    }
+  } catch {}
+  return getLocalSettings();
+}
+
+export function saveDraftSettings(draft: SiteSettings) {
+  try {
+    localStorage.setItem(DRAFT_SETTINGS_KEY, JSON.stringify(draft));
+  } catch (err) {
+    console.warn('Failed to save draft settings:', err);
+  }
+}
+
+export function clearDraftSettings() {
+  try {
+    localStorage.removeItem(DRAFT_SETTINGS_KEY);
+  } catch {}
+}
+
 /**
- * Subscribes to live site copy settings with fast local initialization and global content.json synchronization.
- * Crucial Fix: Deployed settings from content.json / GitHub take authoritative priority for clients!
+ * Subscribes to live site copy settings.
+ * Authoritative Rule: The entire website (for visitors and admin alike) renders
+ * the true latest published content from the global cloud/GitHub/content.json.
  */
 export function subscribeToSiteSettings(callback: (settings: SiteSettings) => void): () => void {
-  // Fast initial render from cached local settings
+  // Fast initial render from cached published settings
   const localInitial = getLocalSettings();
   callback(localInitial);
 
@@ -91,28 +117,14 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
       .then((deployed) => {
         if (isCleanedUp || !deployed || !deployed.siteSettings) return;
 
-        // Determine if local admin has active unsaved draft session
-        const hasAdminSession = Boolean(localStorage.getItem('zolepto_admin_session'));
+        // Authoritative source of truth: Deployed/published settings
+        const finalSettings: SiteSettings = {
+          ...DEFAULT_SITE_SETTINGS,
+          ...deployed.siteSettings,
+        };
 
-        let finalSettings: SiteSettings;
-        if (hasAdminSession) {
-          // In admin mode, keep local edits but backfill missing keys from deployed
-          const currentLocal = getLocalSettings();
-          finalSettings = {
-            ...DEFAULT_SITE_SETTINGS,
-            ...deployed.siteSettings,
-            ...currentLocal,
-          };
-        } else {
-          // For all public visitors and clients: Deployed content from GitHub/Vercel is the true reality!
-          finalSettings = {
-            ...DEFAULT_SITE_SETTINGS,
-            ...deployed.siteSettings,
-          };
-          // Persist to local cache so offline or reloads stay up to date
-          saveLocalSettings(finalSettings, false);
-        }
-
+        // Cache so reloads and offline stay fully updated
+        saveLocalSettings(finalSettings, false);
         callback(finalSettings);
       })
       .catch((err) => {
@@ -120,30 +132,37 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
       });
   };
 
-  // Immediate fetch
+  // Immediate authoritative fetch
   fetchGlobalSettings();
 
-  // Re-fetch when client returns to tab or window gains focus
-  const handleFocus = () => {
-    fetchGlobalSettings();
-  };
-
+  // Re-fetch when user returns to tab
+  const handleFocus = () => fetchGlobalSettings();
   const handleVisibility = () => {
-    if (document.visibilityState === 'visible') {
-      fetchGlobalSettings();
-    }
+    if (document.visibilityState === 'visible') fetchGlobalSettings();
   };
 
-  // Periodic real-time poll every 10 seconds for instant live client synchronization
-  const interval = setInterval(fetchGlobalSettings, 10000);
+  // Periodic real-time poll every 8 seconds for immediate client updates
+  const interval = setInterval(fetchGlobalSettings, 8000);
 
   const handleLocalUpdate = () => {
     if (isCleanedUp) return;
     callback(getLocalSettings());
   };
 
+  const handleGlobalPublished = (e: any) => {
+    if (isCleanedUp) return;
+    if (e.detail?.siteSettings) {
+      const merged = { ...DEFAULT_SITE_SETTINGS, ...e.detail.siteSettings };
+      saveLocalSettings(merged, false);
+      callback(merged);
+    } else {
+      fetchGlobalSettings();
+    }
+  };
+
   window.addEventListener('storage', handleLocalUpdate);
   window.addEventListener(SETTINGS_EVENT, handleLocalUpdate);
+  window.addEventListener(CONTENT_PUBLISHED_EVENT, handleGlobalPublished);
   window.addEventListener('focus', handleFocus);
   document.addEventListener('visibilitychange', handleVisibility);
 
@@ -152,13 +171,14 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
     clearInterval(interval);
     window.removeEventListener('storage', handleLocalUpdate);
     window.removeEventListener(SETTINGS_EVENT, handleLocalUpdate);
+    window.removeEventListener(CONTENT_PUBLISHED_EVENT, handleGlobalPublished);
     window.removeEventListener('focus', handleFocus);
     document.removeEventListener('visibilitychange', handleVisibility);
   };
 }
 
 /**
- * Saves updated site copy to local storage (ready for GitHub commit & Vercel deployment).
+ * Saves updated site copy as authoritative published settings and broadcasts to the site.
  */
 export async function updateSiteSettings(
   updates: Partial<SiteSettings>
@@ -167,5 +187,6 @@ export async function updateSiteSettings(
   const updated: SiteSettings = { ...current, ...updates };
 
   saveLocalSettings(updated, true);
+  clearDraftSettings();
   return { success: true, cloudSynced: true };
 }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { CheckCircle2, Copy, Check, ArrowRight, Plus } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { CheckCircle2, Copy, Check, ArrowRight, Plus, ShieldCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ConsultationFormState, SubmittedBooking, SiteSettings } from '../types';
 import { saveInquiry } from '../services/inquiryService';
@@ -31,34 +31,67 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
   const [submittedBooking, setSubmittedBooking] = useState<SubmittedBooking | null>(null);
   const [copiedId, setCopiedId] = useState(false);
   const [showSocialsPopup, setShowSocialsPopup] = useState(false);
+  const [botTrap, setBotTrap] = useState('');
+  const [botcheckChecked, setBotcheckChecked] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const userInteractedRef = useRef<boolean>(false);
+  const lastSubmitTimeRef = useRef<number>(0);
+  const lastSubmittedSignatureRef = useRef<string>('');
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
+    userInteractedRef.current = true;
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectBudgetPreset = (presetValue: string) => {
+    userInteractedRef.current = true;
     setFormData((prev) => ({ ...prev, estimatedBudget: presetValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+
+    // Anti-Bot Protection 1: Honeypot trap check (both hidden text and Web3Forms botcheck)
+    if ((botTrap && botTrap.trim().length > 0) || botcheckChecked) {
+      // Silently simulate success for bots without executing dispatch
+      setSubmittedBooking({
+        ...formData,
+        id: `ZH-${Math.floor(100000 + Math.random() * 900000)}`,
+        submittedAt: new Date().toLocaleString(),
+        status: 'new',
+      });
+      return;
+    }
+
+    // Accidental double-click debounce: prevent identical rapid submission within 2.5s
+    const now = Date.now();
+    const currentSignature = `${formData.fullName.trim()}_${formData.email.trim()}_${formData.brief.trim()}`;
+    if (now - lastSubmitTimeRef.current < 2500 && lastSubmittedSignatureRef.current === currentSignature) {
+      return;
+    }
+    lastSubmitTimeRef.current = now;
+    lastSubmittedSignatureRef.current = currentSignature;
+
     if (!formData.fullName.trim() || !formData.email.trim()) return;
 
     setIsSubmitting(true);
     const generatedId = `ZH-${Math.floor(100000 + Math.random() * 900000)}`;
-    const bookingRecord: SubmittedBooking = {
+    const bookingRecord: SubmittedBooking & { _bot_trap?: string; botcheck?: boolean } = {
       ...formData,
       id: generatedId,
       submittedAt: new Date().toLocaleString(),
       status: 'new',
+      _bot_trap: botTrap,
+      botcheck: botcheckChecked,
     };
 
-    // Save and dispatch through our resilient multi-channel system
+    // Save and dispatch through our resilient multi-channel Web3Forms system
     try {
-      await saveInquiry(bookingRecord, settings?.inquiryWebhookUrl);
+      await saveInquiry(bookingRecord, settings?.inquiryWebhookUrl, settings?.web3formsAccessKey);
     } catch (err) {
       console.warn('Inquiry dispatch caught error:', err);
     }
@@ -79,6 +112,11 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
     setSubmittedBooking(null);
     setShowSocialsPopup(false);
     setFormData(INITIAL_FORM);
+    setBotTrap('');
+    setBotcheckChecked(false);
+    setFormError(null);
+    userInteractedRef.current = false;
+    lastSubmittedSignatureRef.current = '';
   };
 
   const formattedBudget = submittedBooking?.estimatedBudget
@@ -203,6 +241,38 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
           ) : (
             /* Streamlined, simplified form */
             <form id="consultation-form" onSubmit={handleSubmit} className="space-y-6">
+              {/* Web3Forms Built-in Anti-Spam Honeypot: humans never see/check this */}
+              <input
+                type="checkbox"
+                name="botcheck"
+                className="hidden"
+                style={{ display: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+                checked={botcheckChecked}
+                onChange={(e) => setBotcheckChecked(e.target.checked)}
+              />
+
+              {/* Auxiliary Scraper Deflector Trap */}
+              <div aria-hidden="true" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0, width: 0, overflow: 'hidden' }}>
+                <label htmlFor="company_bot_trap_field">Do not fill this field</label>
+                <input
+                  id="company_bot_trap_field"
+                  type="text"
+                  name="_bot_trap"
+                  value={botTrap}
+                  onChange={(e) => setBotTrap(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+
+              {formError && (
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+                  {formError}
+                </div>
+              )}
+
               {/* Row 1: Name and Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-1.5">

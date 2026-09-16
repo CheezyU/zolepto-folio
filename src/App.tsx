@@ -19,6 +19,8 @@ import { VideoProject, GraphicProject, SiteSettings } from './types';
 import { MAIN_SHOWREEL, VIDEO_PROJECTS, GRAPHIC_PROJECTS } from './data/portfolioData';
 import { subscribeToShowreels, subscribeToGraphics } from './services/portfolioService';
 import { subscribeToSiteSettings, DEFAULT_SITE_SETTINGS } from './services/siteSettingsService';
+import { startSmartUpdateMonitor } from './services/smartUpdateMonitor';
+import { SmartUpdateBanner } from './components/SmartUpdateBanner';
 
 function checkIsAdminRoute(): boolean {
   if (typeof window === 'undefined') return false;
@@ -81,7 +83,7 @@ function MainApp() {
     };
   }, []);
 
-  // Real-time Firestore subscriptions for Showreels, Graphic Designs, and Site Settings
+  // Real-time live subscriptions and Smart Auto-Update Refresher Monitor
   useEffect(() => {
     const unsubShowreels = subscribeToShowreels((items) => {
       setShowreels(items);
@@ -93,12 +95,30 @@ function MainApp() {
       setSiteSettings(settings);
     });
 
+    // Smart auto-refresher monitor that checks for genuine content.json / cloud store updates
+    const unsubMonitor = startSmartUpdateMonitor({
+      isAdminActive: () => currentView === 'admin' || checkIsAdminRoute(),
+      isVideoActive: () => activeTheaterProject !== null,
+      onContentUpdated: (newContent) => {
+        if (newContent.siteSettings) {
+          setSiteSettings((prev) => ({ ...prev, ...newContent.siteSettings }));
+        }
+        if (Array.isArray(newContent.showreels)) {
+          setShowreels(newContent.showreels);
+        }
+        if (Array.isArray(newContent.graphics)) {
+          setGraphics(newContent.graphics);
+        }
+      },
+    });
+
     return () => {
       unsubShowreels();
       unsubGraphics();
       unsubSettings();
+      unsubMonitor();
     };
-  }, []);
+  }, [currentView, activeTheaterProject]);
 
   const [activeWorkTab, setActiveWorkTab] = useState<'all' | 'showreels' | 'design'>('all');
 
@@ -251,6 +271,9 @@ function MainApp() {
         project={activeTheaterProject}
         onClose={() => setActiveTheaterProject(null)}
       />
+
+      {/* Smart Update Auto-Refresher Toast Notification */}
+      <SmartUpdateBanner />
     </div>
   );
 }

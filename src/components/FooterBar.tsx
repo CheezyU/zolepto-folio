@@ -11,7 +11,7 @@ interface FooterBarProps {
 
 export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin, settings }) => {
   const [roleIndex, setRoleIndex] = useState(0);
-  const email = settings?.contactEmail || 'cheddarc19@gmail.com';
+  const email = settings?.contactEmail || 'zolepto@gmail.com';
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   useEffect(() => {

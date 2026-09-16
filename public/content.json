@@ -1,8 +1,14 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-16T17:00:00.000Z",
+  "lastUpdated": "2026-09-16T19:28:31.255Z",
+  "repoSource": {
+    "owner": "CheezyU",
+    "repo": "zolepto-folio",
+    "branch": "main",
+    "filePath": "public/content.json"
+  },
   "siteSettings": {
-    "heroTitleLine1": "Your visual storyteller",
+    "heroTitleLine1": "testing you",
     "heroTitleLine2": "& content creation director.",
     "heroSubtitle": "I craft high-retention commercial cuts, cinematic narratives, and digital formats where every single frame earns its place. Direct 1-on-1 collaboration that makes your work impossible to ignore.",
     "availabilityStatus": "Available for incoming projects!",
@@ -13,7 +19,29 @@
     "aboutBio2": "I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.",
     "contactEmail": "zelopte@gmail.com",
     "featuredReelYoutubeId": "aqz-KE-bpKQ",
-    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel"
+    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel",
+    "workshopHeading": "How the story unfolds.",
+    "workshopSubtitle": "No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.",
+    "step1Title": "Identifying You",
+    "step1Subtitle": "The Core Signal & Creative DNA",
+    "step1Description": "Before a single clip is dragged to the timeline or a cut is made, we identify you. Who you are, what your voice stands for, who your real audience is, and the psychological hook that makes your content undeniably yours. We don’t copy trends or use cookie-cutter templates—we locate your authentic edge and reverse-engineer the entire narrative around it.",
+    "step1Note": "“Who you are > fancy transitions. This is where real retention is born.”",
+    "step2Title": "Deconstructing the Narrative",
+    "step2Subtitle": "Ruthless Dissection & Trimming the Fat",
+    "step2Description": "Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.",
+    "step2Note": "✂ Cut the safety filler. If it doesn’t push the story forward, it dies here.",
+    "step3Title": "Emotional Rhythm & Subconscious Sound",
+    "step3Subtitle": "The Kinetic Pulse & Visceral Foley",
+    "step3Description": "Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.",
+    "step3Note": "Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧",
+    "step4Title": "Visual Prestige & Delivery",
+    "step4Subtitle": "Color Science, Key-Art & Cultural Authority",
+    "step4Description": "The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.",
+    "step4Note": "✦ Ready for export. Approved for master release across all formats.",
+    "socialInstagram": "https://instagram.com/zolepto",
+    "socialLinkedin": "https://linkedin.com/in/zolepto",
+    "socialX": "https://x.com/zolepto",
+    "socialGmail": "cheddarc19@gmail.com"
   },
   "showreels": [
     {
@@ -29,7 +57,12 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
       "description": "Precision match-cuts timed to an aggressive synthetic beat. Engineered for maximum visual impact across digital billboards and high-fidelity displays.",
       "role": "Pacing, Speed Ramping, Kinetic SFX, Color Cast",
-      "tags": ["Automotive", "Speed Ramping", "Bass Design", "Commercial"],
+      "tags": [
+        "Automotive",
+        "Speed Ramping",
+        "Bass Design",
+        "Commercial"
+      ],
       "metrics": "94% Client Brand Recall"
     },
     {
@@ -45,7 +78,12 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=1200&q=80",
       "description": "Deliberate, breath-controlled atmospheric pacing. Allowing stark Arctic silhouettes to command tension through room tone and nuanced audio foley.",
       "role": "Documentary Story Arc, Scene Assembly, 35mm Grain Emulation",
-      "tags": ["Documentary", "Narrative", "Atmospheric Foley", "DaVinci Resolve"]
+      "tags": [
+        "Documentary",
+        "Narrative",
+        "Atmospheric Foley",
+        "DaVinci Resolve"
+      ]
     },
     {
       "id": "vid-3",
@@ -60,7 +98,11 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
       "description": "Engineered for 9-second hook retention. Dynamic zoom transitions and typography sync that stopped 1.8M TikTok & Instagram scrollers.",
       "role": "9:16 Re-Framing, Glitch Typography, Bass Punch",
-      "tags": ["TikTok / Reels", "High Retention", "Kinetic Typography"]
+      "tags": [
+        "TikTok / Reels",
+        "High Retention",
+        "Kinetic Typography"
+      ]
     }
   ],
   "graphics": [
@@ -74,7 +116,11 @@
       "aspect": "portrait",
       "year": "2026",
       "description": "Minimalist brutalist composition with heavy typographic hierarchy and custom distorted gradients.",
-      "tools": ["Photoshop", "Illustrator", "Cinema 4D"]
+      "tools": [
+        "Photoshop",
+        "Illustrator",
+        "Cinema 4D"
+      ]
     },
     {
       "id": "art-2",
@@ -86,7 +132,11 @@
       "aspect": "landscape",
       "year": "2026",
       "description": "High-contrast visual focal point engineered for maximum click-through rate on competitive browse feeds.",
-      "tools": ["Photoshop", "Lightroom", "Color Science"]
+      "tools": [
+        "Photoshop",
+        "Lightroom",
+        "Color Science"
+      ]
     }
   ]
 }

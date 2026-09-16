@@ -2,15 +2,51 @@ import { SubmittedBooking } from '../types';
 
 const INQUIRIES_STORAGE_KEY = 'zolepto_submitted_inquiries';
 const INQUIRIES_EVENT = 'zolepto:inquiries-changed';
+const TARGET_INBOX = 'zelopte@gmail.com';
 
 /**
- * Saves an inquiry to LocalStorage with instant reactivity (GitHub & Vercel ready).
+ * Saves an inquiry and delivers it directly to zelopte@gmail.com.
+ * Uses Formsubmit.co free AJAX endpoint for automated email inbox delivery,
+ * plus local storage synchronization.
  */
 export async function saveInquiry(
   inquiry: SubmittedBooking
-): Promise<{ id: string; cloudSynced: boolean; error?: string }> {
+): Promise<{ id: string; emailSent: boolean; error?: string }> {
+  // 1. Save locally for instant preview & offline resilience
   saveInquiryLocally(inquiry);
-  return { id: inquiry.id, cloudSynced: true };
+
+  // 2. Dispatch to Formsubmit AJAX endpoint to deliver inquiry directly to zelopte@gmail.com inbox
+  let emailSent = false;
+  try {
+    const res = await fetch(`https://formsubmit.co/ajax/${TARGET_INBOX}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        _subject: `New Portfolio Inquiry [${inquiry.id}] — ${inquiry.fullName}`,
+        _replyto: inquiry.email,
+        _template: 'table',
+        'Client Name': inquiry.fullName,
+        'Client Email': inquiry.email,
+        'Project Scope': inquiry.projectType,
+        'Estimated Budget': inquiry.estimatedBudget || 'To be discussed',
+        'Reference Links': inquiry.links || 'None',
+        'Project Brief': inquiry.brief || 'None provided',
+        'Inquiry Reference ID': inquiry.id,
+        'Submitted At': inquiry.submittedAt,
+      }),
+    });
+
+    if (res.ok) {
+      emailSent = true;
+    }
+  } catch (err) {
+    console.warn('Could not auto-forward inquiry via Formsubmit:', err);
+  }
+
+  return { id: inquiry.id, emailSent };
 }
 
 /**
@@ -86,15 +122,15 @@ export function getInquiriesLocally(): SubmittedBooking[] {
 }
 
 /**
- * Builds standard mailto URL
+ * Builds standard mailto URL targeting zelopte@gmail.com
  */
-export function buildMailtoUrl(to: string, subject: string, body: string): string {
+export function buildMailtoUrl(to = TARGET_INBOX, subject: string, body: string): string {
   return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 /**
  * Builds direct Gmail web-compose URL so users without configured desktop mail clients can send directly
  */
-export function buildGmailWebUrl(to: string, subject: string, body: string): string {
+export function buildGmailWebUrl(to = TARGET_INBOX, subject: string, body: string): string {
   return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

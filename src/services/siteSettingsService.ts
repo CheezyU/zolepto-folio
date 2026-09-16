@@ -1,4 +1,5 @@
 import { SiteSettings } from '../types';
+import { loadLivePortfolioContent } from './githubSyncService';
 
 const SITE_SETTINGS_KEY = 'zolepto_site_settings';
 const SETTINGS_EVENT = 'zolepto:site-settings-changed';
@@ -17,7 +18,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     'I’m Zolepto Hiraya. For over four years, I’ve lived inside the timeline—obsessing over the millisecond a cut lands, why retention drops at forty-five seconds, and how subconscious sound design transforms an ordinary video into an unforgettable experience.',
   aboutBio2:
     'I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.',
-  contactEmail: 'zolepto@gmail.com',
+  contactEmail: 'zelopte@gmail.com',
   featuredReelYoutubeId: 'aqz-KE-bpKQ',
   featuredReelTitle: 'ZOLEPTO — 2026 Director & Editing Master Showreel',
 };
@@ -29,6 +30,10 @@ export function getLocalSettings(): SiteSettings {
     const parsed = JSON.parse(raw);
     if (parsed.availabilityStatus === 'Open for select Q3/Q4 collaborations') {
       parsed.availabilityStatus = 'Available for incoming projects!';
+    }
+    // Ensure email is zelopte@gmail.com if it was placeholder
+    if (parsed.contactEmail === 'zolepto@gmail.com') {
+      parsed.contactEmail = 'zelopte@gmail.com';
     }
     return { ...DEFAULT_SITE_SETTINGS, ...parsed };
   } catch {
@@ -47,13 +52,22 @@ export function saveLocalSettings(settings: SiteSettings) {
 }
 
 /**
- * Subscribes to live site copy settings with fast local synchronization.
+ * Subscribes to live site copy settings with fast local synchronization and global content.json loading.
  */
 export function subscribeToSiteSettings(callback: (settings: SiteSettings) => void): () => void {
   // Emit local copy immediately for instant render
   callback(getLocalSettings());
 
   let isCleanedUp = false;
+
+  // Background fetch from public/content.json (GitHub / Vercel deployed data)
+  loadLivePortfolioContent().then((deployed) => {
+    if (isCleanedUp || !deployed || !deployed.siteSettings) return;
+    const current = getLocalSettings();
+    // Merge if no newer local edits exist or to update baseline
+    const merged: SiteSettings = { ...DEFAULT_SITE_SETTINGS, ...deployed.siteSettings, ...current };
+    callback(merged);
+  }).catch(() => {});
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
@@ -71,7 +85,7 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
 }
 
 /**
- * Saves updated site copy to local storage (production ready for GitHub & Vercel).
+ * Saves updated site copy to local storage (ready for GitHub commit & Vercel deployment).
  */
 export async function updateSiteSettings(
   updates: Partial<SiteSettings>

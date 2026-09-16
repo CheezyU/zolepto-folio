@@ -24,6 +24,7 @@ import {
   Sparkles,
   Eye,
   RefreshCw,
+  GitBranch,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -56,6 +57,9 @@ import {
   updateSiteSettings,
   DEFAULT_SITE_SETTINGS,
 } from '../services/siteSettingsService';
+import { GitHubSyncTab } from './admin/GitHubSyncTab';
+import { SecurityTab } from './admin/SecurityTab';
+import { pushPortfolioToGitHub, getGitHubConfig } from '../services/githubSyncService';
 
 interface AdminPanelProps {
   onBackToPortfolio: () => void;
@@ -96,8 +100,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 }) => {
   const { user, logout, isConfigured } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    'showreels' | 'graphics' | 'site-copy' | 'inquiries' | 'security'
+    'showreels' | 'graphics' | 'site-copy' | 'inquiries' | 'github-sync' | 'security'
   >('showreels');
+
+  // Top Bar Quick Push to GitHub State
+  const [isPushingTop, setIsPushingTop] = useState(false);
+  const [topPushStatus, setTopPushStatus] = useState<string | null>(null);
+
+  const handleTopPushLive = async () => {
+    const cfg = getGitHubConfig();
+    if (!cfg.token.trim() || !cfg.owner.trim() || !cfg.repo.trim()) {
+      setActiveTab('github-sync');
+      return;
+    }
+    setIsPushingTop(true);
+    setTopPushStatus('Committing to GitHub...');
+    try {
+      const res = await pushPortfolioToGitHub({ siteSettings, showreels, graphics }, cfg);
+      if (res.success) {
+        setTopPushStatus('Live on GitHub!');
+        appendSecurityLog('GitHub Auto-Commit Live', res.commitUrl || 'Success');
+      } else {
+        setTopPushStatus('Commit Failed');
+      }
+      setTimeout(() => setTopPushStatus(null), 3500);
+    } catch (e: any) {
+      setTopPushStatus('Failed');
+      setTimeout(() => setTopPushStatus(null), 3000);
+    } finally {
+      setIsPushingTop(false);
+    }
+  };
 
   // Inquiries State
   const [inquiries, setInquiries] = useState<SubmittedBooking[]>([]);
@@ -534,6 +567,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Quick Commit & Push Live to GitHub Button */}
+            <button
+              id="top-push-github-btn"
+              type="button"
+              onClick={handleTopPushLive}
+              disabled={isPushingTop}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
+              title="Push live changes to GitHub & deploy on Vercel"
+            >
+              {isPushingTop ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <GitBranch className="w-3.5 h-3.5" />
+              )}
+              <span>{topPushStatus || (isPushingTop ? 'Pushing...' : 'Push to GitHub')}</span>
+            </button>
+
             {/* Session Countdown & Lock button */}
             <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-zinc-100 font-mono text-xs text-zinc-500">
               <Clock className="w-3.5 h-3.5 text-zinc-400" />
@@ -611,6 +661,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </button>
 
           <button
+            id="tab-btn-github-sync"
+            onClick={() => setActiveTab('github-sync')}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'github-sync'
+                ? 'bg-zinc-950 text-white shadow-xs'
+                : 'bg-white text-zinc-600 hover:text-zinc-900 border border-zinc-200'
+            }`}
+          >
+            <GitBranch className="w-4 h-4 text-emerald-600" />
+            <span>GitHub & Vercel Sync</span>
+          </button>
+
+          <button
             id="tab-btn-security"
             onClick={() => setActiveTab('security')}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
@@ -620,7 +683,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Security & Cloud Status</span>
+            <span>Security & Access</span>
           </button>
         </div>
 
@@ -1027,6 +1090,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </div>
             </div>
 
+            {/* Direct Email Forwarding Banner */}
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-start gap-3">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-semibold block">Real-time Email Forwarding Enabled</span>
+                <span className="text-emerald-800">
+                  Client inquiries submitted via the public consultation form are dispatched directly to{' '}
+                  <strong className="font-mono text-emerald-950">zelopte@gmail.com</strong> in real-time via Formsubmit.co. A local copy is also archived below in this browser.
+                </span>
+              </div>
+            </div>
+
             {filteredInquiries.length === 0 ? (
               <div className="p-12 text-center rounded-2xl bg-white border border-zinc-200 text-zinc-500 text-xs font-mono">
                 No inquiries matching filter.
@@ -1124,79 +1199,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
         )}
 
-        {/* TAB 5: SECURITY AUDIT & STATUS */}
+        {/* TAB 5: GITHUB AUTO-COMMIT & VERCEL SYNC */}
+        {activeTab === 'github-sync' && (
+          <GitHubSyncTab
+            siteSettings={siteSettings}
+            showreels={showreels}
+            graphics={graphics}
+            onCommitSuccess={(commitUrl) =>
+              appendSecurityLog('GitHub Auto-Commit Live', commitUrl)
+            }
+          />
+        )}
+
+        {/* TAB 6: SECURITY & HARDENED CREDENTIALS */}
         {activeTab === 'security' && (
-          <div className="max-w-4xl space-y-6">
-            <div>
-              <h2 className="font-display text-2xl font-bold text-zinc-900">
-                Security & Cloud Architecture
-              </h2>
-              <p className="text-xs text-zinc-500 mt-1">
-                Backdoor authentication, security rules audit trail, and database persistence status.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-5 rounded-2xl bg-white border border-zinc-200">
-                <span className="text-[11px] font-mono text-zinc-400 block">ACCESS CONTROL</span>
-                <p className="text-base font-bold text-zinc-900 mt-1">Authorized Admin</p>
-                <p className="text-xs text-zinc-500 mt-0.5">{user?.email || 'zolepto@gmail.com'}</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-zinc-200">
-                <span className="text-[11px] font-mono text-zinc-400 block">DEPLOYMENT TARGET</span>
-                <p className="text-base font-bold text-emerald-600 mt-1">
-                  GitHub + Vercel
-                </p>
-                <p className="text-xs text-zinc-500 mt-0.5">High-performance production architecture</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-zinc-200">
-                <span className="text-[11px] font-mono text-zinc-400 block">AUTO-LOCK SECURITY</span>
-                <p className="text-base font-bold text-zinc-900 mt-1">15 Min Idle Guard</p>
-                <p className="text-xs text-zinc-500 mt-0.5">Locks immediately on inactivity</p>
-              </div>
-            </div>
-
-            {/* Security Audit Trail Table */}
-            <div className="p-6 rounded-2xl bg-white border border-zinc-200 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-display font-semibold text-base text-zinc-900 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Security Audit Log (Recent Operations)</span>
-                </h3>
-                <button
-                  onClick={() => setAuditLogs(getSecurityLogs())}
-                  className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900"
-                  title="Refresh logs"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {auditLogs.length === 0 ? (
-                <p className="text-xs font-mono text-zinc-400">No actions recorded yet.</p>
-              ) : (
-                <div className="divide-y divide-zinc-100 max-h-96 overflow-y-auto">
-                  {auditLogs.map((log) => (
-                    <div key={log.id} className="py-2.5 flex items-center justify-between text-xs">
-                      <div>
-                        <span className="font-medium text-zinc-900">{log.action}</span>
-                        {log.details && (
-                          <span className="text-zinc-400 ml-2 font-mono text-[11px]">
-                            ({log.details})
-                          </span>
-                        )}
-                      </div>
-                      <span className="font-mono text-zinc-400 text-[11px] shrink-0">
-                        {log.timestamp}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <SecurityTab
+            auditLogs={auditLogs}
+            onRefreshLogs={() => setAuditLogs(getSecurityLogs())}
+          />
         )}
       </div>
 

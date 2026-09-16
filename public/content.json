@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-09-16T17:00:00.000Z",
+  "siteSettings": {
+    "heroTitleLine1": "Your visual storyteller",
+    "heroTitleLine2": "& content creation director.",
+    "heroSubtitle": "I craft high-retention commercial cuts, cinematic narratives, and digital formats where every single frame earns its place. Direct 1-on-1 collaboration that makes your work impossible to ignore.",
+    "availabilityStatus": "Available for incoming projects!",
+    "showAvailabilityDot": true,
+    "aboutHeading": "About",
+    "aboutQuote": "“An edit isn’t just assembling footage. It’s an emotional rhythm that decides whether a viewer clicks away in three seconds or stays until the final frame.”",
+    "aboutBio1": "I’m Zolepto Hiraya. For over four years, I’ve lived inside the timeline—obsessing over the millisecond a cut lands, why retention drops at forty-five seconds, and how subconscious sound design transforms an ordinary video into an unforgettable experience.",
+    "aboutBio2": "I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.",
+    "contactEmail": "zelopte@gmail.com",
+    "featuredReelYoutubeId": "aqz-KE-bpKQ",
+    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel"
+  },
+  "showreels": [
+    {
+      "id": "vid-1",
+      "title": "HYPERION — Cyberpunk Automotive Commercial",
+      "client": "Apex Motors Worldwide",
+      "category": "commercial",
+      "categoryLabel": "Commercial / Brand",
+      "duration": "0:45",
+      "year": "2026",
+      "youtubeId": "LXb3EKWsInQ",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/LXb3EKWsInQ?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
+      "description": "Precision match-cuts timed to an aggressive synthetic beat. Engineered for maximum visual impact across digital billboards and high-fidelity displays.",
+      "role": "Pacing, Speed Ramping, Kinetic SFX, Color Cast",
+      "tags": ["Automotive", "Speed Ramping", "Bass Design", "Commercial"],
+      "metrics": "94% Client Brand Recall"
+    },
+    {
+      "id": "vid-2",
+      "title": "THE SILENT EXPEDITION — Arctic Documentary Short",
+      "client": "Nordic Horizon Productions",
+      "category": "narrative",
+      "categoryLabel": "Cinematic Narrative",
+      "duration": "3:12",
+      "year": "2025",
+      "youtubeId": "jNQXAC9IVRw",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/jNQXAC9IVRw?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=1200&q=80",
+      "description": "Deliberate, breath-controlled atmospheric pacing. Allowing stark Arctic silhouettes to command tension through room tone and nuanced audio foley.",
+      "role": "Documentary Story Arc, Scene Assembly, 35mm Grain Emulation",
+      "tags": ["Documentary", "Narrative", "Atmospheric Foley", "DaVinci Resolve"]
+    },
+    {
+      "id": "vid-3",
+      "title": "NEO-SHIBUYA — Kinetic Streetwear Campaign",
+      "client": "Kinetix Apparel Tokyo",
+      "category": "social",
+      "categoryLabel": "Digital High-Retention",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "dQw4w9WgXcQ",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
+      "description": "Engineered for 9-second hook retention. Dynamic zoom transitions and typography sync that stopped 1.8M TikTok & Instagram scrollers.",
+      "role": "9:16 Re-Framing, Glitch Typography, Bass Punch",
+      "tags": ["TikTok / Reels", "High Retention", "Kinetic Typography"]
+    }
+  ],
+  "graphics": [
+    {
+      "id": "art-1",
+      "title": "ECLIPSE PROTOCOL — Key Visual Poster",
+      "client": "Indie Sci-Fi Studio",
+      "category": "key-art",
+      "categoryLabel": "Theatrical Poster",
+      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80",
+      "aspect": "portrait",
+      "year": "2026",
+      "description": "Minimalist brutalist composition with heavy typographic hierarchy and custom distorted gradients.",
+      "tools": ["Photoshop", "Illustrator", "Cinema 4D"]
+    },
+    {
+      "id": "art-2",
+      "title": "CHRONO DRIFT — YouTube 4K Hero Thumbnail",
+      "client": "Velocity Gaming (1.2M Subs)",
+      "category": "thumbnail",
+      "categoryLabel": "High-CTR Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+      "aspect": "landscape",
+      "year": "2026",
+      "description": "High-contrast visual focal point engineered for maximum click-through rate on competitive browse feeds.",
+      "tools": ["Photoshop", "Lightroom", "Color Science"]
+    }
+  ]
+}

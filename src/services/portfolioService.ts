@@ -1,6 +1,7 @@
 import { VideoProject, GraphicProject, VideoCategory, GraphicCategory } from '../types';
 import { VIDEO_PROJECTS as DEFAULT_VIDEOS, GRAPHIC_PROJECTS as DEFAULT_GRAPHICS } from '../data/portfolioData';
 import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '../lib/youtube';
+import { loadLivePortfolioContent } from './githubSyncService';
 
 const LOCAL_SHOWREELS_KEY = 'zolepto_custom_showreels';
 const LOCAL_GRAPHICS_KEY = 'zolepto_custom_graphics';
@@ -134,6 +135,14 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
 
   let isCleanedUp = false;
 
+  // Background fetch from public/content.json (GitHub & Vercel live updates)
+  loadLivePortfolioContent().then((deployed) => {
+    if (isCleanedUp || !deployed || !deployed.showreels) return;
+    const currentLocal = getLocalShowreels();
+    const merged = mergeShowreels(currentLocal, deployed.showreels);
+    callback(merged);
+  }).catch(() => {});
+
   const handleUpdate = () => {
     if (isCleanedUp) return;
     const updated = getLocalShowreels();
@@ -159,6 +168,14 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
   callback(mergeGraphics(initialLocal, DEFAULT_GRAPHICS));
 
   let isCleanedUp = false;
+
+  // Background fetch from public/content.json (GitHub & Vercel live updates)
+  loadLivePortfolioContent().then((deployed) => {
+    if (isCleanedUp || !deployed || !deployed.graphics) return;
+    const currentLocal = getLocalGraphics();
+    const merged = mergeGraphics(currentLocal, deployed.graphics);
+    callback(merged);
+  }).catch(() => {});
 
   const handleUpdate = () => {
     if (isCleanedUp) return;

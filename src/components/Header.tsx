@@ -3,65 +3,11 @@ import { ArrowDownRight, Menu, X, Film } from 'lucide-react';
 
 interface HeaderProps {
   onNavigate: (sectionId: string) => void;
-  onOpenAdmin?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin }) => {
+export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Press-and-hold backdoor state on brand name
-  const [isHoldingBrand, setIsHoldingBrand] = useState(false);
-  const [holdProgress, setHoldProgress] = useState(0);
-  const timerRef = useRef<number | null>(null);
-  const animFrameRef = useRef<number | null>(null);
-  const didTriggerRef = useRef(false);
-
-  const startHold = (e: React.PointerEvent | React.TouchEvent) => {
-    if ('button' in e && e.button !== 0) return;
-    didTriggerRef.current = false;
-    setIsHoldingBrand(true);
-    setHoldProgress(0);
-    const holdDuration = 1500;
-    const startTime = Date.now();
-
-    const tick = () => {
-      const elapsed = Date.now() - startTime;
-      const pct = Math.min(100, (elapsed / holdDuration) * 100);
-      setHoldProgress(pct);
-      if (pct < 100) {
-        animFrameRef.current = requestAnimationFrame(tick);
-      }
-    };
-    animFrameRef.current = requestAnimationFrame(tick);
-
-    timerRef.current = window.setTimeout(() => {
-      didTriggerRef.current = true;
-      setIsHoldingBrand(false);
-      setHoldProgress(0);
-      if (navigator.vibrate) {
-        try {
-          navigator.vibrate(50);
-        } catch {
-          // ignore
-        }
-      }
-      onOpenAdmin?.();
-    }, holdDuration);
-  };
-
-  const cancelHold = () => {
-    setIsHoldingBrand(false);
-    setHoldProgress(0);
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    if (animFrameRef.current) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,16 +16,10 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin }) => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
   }, []);
 
   const handleLinkClick = (id: string) => {
-    if (didTriggerRef.current) {
-      didTriggerRef.current = false;
-      return;
-    }
     onNavigate(id);
     setMobileMenuOpen(false);
   };
@@ -99,13 +39,6 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin }) => {
           <button
             id="brand-logo-btn"
             onClick={() => handleLinkClick('hero')}
-            onPointerDown={startHold}
-            onPointerUp={cancelHold}
-            onPointerLeave={cancelHold}
-            onPointerCancel={cancelHold}
-            onTouchStart={startHold}
-            onTouchEnd={cancelHold}
-            onTouchCancel={cancelHold}
             className="group relative flex items-center gap-2.5 text-left focus:outline-none cursor-pointer select-none"
           >
             {/* Placeholder logo icon */}
@@ -122,14 +55,6 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin }) => {
               }`}
             >
               Zolepto
-              {isHoldingBrand && (
-                <span
-                  className={`absolute left-0 -bottom-0.5 h-0.5 rounded-full transition-all duration-75 pointer-events-none ${
-                    isScrolled ? 'bg-zinc-900' : 'bg-white'
-                  }`}
-                  style={{ width: `${holdProgress}%` }}
-                />
-              )}
             </span>
           </button>
         </div>
@@ -240,18 +165,6 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenAdmin }) => {
           >
             Contact & Info (Bottom)
           </button>
-          {onOpenAdmin && (
-            <button
-              id="mobile-nav-admin"
-              onClick={() => {
-                onOpenAdmin();
-                setMobileMenuOpen(false);
-              }}
-              className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-50 transition-colors"
-            >
-              Admin Panel
-            </button>
-          )}
         </div>
       )}
     </header>

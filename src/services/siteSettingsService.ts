@@ -55,7 +55,18 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 
 export function getLocalSettings(): SiteSettings {
   try {
-    const raw = localStorage.getItem(SITE_SETTINGS_KEY);
+    let raw = localStorage.getItem(SITE_SETTINGS_KEY);
+    if (!raw) {
+      const pushedRaw = localStorage.getItem('zolepto_last_pushed_payload');
+      if (pushedRaw) {
+        try {
+          const parsedPushed = JSON.parse(pushedRaw);
+          if (parsedPushed.siteSettings) {
+            raw = JSON.stringify(parsedPushed.siteSettings);
+          }
+        } catch {}
+      }
+    }
     if (!raw) return DEFAULT_SITE_SETTINGS;
     const parsed = JSON.parse(raw);
     if (parsed.web3formsAccessKey === '64d852a4-5696-414c-a11b-10f845dca889' || !parsed.web3formsAccessKey) {

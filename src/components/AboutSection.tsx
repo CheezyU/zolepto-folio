@@ -175,6 +175,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
 
           {/* FREE-FLOW PROGRESSION CONTAINER: No hard card borders */}
           <div className="relative space-y-16 sm:space-y-24">
+            {/* Continuous dashed line guiding through the steps */}
+            <div className="hidden lg:block absolute left-[38px] top-10 bottom-16 w-0.5 border-l-2 border-dashed border-zinc-300 pointer-events-none">
+              <div className="absolute -top-1 -left-[3px] w-2 h-2 rounded-full bg-zinc-400" />
+              <div className="absolute -bottom-1 -left-[3px] w-2 h-2 rounded-full bg-zinc-400" />
+            </div>
+
             {PROCESS_STEPS.map((step, idx) => {
               const isHovered = activeStepHover === step.id;
 
@@ -192,7 +198,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                   {/* Organic layout: NO hard card border, purely breathable typography & hand-drawn annotations */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start relative">
                     
-                    {/* Left Step Marker with Hand-Drawn Imperfect Circle & Real-time Animated Dashed Line */}
+                    {/* Left Step Marker with Hand-Drawn Circle with Simple Hover */}
                     <div className="lg:col-span-4 flex items-start gap-4 relative">
                       {/* Hand-Drawn Sketch Circle around number */}
                       <div className="relative flex-shrink-0 w-16 h-16 flex items-center justify-center">
@@ -202,44 +208,18 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                             isHovered ? 'scale-110 rotate-12 text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-700'
                           }`}
                         >
-                          {/* Organic imperfect hand-drawn circle path with real-time drawing animation */}
-                          <motion.path
+                          <path
                             d="M 50,8 C 76,6 94,22 93,51 C 92,78 74,94 48,93 C 21,92 7,74 8,47 C 9,21 28,10 52,8"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="3.5"
                             strokeLinecap="round"
-                            initial={{ pathLength: 0.2 }}
-                            whileInView={{ pathLength: 1 }}
-                            viewport={{ once: false, amount: 0.3 }}
-                            transition={{ duration: 0.8, ease: 'easeOut' }}
                           />
                         </svg>
                         <span className="font-display font-bold text-xl text-zinc-900 relative z-10">
                           {step.number}
                         </span>
                       </div>
-
-                      {/* Real-time Animated Connecting Dashed Line connecting Phase 1 to Phase 4 */}
-                      {idx < PROCESS_STEPS.length - 1 && (
-                        <div className="absolute left-8 top-16 -bottom-16 sm:-bottom-24 w-1 -translate-x-1/2 overflow-visible pointer-events-none z-0">
-                          <svg className="w-4 h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 4 100">
-                            <motion.path
-                              d="M 2,0 L 2,100"
-                              vectorEffect="non-scaling-stroke"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeDasharray="6 6"
-                              strokeLinecap="round"
-                              className="text-zinc-400"
-                              initial={{ pathLength: 0, opacity: 0 }}
-                              whileInView={{ pathLength: 1, opacity: 1 }}
-                              viewport={{ once: false, amount: 0.15 }}
-                              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-                            />
-                          </svg>
-                        </div>
-                      )}
 
                       <div className="space-y-1 pt-1.5">
                         <h4 className="font-display text-xl sm:text-2xl font-bold text-zinc-950 group-hover:text-zinc-800 transition-colors">
@@ -253,29 +233,26 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
 
                     {/* Right Narrative & Clean Workshop Annotations */}
                     <div className="lg:col-span-8 space-y-4 relative">
-                      {/* Blueprint phase tag */}
+                      {/* Step category indicator contained in brackets with respective color */}
                       <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="font-mono text-xs text-zinc-600 bg-zinc-100 px-2.5 py-0.5 rounded">
-                          {step.tag}
-                        </span>
                         {idx === 0 && (
                           <span className="font-handwriting text-lg text-emerald-700 font-semibold">
-                            ✦ user favorite core step
+                            [ ✦ &nbsp;user favorite core step ]
                           </span>
                         )}
                         {idx === 1 && (
                           <span className="font-handwriting text-lg text-rose-700 font-semibold">
-                            ✂ the breakdown begins
+                            [ ✂ &nbsp;the breakdown begins ]
                           </span>
                         )}
                         {idx === 2 && (
                           <span className="font-handwriting text-lg text-indigo-700 font-semibold">
-                            ♫ 40Hz sub-bass layer
+                            [ ♫ &nbsp;40Hz sub-bass layer ]
                           </span>
                         )}
                         {idx === 3 && (
                           <span className="font-handwriting text-lg text-amber-700 font-semibold">
-                            ✓ export locked
+                            [ ✓ &nbsp;export locked ]
                           </span>
                         )}
                       </div>

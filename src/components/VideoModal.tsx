@@ -88,20 +88,6 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
           />
         </div>
 
-        {/* Fallback Banner for Restricted Iframe Sandboxes */}
-        <div className="px-4 sm:px-6 py-2 bg-zinc-100 border-b border-zinc-200 flex items-center justify-between text-xs font-mono text-zinc-600">
-          <span className="truncate pr-2">If video is blocked by sandbox cookies:</span>
-          <a
-            href={`https://www.youtube.com/watch?v=${project.youtubeId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-semibold text-zinc-900 hover:underline shrink-0"
-          >
-            <span>Open in YouTube Tab</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
-        </div>
-
         {/* Video details & editorial notes with internal scroll for mobile */}
         <div className="p-4 sm:p-8 bg-white space-y-4 overflow-y-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

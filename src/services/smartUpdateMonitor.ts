@@ -108,19 +108,12 @@ export function startSmartUpdateMonitor(options: SmartMonitorOptions = {}): () =
       sessionStorage.setItem(REFRESHED_VERSION_KEY, newTimestamp);
     } catch {}
 
-    // Dispatch event to show subtle banner before reload
+    // Dispatch event to inform UI of seamless live update
     window.dispatchEvent(
       new CustomEvent('zolepto:auto-refresh-imminent', {
         detail: { timestamp: newTimestamp },
       })
     );
-
-    // Smooth reload after giving UI a moment to show notification
-    setTimeout(() => {
-      if (!isCleanedUp) {
-        window.location.reload();
-      }
-    }, 1400);
   };
 
   const checkForLiveContentUpdates = async () => {

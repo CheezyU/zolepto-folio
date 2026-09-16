@@ -87,6 +87,65 @@ export interface NewGraphicInput {
   imageUrl?: string;
 }
 
+let authoritativeShowreels: VideoProject[] | null = null;
+let authoritativeGraphics: GraphicProject[] | null = null;
+
+export function getAuthoritativeShowreels(): VideoProject[] {
+  if (authoritativeShowreels && authoritativeShowreels.length > 0) {
+    return authoritativeShowreels;
+  }
+
+  // 1. Prioritize pushed/published payload from GitHub / Admin publish
+  try {
+    const pushedRaw = localStorage.getItem('zolepto_last_pushed_payload');
+    if (pushedRaw) {
+      const parsed = JSON.parse(pushedRaw);
+      if (Array.isArray(parsed.showreels) && parsed.showreels.length > 0) {
+        authoritativeShowreels = parsed.showreels;
+        return parsed.showreels;
+      }
+    }
+  } catch {}
+
+  // 2. Custom showreels from admin edits
+  const local = getLocalShowreels();
+  if (local && local.length > 0) {
+    authoritativeShowreels = local;
+    return local;
+  }
+
+  // 3. Fallback only if virgin session with zero edits/pushes
+  return DEFAULT_VIDEOS;
+}
+
+export function getAuthoritativeGraphics(): GraphicProject[] {
+  if (authoritativeGraphics && authoritativeGraphics.length > 0) {
+    return authoritativeGraphics;
+  }
+
+  // 1. Prioritize pushed/published payload
+  try {
+    const pushedRaw = localStorage.getItem('zolepto_last_pushed_payload');
+    if (pushedRaw) {
+      const parsed = JSON.parse(pushedRaw);
+      if (Array.isArray(parsed.graphics) && parsed.graphics.length > 0) {
+        authoritativeGraphics = parsed.graphics;
+        return parsed.graphics;
+      }
+    }
+  } catch {}
+
+  // 2. Custom graphics from admin edits
+  const local = getLocalGraphics();
+  if (local && local.length > 0) {
+    authoritativeGraphics = local;
+    return local;
+  }
+
+  // 3. Fallback only if virgin session
+  return DEFAULT_GRAPHICS;
+}
+
 export function getLocalShowreels(): VideoProject[] {
   try {
     const raw = localStorage.getItem(LOCAL_SHOWREELS_KEY);
@@ -98,7 +157,21 @@ export function getLocalShowreels(): VideoProject[] {
 
 export function saveLocalShowreels(items: VideoProject[], dispatch = true) {
   try {
+    authoritativeShowreels = items;
     localStorage.setItem(LOCAL_SHOWREELS_KEY, JSON.stringify(items));
+    try {
+      const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+      const existing = existingRaw ? JSON.parse(existingRaw) : {};
+      localStorage.setItem(
+        'zolepto_last_pushed_payload',
+        JSON.stringify({
+          ...existing,
+          showreels: items,
+          lastUpdated: new Date().toISOString(),
+        })
+      );
+    } catch {}
+
     if (dispatch) {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
@@ -119,7 +192,21 @@ export function getLocalGraphics(): GraphicProject[] {
 
 export function saveLocalGraphics(items: GraphicProject[], dispatch = true) {
   try {
+    authoritativeGraphics = items;
     localStorage.setItem(LOCAL_GRAPHICS_KEY, JSON.stringify(items));
+    try {
+      const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+      const existing = existingRaw ? JSON.parse(existingRaw) : {};
+      localStorage.setItem(
+        'zolepto_last_pushed_payload',
+        JSON.stringify({
+          ...existing,
+          graphics: items,
+          lastUpdated: new Date().toISOString(),
+        })
+      );
+    } catch {}
+
     if (dispatch) {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
@@ -133,9 +220,8 @@ export function saveLocalGraphics(items: GraphicProject[], dispatch = true) {
  * Subscribes to real-time Showreels list with authoritative global synchronization.
  */
 export function subscribeToShowreels(callback: (projects: VideoProject[]) => void): () => void {
-  // Instant initial data
-  const initialLocal = getLocalShowreels();
-  callback(mergeShowreels(initialLocal, DEFAULT_VIDEOS));
+  // Instant initial data: Guaranteed to be authoritative (never reverts or flickers default placeholders)
+  callback(getAuthoritativeShowreels());
 
   let isCleanedUp = false;
 
@@ -144,15 +230,8 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
       .then((deployed) => {
         if (isCleanedUp || !deployed || !deployed.showreels || deployed.showreels.length === 0) return;
 
-        const hasAdminSession = Boolean(localStorage.getItem('zolepto_admin_session'));
-        if (hasAdminSession) {
-          const currentLocal = getLocalShowreels();
-          const merged = mergeShowreels(currentLocal, deployed.showreels);
-          callback(merged);
-        } else {
-          // For all client visitors: Deployed content from GitHub is the single global truth!
-          callback(deployed.showreels);
-        }
+        authoritativeShowreels = deployed.showreels;
+        callback(deployed.showreels);
       })
       .catch(() => {});
   };
@@ -164,12 +243,11 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
   const handleVisibility = () => {
     if (document.visibilityState === 'visible') fetchGlobalShowreels();
   };
-  const pollInterval = setInterval(fetchGlobalShowreels, 10000);
+  const pollInterval = setInterval(fetchGlobalShowreels, 15000);
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
-    const updated = getLocalShowreels();
-    callback(mergeShowreels(updated, DEFAULT_VIDEOS));
+    callback(getAuthoritativeShowreels());
   };
 
   window.addEventListener('storage', handleUpdate);
@@ -191,9 +269,8 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
  * Subscribes to real-time Graphic Design list with authoritative global synchronization.
  */
 export function subscribeToGraphics(callback: (projects: GraphicProject[]) => void): () => void {
-  // Instant initial data
-  const initialLocal = getLocalGraphics();
-  callback(mergeGraphics(initialLocal, DEFAULT_GRAPHICS));
+  // Instant initial data: Guaranteed to be authoritative
+  callback(getAuthoritativeGraphics());
 
   let isCleanedUp = false;
 
@@ -202,15 +279,8 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
       .then((deployed) => {
         if (isCleanedUp || !deployed || !deployed.graphics || deployed.graphics.length === 0) return;
 
-        const hasAdminSession = Boolean(localStorage.getItem('zolepto_admin_session'));
-        if (hasAdminSession) {
-          const currentLocal = getLocalGraphics();
-          const merged = mergeGraphics(currentLocal, deployed.graphics);
-          callback(merged);
-        } else {
-          // For all client visitors: Deployed content from GitHub is the single global truth!
-          callback(deployed.graphics);
-        }
+        authoritativeGraphics = deployed.graphics;
+        callback(deployed.graphics);
       })
       .catch(() => {});
   };
@@ -221,12 +291,11 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
   const handleVisibility = () => {
     if (document.visibilityState === 'visible') fetchGlobalGraphics();
   };
-  const pollInterval = setInterval(fetchGlobalGraphics, 10000);
+  const pollInterval = setInterval(fetchGlobalGraphics, 15000);
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
-    const updated = getLocalGraphics();
-    callback(mergeGraphics(updated, DEFAULT_GRAPHICS));
+    callback(getAuthoritativeGraphics());
   };
 
   window.addEventListener('storage', handleUpdate);
@@ -281,8 +350,8 @@ export async function addShowreel(input: NewShowreelInput): Promise<PortfolioOpe
     tags: input.tags && input.tags.length > 0 ? input.tags : ['Commercial', 'Editing'],
   };
 
-  const localItems = getLocalShowreels();
-  saveLocalShowreels([newDoc, ...localItems]);
+  const currentList = getAuthoritativeShowreels();
+  saveLocalShowreels([newDoc, ...currentList]);
 
   return { id: newId, isCloudSynced: true };
 }
@@ -292,8 +361,9 @@ export async function addShowreel(input: NewShowreelInput): Promise<PortfolioOpe
  */
 export async function deleteShowreel(id: string): Promise<void> {
   hideProjectId(id);
-  const localItems = getLocalShowreels().filter((item) => item.id !== id);
-  saveLocalShowreels(localItems);
+  const currentList = getAuthoritativeShowreels();
+  const updatedList = currentList.filter((item) => item.id !== id);
+  saveLocalShowreels(updatedList);
 }
 
 /**
@@ -303,8 +373,9 @@ export async function updateShowreel(
   id: string,
   updates: Partial<VideoProject> & { youtubeUrl?: string }
 ): Promise<PortfolioOperationResult> {
-  const existingShowreels = mergeShowreels(getLocalShowreels(), DEFAULT_VIDEOS);
-  const target = existingShowreels.find((p) => p.id === id) || {
+  const currentList = getAuthoritativeShowreels();
+  const index = currentList.findIndex((p) => p.id === id);
+  const target = index !== -1 ? currentList[index] : {
     id,
     title: 'Showreel',
     client: 'Client Project',
@@ -342,8 +413,15 @@ export async function updateShowreel(
     tags: updates.tags || target.tags,
   };
 
-  const localItems = getLocalShowreels().filter((item) => item.id !== id);
-  saveLocalShowreels([updatedDoc, ...localItems]);
+  let updatedList: VideoProject[];
+  if (index !== -1) {
+    updatedList = [...currentList];
+    updatedList[index] = updatedDoc;
+  } else {
+    updatedList = [updatedDoc, ...currentList];
+  }
+
+  saveLocalShowreels(updatedList);
 
   return { id, isCloudSynced: true };
 }
@@ -376,8 +454,8 @@ export async function addGraphicDesign(input: NewGraphicInput): Promise<Portfoli
     tools: input.tools && input.tools.length > 0 ? input.tools : ['Photoshop'],
   };
 
-  const localItems = getLocalGraphics();
-  saveLocalGraphics([newDoc, ...localItems]);
+  const currentList = getAuthoritativeGraphics();
+  saveLocalGraphics([newDoc, ...currentList]);
 
   return {
     id: newId,
@@ -390,8 +468,9 @@ export async function addGraphicDesign(input: NewGraphicInput): Promise<Portfoli
  */
 export async function deleteGraphicDesign(id: string, _imageUrl?: string): Promise<void> {
   hideProjectId(id);
-  const localItems = getLocalGraphics().filter((item) => item.id !== id);
-  saveLocalGraphics(localItems);
+  const currentList = getAuthoritativeGraphics();
+  const updatedList = currentList.filter((item) => item.id !== id);
+  saveLocalGraphics(updatedList);
 }
 
 /**
@@ -401,8 +480,9 @@ export async function updateGraphicDesign(
   id: string,
   updates: Partial<GraphicProject> & { file?: File | null }
 ): Promise<PortfolioOperationResult> {
-  const existingGraphics = mergeGraphics(getLocalGraphics(), DEFAULT_GRAPHICS);
-  const target = existingGraphics.find((p) => p.id === id) || {
+  const currentList = getAuthoritativeGraphics();
+  const index = currentList.findIndex((p) => p.id === id);
+  const target = index !== -1 ? currentList[index] : {
     id,
     title: 'Design Project',
     client: 'Studio Art',
@@ -428,8 +508,15 @@ export async function updateGraphicDesign(
     tools: updates.tools || target.tools,
   };
 
-  const localItems = getLocalGraphics().filter((item) => item.id !== id);
-  saveLocalGraphics([updatedDoc, ...localItems]);
+  let updatedList: GraphicProject[];
+  if (index !== -1) {
+    updatedList = [...currentList];
+    updatedList[index] = updatedDoc;
+  } else {
+    updatedList = [updatedDoc, ...currentList];
+  }
+
+  saveLocalGraphics(updatedList);
 
   return { id, isCloudSynced: true };
 }

@@ -167,6 +167,26 @@ export async function testGitHubConnection(config: GitHubSyncConfig): Promise<{
   }
 }
 
+export function commitAuthoritativeLocalState(fullData: PortfolioContentPayload) {
+  try {
+    localStorage.setItem(LAST_PUSHED_PAYLOAD_KEY, JSON.stringify(fullData));
+    if (fullData.showreels) {
+      localStorage.setItem('zolepto_custom_showreels', JSON.stringify(fullData.showreels));
+    }
+    if (fullData.graphics) {
+      localStorage.setItem('zolepto_custom_graphics', JSON.stringify(fullData.graphics));
+    }
+    if (fullData.siteSettings) {
+      localStorage.setItem('zolepto_site_settings', JSON.stringify(fullData.siteSettings));
+    }
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('zolepto:portfolio-changed'));
+    window.dispatchEvent(new CustomEvent(CONTENT_PUBLISHED_EVENT, { detail: fullData }));
+  } catch (e) {
+    console.warn('Failed to commit authoritative local state', e);
+  }
+}
+
 /**
  * Pushes the full portfolio state to GitHub via Direct Auto-Commit to public/content.json,
  * while ALSO updating the instant Global Cloud Store so clients see updates in <200ms worldwide.
@@ -201,6 +221,9 @@ export async function pushPortfolioToGitHub(
     showreels: payload.showreels,
     graphics: payload.graphics,
   };
+
+  // Step 0: Make local and subscription state ABSOLUTE and IMMEDIATELY true
+  commitAuthoritativeLocalState(fullData);
 
   // Step 1: ALWAYS publish immediately to Global Cloud Store (< 200ms worldwide propagation)
   const cloudSynced = await publishToGlobalCloud(fullData);

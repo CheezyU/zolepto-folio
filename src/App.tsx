@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/Header';
@@ -83,7 +83,12 @@ function MainApp() {
     };
   }, []);
 
-  // Real-time live subscriptions and Smart Auto-Update Refresher Monitor
+  const currentViewRef = useRef(currentView);
+  currentViewRef.current = currentView;
+  const isVideoActiveRef = useRef(activeTheaterProject !== null);
+  isVideoActiveRef.current = activeTheaterProject !== null;
+
+  // Real-time live subscriptions and Smart Auto-Update Refresher Monitor (Mount once)
   useEffect(() => {
     const unsubShowreels = subscribeToShowreels((items) => {
       setShowreels(items);
@@ -97,8 +102,8 @@ function MainApp() {
 
     // Smart auto-refresher monitor that checks for genuine content.json / cloud store updates
     const unsubMonitor = startSmartUpdateMonitor({
-      isAdminActive: () => currentView === 'admin' || checkIsAdminRoute(),
-      isVideoActive: () => activeTheaterProject !== null,
+      isAdminActive: () => currentViewRef.current === 'admin' || checkIsAdminRoute(),
+      isVideoActive: () => isVideoActiveRef.current,
       onContentUpdated: (newContent) => {
         if (newContent.siteSettings) {
           setSiteSettings((prev) => ({ ...prev, ...newContent.siteSettings }));
@@ -118,7 +123,7 @@ function MainApp() {
       unsubSettings();
       unsubMonitor();
     };
-  }, [currentView, activeTheaterProject]);
+  }, []);
 
   const [activeWorkTab, setActiveWorkTab] = useState<'all' | 'showreels' | 'design'>('all');
 

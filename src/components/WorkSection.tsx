@@ -142,16 +142,16 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-14 gap-6"
+          className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-14 gap-6 relative z-40"
         >
-          <div className="relative">
-            <div className="flex items-center gap-3">
+          <div className="relative z-40">
+            <div className="flex items-center gap-3 relative">
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
                 What I Build
               </h2>
 
               {/* Hand-drawn Question Mark Button Badge */}
-              <div className="relative inline-block">
+              <div className="relative inline-flex items-center">
                 <button
                   id="what-i-build-question-badge"
                   type="button"
@@ -179,7 +179,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                   </svg>
                 </button>
 
-                {/* Hand-drawn Tooltip popover with Let's Go button */}
+                {/* Hand-drawn Tooltip popover placed relatively near the question mark button, on top of everything */}
                 <AnimatePresence>
                   {showCustomPrompt && (
                     <>
@@ -189,19 +189,22 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setShowCustomPrompt(false)}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-xs z-[80] sm:hidden"
+                        className="fixed inset-0 bg-black/40 backdrop-blur-2xs z-[95] sm:hidden"
                       />
 
                       <motion.div
                         id="custom-inquiry-tooltip"
-                        initial={{ opacity: 0, y: 12, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
                         transition={{ type: 'spring', stiffness: 420, damping: 30 }}
-                        className="fixed bottom-6 left-4 right-4 sm:bottom-auto sm:left-0 sm:right-auto sm:top-full sm:mt-3 z-[90] sm:w-84 max-w-sm mx-auto sm:mx-0 p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white shadow-[0_25px_60px_rgba(0,0,0,0.5)] border border-zinc-800"
+                        className="absolute left-[-170px] xs:left-[-190px] top-full mt-3 sm:top-1/2 sm:-translate-y-1/2 sm:left-full sm:mt-0 sm:ml-4 z-[100] w-[calc(100vw-2.5rem)] max-w-xs sm:w-84 p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-zinc-800"
                       >
-                        {/* Subtle desktop arrow indicator pointing up to the question mark */}
-                        <div className="hidden sm:block absolute -top-1.5 left-4 w-3 h-3 bg-zinc-950 border-t border-l border-zinc-800 rotate-45" />
+                        {/* Desktop arrow indicator pointing left towards the question mark */}
+                        <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-3 bg-zinc-950 border-b border-l border-zinc-800 rotate-45" />
+
+                        {/* Mobile arrow indicator pointing up towards question mark */}
+                        <div className="sm:hidden absolute -top-1.5 right-12 w-3 h-3 bg-zinc-950 border-t border-l border-zinc-800 rotate-45" />
 
                         {/* Close button */}
                         <button

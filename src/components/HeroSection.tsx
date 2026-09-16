@@ -25,7 +25,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="hero"
-      className="relative pt-32 sm:pt-40 pb-28 sm:pb-36 overflow-hidden bg-[#0d0e13] text-zinc-100"
+      className="relative pt-24 sm:pt-40 pb-16 sm:pb-36 overflow-hidden bg-[#0d0e13] text-zinc-100"
     >
       {/* Upper Page Studio Atmosphere & Creator Backdrop */}
       <div className="absolute inset-0 pointer-events-none">
@@ -55,42 +55,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         
-        {/* Top Director's Status Bar with Customizable Pill */}
-        <motion.div
-          initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-3 mb-8 sm:mb-12"
-        >
-          {/* Availability Status Pill - Customizable in Admin */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
-            {showDot && (
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-              </span>
-            )}
-            <span className="text-xs font-medium text-zinc-200 tracking-tight">
-              {availability}
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Main Grid: Left Headline & Story / Right Personal Identity Showcase ("Where we show our self") */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        {/* Main Grid: Order optimized so avatar face is seen immediately in mobile view */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-center">
           
-          {/* Avatar Column: In mobile view, comes FIRST so the creator's face builds immediate identity & trust */}
+          {/* Creator Profile Avatar - Appears FIRST on mobile to immediately show face and establish identity */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="order-first lg:order-last lg:col-span-5 flex items-center justify-center lg:justify-end"
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="order-first lg:order-last lg:col-span-5 flex flex-col items-center justify-center lg:justify-end"
           >
             <div className="relative group flex flex-col items-center">
-              {/* Circular profile container - ready for future professional photo / avatar */}
+              {/* Circular profile container */}
               <div
                 id="hero-profile-avatar-slot"
-                className="relative w-32 h-32 sm:w-44 sm:h-44 lg:w-72 lg:h-72 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/5"
+                className="relative w-28 h-28 sm:w-44 sm:h-44 lg:w-72 lg:h-72 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/5"
               >
                 {/* Mock torso half-body headshot silhouette */}
                 <svg
@@ -108,20 +87,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
                 </svg>
 
-                {/* Subtle active status dot on avatar */}
-                <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs" title="Online / Direct Direction" />
+                {/* Active status dot on avatar */}
+                <div
+                  className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs"
+                  title="Online / Direct Direction"
+                />
+              </div>
+
+              {/* Status Pill on mobile right below avatar, or inline */}
+              <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
+                {showDot && (
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                  </span>
+                )}
+                <span className="text-[11px] sm:text-xs font-medium text-zinc-200 tracking-tight">
+                  {availability}
+                </span>
               </div>
             </div>
           </motion.div>
 
-          {/* Left Column: Bold Display Typography & CTAs */}
-          <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
+          {/* Left Column: Bold Display Typography, Narrative, CTAs & Metrics */}
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
             <motion.div
-              initial={{ opacity: 0, y: 24, filter: 'blur(12px)' }}
+              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1]">
+              <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.12]">
                 {line1} <br />
                 <span className="text-zinc-400 font-semibold">{line2}</span>
               </h1>
@@ -129,60 +124,72 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Breathable narrative description */}
             <motion.p
-              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+              initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-sm sm:text-base md:text-lg text-zinc-300 max-w-xl font-body leading-relaxed font-normal"
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-xs sm:text-base md:text-lg text-zinc-300 max-w-xl mx-auto lg:mx-0 font-body leading-relaxed font-normal"
             >
               {subtitle}
             </motion.p>
 
             {/* Primary Actions */}
             <motion.div
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 relative"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="pt-1 sm:pt-2 flex flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-4 relative"
             >
               <button
                 id="hero-play-reel-btn"
                 onClick={onPlayFeatured}
-                className="group inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white text-zinc-950 font-semibold text-xs sm:text-sm tracking-wide hover:bg-zinc-100 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md cursor-pointer"
+                className="group inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full bg-white text-zinc-950 font-semibold text-xs sm:text-sm tracking-wide hover:bg-zinc-100 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md cursor-pointer"
               >
                 <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-zinc-950 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current ml-0.5" />
                 </div>
-                <span>Watch 2026 Showreel</span>
+                <span>Watch Showreel</span>
               </button>
 
               <button
                 id="hero-start-cta"
                 onClick={() => onNavigate('start')}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-white text-xs sm:text-sm tracking-wide font-semibold transition-all duration-200 hover:border-white/30 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-white text-xs sm:text-sm tracking-wide font-semibold transition-all duration-200 hover:border-white/30 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
               >
                 <span>Start a Project</span>
-                <ArrowUpRight className="w-4 h-4 text-zinc-400" />
+                <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400" />
               </button>
             </motion.div>
 
-            {/* Minimalist Trust & Credibility Metrics - Non-stacking 3-column horizontal grid on mobile */}
+            {/* Non-Stacking Horizontal Credibility Metrics on Mobile */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.45 }}
-              className="pt-5 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-6 text-left"
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="pt-4 sm:pt-5 border-t border-white/10 grid grid-cols-3 divide-x divide-white/10 text-center sm:text-left"
             >
-              <div className="space-y-0.5">
-                <span className="block font-bold text-white font-display text-base sm:text-lg tracking-tight">14M+</span>
-                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">Organic Views</span>
+              <div className="px-1.5 sm:px-0 space-y-0.5">
+                <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight">
+                  14M+
+                </span>
+                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">
+                  Organic Views
+                </span>
               </div>
-              <div className="space-y-0.5 border-l border-white/10 pl-2.5 sm:pl-6">
-                <span className="block font-bold text-white font-display text-base sm:text-lg tracking-tight">4+ Years</span>
-                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">Multimedia & Creation</span>
+              <div className="px-1.5 sm:pl-6 space-y-0.5">
+                <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight whitespace-nowrap">
+                  4+ Years
+                </span>
+                <span className="block text-[9px] sm:text-xs font-mono text-zinc-400 leading-tight">
+                  Multimedia & Content Creation
+                </span>
               </div>
-              <div className="space-y-0.5 border-l border-white/10 pl-2.5 sm:pl-6">
-                <span className="block font-bold text-white font-display text-base sm:text-lg tracking-tight">1-on-1</span>
-                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">Direct Direction</span>
+              <div className="px-1.5 sm:pl-6 space-y-0.5">
+                <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight">
+                  1-on-1
+                </span>
+                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">
+                  Direct Direction
+                </span>
               </div>
             </motion.div>
           </div>

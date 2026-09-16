@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Check, Copy, ExternalLink, Lock } from 'lucide-react';
+import { Mail, Check, Copy, ExternalLink } from 'lucide-react';
 import { ROTATING_ROLES } from '../data/portfolioData';
 
 interface FooterBarProps {
@@ -105,20 +105,6 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin }) => {
             {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-zinc-400" />}
             <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
           </button>
-
-          {/* Discreet Studio Access */}
-          {onOpenAdmin && (
-            <button
-              id="admin-portal-access-btn"
-              type="button"
-              onClick={onOpenAdmin}
-              className="p-2 rounded-full text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
-              title="Studio Admin Access"
-              aria-label="Studio Admin Access"
-            >
-              <Lock className="w-3.5 h-3.5" />
-            </button>
-          )}
         </div>
       </div>
     </footer>

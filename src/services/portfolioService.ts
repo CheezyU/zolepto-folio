@@ -96,11 +96,13 @@ export function getLocalShowreels(): VideoProject[] {
   }
 }
 
-export function saveLocalShowreels(items: VideoProject[]) {
+export function saveLocalShowreels(items: VideoProject[], dispatch = true) {
   try {
     localStorage.setItem(LOCAL_SHOWREELS_KEY, JSON.stringify(items));
-    window.dispatchEvent(new Event('storage'));
-    window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
+    if (dispatch) {
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
+    }
   } catch (err) {
     console.warn('Failed to save to local storage', err);
   }
@@ -115,18 +117,20 @@ export function getLocalGraphics(): GraphicProject[] {
   }
 }
 
-export function saveLocalGraphics(items: GraphicProject[]) {
+export function saveLocalGraphics(items: GraphicProject[], dispatch = true) {
   try {
     localStorage.setItem(LOCAL_GRAPHICS_KEY, JSON.stringify(items));
-    window.dispatchEvent(new Event('storage'));
-    window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
+    if (dispatch) {
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
+    }
   } catch (err) {
     console.warn('Failed to save to local storage', err);
   }
 }
 
 /**
- * Subscribes to real-time Showreels list (GitHub & Vercel production ready).
+ * Subscribes to real-time Showreels list with authoritative global synchronization.
  */
 export function subscribeToShowreels(callback: (projects: VideoProject[]) => void): () => void {
   // Instant initial data
@@ -135,13 +139,29 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
 
   let isCleanedUp = false;
 
-  // Background fetch from public/content.json (GitHub & Vercel live updates)
-  loadLivePortfolioContent().then((deployed) => {
-    if (isCleanedUp || !deployed || !deployed.showreels) return;
-    const currentLocal = getLocalShowreels();
-    const merged = mergeShowreels(currentLocal, deployed.showreels);
-    callback(merged);
-  }).catch(() => {});
+  const fetchGlobalShowreels = () => {
+    loadLivePortfolioContent()
+      .then((deployed) => {
+        if (isCleanedUp || !deployed || !deployed.showreels || deployed.showreels.length === 0) return;
+
+        const hasAdminSession = Boolean(localStorage.getItem('zolepto_admin_session'));
+        if (hasAdminSession) {
+          const currentLocal = getLocalShowreels();
+          const merged = mergeShowreels(currentLocal, deployed.showreels);
+          callback(merged);
+        } else {
+          // For all client visitors: Deployed content from GitHub is the single global truth!
+          callback(deployed.showreels);
+        }
+      })
+      .catch(() => {});
+  };
+
+  fetchGlobalShowreels();
+
+  // Re-check on focus or tab active
+  const handleFocus = () => fetchGlobalShowreels();
+  const pollInterval = setInterval(fetchGlobalShowreels, 25000);
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
@@ -151,16 +171,19 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
 
   window.addEventListener('storage', handleUpdate);
   window.addEventListener(PORTFOLIO_EVENT, handleUpdate);
+  window.addEventListener('focus', handleFocus);
 
   return () => {
     isCleanedUp = true;
+    clearInterval(pollInterval);
     window.removeEventListener('storage', handleUpdate);
     window.removeEventListener(PORTFOLIO_EVENT, handleUpdate);
+    window.removeEventListener('focus', handleFocus);
   };
 }
 
 /**
- * Subscribes to real-time Graphic Design list (GitHub & Vercel production ready).
+ * Subscribes to real-time Graphic Design list with authoritative global synchronization.
  */
 export function subscribeToGraphics(callback: (projects: GraphicProject[]) => void): () => void {
   // Instant initial data
@@ -169,13 +192,28 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
 
   let isCleanedUp = false;
 
-  // Background fetch from public/content.json (GitHub & Vercel live updates)
-  loadLivePortfolioContent().then((deployed) => {
-    if (isCleanedUp || !deployed || !deployed.graphics) return;
-    const currentLocal = getLocalGraphics();
-    const merged = mergeGraphics(currentLocal, deployed.graphics);
-    callback(merged);
-  }).catch(() => {});
+  const fetchGlobalGraphics = () => {
+    loadLivePortfolioContent()
+      .then((deployed) => {
+        if (isCleanedUp || !deployed || !deployed.graphics || deployed.graphics.length === 0) return;
+
+        const hasAdminSession = Boolean(localStorage.getItem('zolepto_admin_session'));
+        if (hasAdminSession) {
+          const currentLocal = getLocalGraphics();
+          const merged = mergeGraphics(currentLocal, deployed.graphics);
+          callback(merged);
+        } else {
+          // For all client visitors: Deployed content from GitHub is the single global truth!
+          callback(deployed.graphics);
+        }
+      })
+      .catch(() => {});
+  };
+
+  fetchGlobalGraphics();
+
+  const handleFocus = () => fetchGlobalGraphics();
+  const pollInterval = setInterval(fetchGlobalGraphics, 25000);
 
   const handleUpdate = () => {
     if (isCleanedUp) return;
@@ -185,11 +223,14 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
 
   window.addEventListener('storage', handleUpdate);
   window.addEventListener(PORTFOLIO_EVENT, handleUpdate);
+  window.addEventListener('focus', handleFocus);
 
   return () => {
     isCleanedUp = true;
+    clearInterval(pollInterval);
     window.removeEventListener('storage', handleUpdate);
     window.removeEventListener(PORTFOLIO_EVENT, handleUpdate);
+    window.removeEventListener('focus', handleFocus);
   };
 }
 

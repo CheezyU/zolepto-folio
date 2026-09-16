@@ -54,6 +54,33 @@ function MainApp() {
     };
   }, []);
 
+  // Secret Admin Access Hotkey: CTRL + ALT + SHIFT + L (PC / Desktop)
+  useEffect(() => {
+    const handleSecretHotkey = (e: KeyboardEvent) => {
+      // Must have Ctrl (or Cmd), Alt, and Shift held down together with 'L' or 'l'
+      const hasCtrl = e.ctrlKey || e.metaKey;
+      if (hasCtrl && e.altKey && e.shiftKey && (e.key === 'L' || e.key === 'l' || e.code === 'KeyL')) {
+        e.preventDefault();
+        setCurrentView((prev) => {
+          if (prev === 'admin') {
+            if (window.location.hash.toLowerCase().includes('admin')) {
+              window.location.hash = '';
+            }
+            return 'portfolio';
+          } else {
+            window.location.hash = 'admin';
+            return 'admin';
+          }
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleSecretHotkey);
+    return () => {
+      window.removeEventListener('keydown', handleSecretHotkey);
+    };
+  }, []);
+
   // Real-time Firestore subscriptions for Showreels, Graphic Designs, and Site Settings
   useEffect(() => {
     const unsubShowreels = subscribeToShowreels((items) => {

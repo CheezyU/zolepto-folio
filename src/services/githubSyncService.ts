@@ -12,6 +12,12 @@ export interface GitHubSyncConfig {
 export interface PortfolioContentPayload {
   version: string;
   lastUpdated: string;
+  repoSource?: {
+    owner: string;
+    repo: string;
+    branch: string;
+    filePath: string;
+  };
   siteSettings: SiteSettings;
   showreels: VideoProject[];
   graphics: GraphicProject[];
@@ -19,6 +25,7 @@ export interface PortfolioContentPayload {
 
 const GITHUB_CONFIG_KEY = 'zolepto_github_sync_vault';
 const LAST_COMMIT_KEY = 'zolepto_github_last_commit';
+const LAST_PUSHED_PAYLOAD_KEY = 'zolepto_github_live_payload';
 
 export const DEFAULT_GITHUB_CONFIG: GitHubSyncConfig = {
   owner: '',
@@ -128,8 +135,8 @@ export async function testGitHubConnection(config: GitHubSyncConfig): Promise<{
 }
 
 /**
- * Pushes the full portfolio state to GitHub via Method A (Direct Auto-Commit to public/content.json).
- * Vercel listens to repository commits and automatically deploys the update live to all users!
+ * Pushes the full portfolio state to GitHub via Direct Auto-Commit to public/content.json.
+ * Also embeds repo metadata so clients can pull real-time GitHub raw updates instantly with zero cache delay!
  */
 export async function pushPortfolioToGitHub(
   payload: {
@@ -156,6 +163,12 @@ export async function pushPortfolioToGitHub(
   const fullData: PortfolioContentPayload = {
     version: '1.0.0',
     lastUpdated: new Date().toISOString(),
+    repoSource: {
+      owner: cleanOwner,
+      repo: cleanRepo,
+      branch,
+      filePath,
+    },
     siteSettings: payload.siteSettings,
     showreels: payload.showreels,
     graphics: payload.graphics,
@@ -213,7 +226,9 @@ export async function pushPortfolioToGitHub(
     const result = await putRes.json();
     const commitUrl = result.commit?.html_url || `https://github.com/${cleanOwner}/${cleanRepo}/commits/${branch}`;
 
+    // Cache the pushed payload in local vault so current device has instant confirmation
     try {
+      localStorage.setItem(LAST_PUSHED_PAYLOAD_KEY, JSON.stringify(fullData));
       localStorage.setItem(
         LAST_COMMIT_KEY,
         JSON.stringify({
@@ -227,7 +242,7 @@ export async function pushPortfolioToGitHub(
 
     return {
       success: true,
-      message: `Committed successfully to GitHub branch "${branch}"! Vercel is now deploying your changes live.`,
+      message: `Committed successfully to GitHub branch "${branch}"! Real-time global sync active.`,
       commitUrl,
       sha: result.content?.sha,
     };
@@ -240,20 +255,88 @@ export async function pushPortfolioToGitHub(
 }
 
 /**
- * Loads the live portfolio content from public/content.json if deployed.
+ * Loads the live portfolio content with multi-tiered fallback:
+ * 1. Fast Cache-busted fetch to /content.json
+ * 2. If repoSource is known or configured, checks GitHub Raw endpoint for instant zero-delay sync
+ * 3. Falls back to local cached payload if network is offline
  */
 export async function loadLivePortfolioContent(): Promise<PortfolioContentPayload | null> {
-  try {
-    const res = await fetch(`/content.json?t=${Date.now()}`, {
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data && data.siteSettings && (data.showreels || data.graphics)) {
-      return data as PortfolioContentPayload;
+  // First, check if GitHub repo is known from config or previous payload
+  const config = getGitHubConfig();
+  const timestamp = Date.now();
+
+  // Tier 1: Try GitHub Raw if repository is public and configured (bypasses Vercel build delay completely!)
+  if (config.owner && config.repo) {
+    const rawUrl = `https://raw.githubusercontent.com/${encodeURIComponent(config.owner.trim())}/${encodeURIComponent(config.repo.trim())}/${encodeURIComponent(config.branch.trim() || 'main')}/${config.filePath.trim() || 'public/content.json'}?_nocache=${timestamp}`;
+    try {
+      const rawRes = await fetch(rawUrl, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+        },
+      });
+      if (rawRes.ok) {
+        const rawData = await rawRes.json();
+        if (rawData && rawData.siteSettings && (rawData.showreels || rawData.graphics)) {
+          return rawData as PortfolioContentPayload;
+        }
+      }
+    } catch {
+      // GitHub raw fallback to local /content.json
     }
-    return null;
-  } catch {
-    return null;
   }
+
+  // Tier 2: Fetch deployed /content.json with rigorous cache-busting headers
+  try {
+    const res = await fetch(`/content.json?_t=${timestamp}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Accept: 'application/json',
+      },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.siteSettings && (data.showreels || data.graphics)) {
+        // If content.json defines repoSource and we don't have it configured locally yet, try fetching GitHub Raw if newer
+        if (data.repoSource?.owner && data.repoSource?.repo) {
+          try {
+            const rawGitHubUrl = `https://raw.githubusercontent.com/${encodeURIComponent(data.repoSource.owner)}/${encodeURIComponent(data.repoSource.repo)}/${encodeURIComponent(data.repoSource.branch || 'main')}/${data.repoSource.filePath || 'public/content.json'}?_nocache=${timestamp}`;
+            const ghRes = await fetch(rawGitHubUrl, { cache: 'no-store' });
+            if (ghRes.ok) {
+              const ghData = await ghRes.json();
+              if (
+                ghData?.lastUpdated &&
+                data.lastUpdated &&
+                new Date(ghData.lastUpdated).getTime() > new Date(data.lastUpdated).getTime()
+              ) {
+                return ghData as PortfolioContentPayload;
+              }
+            }
+          } catch {
+            // Keep local data
+          }
+        }
+
+        return data as PortfolioContentPayload;
+      }
+    }
+  } catch {
+    // Network failure
+  }
+
+  // Tier 3: Local cached payload fallback
+  try {
+    const cached = localStorage.getItem(LAST_PUSHED_PAYLOAD_KEY);
+    if (cached) {
+      return JSON.parse(cached) as PortfolioContentPayload;
+    }
+  } catch {
+    // ignore
+  }
+
+  return null;
 }

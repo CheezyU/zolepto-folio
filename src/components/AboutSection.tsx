@@ -34,13 +34,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
     {
       id: 1,
       number: '01',
-      title: 'Identifying You',
+      title: settings?.step1Title || 'Identifying You',
       tag: '[ PHASE 01 // SIGNAL EXTRACTION ]',
       timecode: 'TC 00:00:00:00',
-      subtitle: 'The Core Signal & Creative DNA',
+      subtitle: settings?.step1Subtitle || 'The Core Signal & Creative DNA',
       description:
+        settings?.step1Description ||
         'Before a single clip is dragged to the timeline or a cut is made, we identify you. Who you are, what your voice stands for, who your real audience is, and the psychological hook that makes your content undeniably yours. We don’t copy trends or use cookie-cutter templates—we locate your authentic edge and reverse-engineer the entire narrative around it.',
-      handwrittenNote: '“Who you are > fancy transitions. This is where real retention is born.”',
+      handwrittenNote:
+        settings?.step1Note ||
+        '“Who you are > fancy transitions. This is where real retention is born.”',
       doodleType: 'circle-signal',
       accentColor: 'text-zinc-900',
       tagColor: 'bg-zinc-100 text-zinc-800',
@@ -48,13 +51,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
     {
       id: 2,
       number: '02',
-      title: 'Deconstructing the Narrative',
+      title: settings?.step2Title || 'Deconstructing the Narrative',
       tag: '[ PHASE 02 // THE BREAKDOWN ]',
       timecode: 'TC 00:01:24:12',
-      subtitle: 'Ruthless Dissection & Trimming the Fat',
+      subtitle: settings?.step2Subtitle || 'Ruthless Dissection & Trimming the Fat',
       description:
+        settings?.step2Description ||
         'Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.',
-      handwrittenNote: '✂ Cut the safety filler. If it doesn’t push the story forward, it dies here.',
+      handwrittenNote:
+        settings?.step2Note ||
+        '✂ Cut the safety filler. If it doesn’t push the story forward, it dies here.',
       doodleType: 'scissor-cut',
       accentColor: 'text-zinc-900',
       tagColor: 'bg-zinc-100 text-zinc-800',
@@ -62,13 +68,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
     {
       id: 3,
       number: '03',
-      title: 'Emotional Rhythm & Subconscious Sound',
+      title: settings?.step3Title || 'Emotional Rhythm & Subconscious Sound',
       tag: '[ PHASE 03 // ACOUSTIC ARCHITECTURE ]',
       timecode: 'TC 00:02:48:06',
-      subtitle: 'The Kinetic Pulse & Visceral Foley',
+      subtitle: settings?.step3Subtitle || 'The Kinetic Pulse & Visceral Foley',
       description:
+        settings?.step3Description ||
         'Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.',
-      handwrittenNote: 'Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧',
+      handwrittenNote:
+        settings?.step3Note ||
+        'Subconscious audio cues [40Hz - 12kHz] — feel it in the headphones 🎧',
       doodleType: 'sound-wave',
       accentColor: 'text-zinc-900',
       tagColor: 'bg-zinc-100 text-zinc-800',
@@ -76,13 +85,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
     {
       id: 4,
       number: '04',
-      title: 'Visual Prestige & Delivery',
+      title: settings?.step4Title || 'Visual Prestige & Delivery',
       tag: '[ PHASE 04 // MASTER POLISH & LAUNCH ]',
       timecode: 'TC 00:04:12:00',
-      subtitle: 'Color Science, Key-Art & Cultural Authority',
+      subtitle: settings?.step4Subtitle || 'Color Science, Key-Art & Cultural Authority',
       description:
+        settings?.step4Description ||
         'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.',
-      handwrittenNote: '✦ Ready for export. Approved for master release across all formats.',
+      handwrittenNote:
+        settings?.step4Note ||
+        '✦ Ready for export. Approved for master release across all formats.',
       doodleType: 'star-master',
       accentColor: 'text-zinc-900',
       tagColor: 'bg-zinc-100 text-zinc-800',
@@ -217,11 +229,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
             </div>
 
             <h3 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950">
-              How the story unfolds.
+              {settings?.workshopHeading || 'How the story unfolds.'}
             </h3>
 
             <p className="mt-3 text-base sm:text-lg text-zinc-600 font-body">
-              No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.
+              {settings?.workshopSubtitle ||
+                'No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.'}
             </p>
 
             {/* Blueprint ruler simulation */}

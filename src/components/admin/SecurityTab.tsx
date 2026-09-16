@@ -3,14 +3,12 @@ import {
   ShieldCheck,
   Lock,
   Key,
-  Smartphone,
-  Copy,
-  Check,
   RefreshCw,
   AlertCircle,
   CheckCircle2,
   Eye,
   EyeOff,
+  ShieldAlert,
 } from 'lucide-react';
 import { useAuth, STRICT_ADMIN_EMAIL } from '../../context/AuthContext';
 import { SecurityLogEntry } from '../../types';
@@ -21,14 +19,8 @@ interface SecurityTabProps {
 }
 
 export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLogs }) => {
-  const {
-    twoFactorSettings,
-    regenerateTwoFactorSecret,
-    setMasterPassword,
-    primaryAdminEmail,
-  } = useAuth();
+  const { setMasterPassword, primaryAdminEmail, failedAttempts, isLockedOut } = useAuth();
 
-  const [copiedKey, setCopiedKey] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,13 +28,6 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
     type: 'success' | 'error';
     message: string;
   } | null>(null);
-  const [showRegenConfirm, setShowRegenConfirm] = useState(false);
-
-  const handleCopyKey = () => {
-    navigator.clipboard.writeText(twoFactorSettings.secret);
-    setCopiedKey(true);
-    setTimeout(() => setCopiedKey(false), 2000);
-  };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,10 +69,10 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
     <div className="max-w-4xl space-y-8 animate-in fade-in">
       <div>
         <h2 className="font-display text-2xl font-bold text-zinc-900">
-          Security & Access Hardening
+          Security & Access Controls
         </h2>
         <p className="text-xs text-zinc-500 mt-1">
-          Master authentication perimeter, TOTP 2FA parameters, and security audit log.
+          Master administrative credentials, brute-force rate limiter, and security audit log.
         </p>
       </div>
 
@@ -103,83 +88,17 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-zinc-200">
-          <span className="text-[11px] font-mono text-zinc-400 block">TWO-FACTOR (2FA)</span>
-          <p className="text-base font-bold text-emerald-600 mt-1">RFC 6238 TOTP Active</p>
-          <p className="text-xs text-zinc-500 mt-0.5">Google Authenticator Enforced</p>
+          <span className="text-[11px] font-mono text-zinc-400 block">AUTHENTICATION PROTOCOL</span>
+          <p className="text-base font-bold text-zinc-900 mt-1">Direct Master Key</p>
+          <p className="text-xs text-zinc-500 mt-0.5">Encrypted Local Vault Verification</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-zinc-200">
           <span className="text-[11px] font-mono text-zinc-400 block">LOCKOUT PROTECTION</span>
-          <p className="text-base font-bold text-zinc-900 mt-1">5-Attempt Rate Limiter</p>
-          <p className="text-xs text-zinc-500 mt-0.5">Auto-freezes on brute-force</p>
-        </div>
-      </div>
-
-      {/* Two-Factor Authentication (2FA) Management Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-zinc-200 shadow-xs space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center">
-              <Smartphone className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-display font-bold text-lg text-zinc-900">
-                Two-Factor Authentication (TOTP 2FA)
-              </h3>
-              <p className="text-xs text-zinc-500 mt-0.5">
-                Compatible with Google Authenticator, 1Password, Microsoft Authenticator, and Apple Passwords.
-              </p>
-            </div>
-          </div>
-
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700 font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>ARMED</span>
-          </span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
-          <p className="text-xs font-mono text-zinc-600 uppercase tracking-wider">
-            Your Authenticator Secret Key (Base32)
+          <p className="text-base font-bold text-zinc-900 mt-1">
+            {isLockedOut ? 'Lockout Active' : '5-Attempt Rate Limiter'}
           </p>
-          <div className="flex items-center gap-3">
-            <code className="px-3 py-2 rounded-xl bg-white border border-zinc-200 font-mono text-sm text-zinc-900 tracking-wider flex-1 select-all font-semibold">
-              {twoFactorSettings.secret}
-            </code>
-            <button
-              type="button"
-              onClick={handleCopyKey}
-              className="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-mono text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
-            >
-              {copiedKey ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-              <span>{copiedKey ? 'Copied' : 'Copy Key'}</span>
-            </button>
-          </div>
-          <p className="text-[11px] text-zinc-500">
-            Open Google Authenticator → Tap <strong>+</strong> → Select <strong>Enter a setup key</strong> → Set Account Name to <em>Zolepto Studio</em> and paste this key.
-          </p>
-        </div>
-
-        {/* Emergency Backup Codes Section */}
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-mono uppercase tracking-wider text-zinc-700 font-semibold">
-              Emergency One-Time Recovery Codes ({twoFactorSettings.backupCodes.length} remaining)
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs">
-            {twoFactorSettings.backupCodes.map((code) => (
-              <div
-                key={code}
-                className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-800 text-center select-all font-semibold"
-              >
-                {code}
-              </div>
-            ))}
-          </div>
-          <p className="text-[11px] text-zinc-500">
-            Keep these emergency codes safe. Each code can be entered into the 2FA login screen if your phone is unavailable.
-          </p>
+          <p className="text-xs text-zinc-500 mt-0.5">Auto-freezes on brute force</p>
         </div>
       </div>
 
@@ -191,7 +110,7 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
             <span>Update Master Admin Password</span>
           </h3>
           <p className="text-xs text-zinc-500 mt-1">
-            Choose a strong custom password for your administrator account.
+            Change the master password engraved in your local system. Must be at least 8 characters.
           </p>
         </div>
 
@@ -215,7 +134,7 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
         <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
           <div>
             <label className="block text-xs font-mono uppercase tracking-wider text-zinc-700 mb-1">
-              New Master Password (Min. 8 chars)
+              New Master Password
             </label>
             <div className="relative">
               <input
@@ -230,7 +149,7 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-zinc-400 hover:text-zinc-900"
+                className="absolute right-3 top-2.5 text-zinc-400 hover:text-zinc-900 cursor-pointer"
                 title={showPassword ? 'Hide' : 'Show'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -271,7 +190,7 @@ export const SecurityTab: React.FC<SecurityTabProps> = ({ auditLogs, onRefreshLo
           </h3>
           <button
             onClick={onRefreshLogs}
-            className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900"
+            className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900 cursor-pointer"
             title="Refresh logs"
           >
             <RefreshCw className="w-3.5 h-3.5" />

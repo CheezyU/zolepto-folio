@@ -59,6 +59,7 @@ import {
 } from '../services/siteSettingsService';
 import { GitHubSyncTab } from './admin/GitHubSyncTab';
 import { SecurityTab } from './admin/SecurityTab';
+import { VisualCopyEditor } from './admin/VisualCopyEditor';
 import { pushPortfolioToGitHub, getGitHubConfig } from '../services/githubSyncService';
 
 interface AdminPanelProps {
@@ -882,182 +883,44 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
         {/* TAB 3: LIVE WEBSITE COPY EDITOR */}
         {activeTab === 'site-copy' && (
-          <div className="max-w-4xl space-y-8">
-            <div>
-              <h2 className="font-display text-2xl font-bold text-zinc-900">
-                Live Website Copy & Brand Editor
-              </h2>
-              <p className="text-xs text-zinc-500 mt-1">
-                Directly edit headlines, studio bio, availability status, and contact information. All updates persist across devices globally.
-              </p>
-            </div>
+          <VisualCopyEditor
+            settings={siteSettings}
+            onSave={async (updated) => {
+              setSiteSettings(updated);
+              setIsSavingSettings(true);
+              setSettingsStatus(null);
+              try {
+                await updateSiteSettings(updated);
+                appendSecurityLog('Updated Website Copy via Visual WYSIWYG');
+                setSettingsStatus({
+                  type: 'success',
+                  text: 'Site copy updated in real-time! Client displays synchronized.',
+                });
 
-            {settingsStatus && (
-              <div
-                className={`p-4 rounded-xl text-xs flex items-center gap-2 ${
-                  settingsStatus.type === 'success'
-                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                    : 'bg-rose-50 text-rose-800 border border-rose-200'
-                }`}
-              >
-                {settingsStatus.type === 'success' ? (
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                ) : (
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-                )}
-                <span>{settingsStatus.text}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSaveSiteSettings} className="space-y-8">
-              {/* Hero Section Copy */}
-              <div className="p-6 rounded-2xl bg-white border border-zinc-200 space-y-4">
-                <h3 className="font-display font-semibold text-base text-zinc-900 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-zinc-600" />
-                  <span>Hero Section Header</span>
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                      Main Headline (Line 1)
-                    </label>
-                    <input
-                      type="text"
-                      value={siteSettings.heroTitleLine1}
-                      onChange={(e) =>
-                        setSiteSettings((prev) => ({ ...prev, heroTitleLine1: e.target.value }))
-                      }
-                      className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                      Secondary Headline (Line 2)
-                    </label>
-                    <input
-                      type="text"
-                      value={siteSettings.heroTitleLine2}
-                      onChange={(e) =>
-                        setSiteSettings((prev) => ({ ...prev, heroTitleLine2: e.target.value }))
-                      }
-                      className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                    Hero Narrative Subtitle
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={siteSettings.heroSubtitle}
-                    onChange={(e) =>
-                      setSiteSettings((prev) => ({ ...prev, heroSubtitle: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  />
-                </div>
-
-                <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-zinc-700 mb-1.5 flex items-center justify-between">
-                      <span>Availability Status Pill</span>
-                      <span className="text-[10px] font-mono text-zinc-400">Live Hero Badge</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Available for incoming projects!"
-                      value={siteSettings.availabilityStatus}
-                      onChange={(e) =>
-                        setSiteSettings((prev) => ({ ...prev, availabilityStatus: e.target.value }))
-                      }
-                      className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
-                    <p className="text-[10px] text-zinc-400 mt-1">
-                      Controls the glowing green availability pill displayed at the top of the home page.
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                      Direct Contact Email
-                    </label>
-                    <input
-                      type="email"
-                      value={siteSettings.contactEmail}
-                      onChange={(e) =>
-                        setSiteSettings((prev) => ({ ...prev, contactEmail: e.target.value }))
-                      }
-                      className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* About Section Copy */}
-              <div className="p-6 rounded-2xl bg-white border border-zinc-200 space-y-4">
-                <h3 className="font-display font-semibold text-base text-zinc-900 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-zinc-600" />
-                  <span>About & Philosophy Story</span>
-                </h3>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                    Philosophy Quote
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={siteSettings.aboutQuote}
-                    onChange={(e) =>
-                      setSiteSettings((prev) => ({ ...prev, aboutQuote: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                    Bio Paragraph 1 (Background & Timeline Craft)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={siteSettings.aboutBio1}
-                    onChange={(e) =>
-                      setSiteSettings((prev) => ({ ...prev, aboutBio1: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                    Bio Paragraph 2 (1-on-1 Collaboration & Philosophy)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={siteSettings.aboutBio2}
-                    onChange={(e) =>
-                      setSiteSettings((prev) => ({ ...prev, aboutBio2: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={isSavingSettings}
-                  className="px-6 py-3 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
-                >
-                  {isSavingSettings ? 'Publishing to Cloud...' : 'Publish Live Website Changes'}
-                </button>
-              </div>
-            </form>
-          </div>
+                // Check if auto-commit on save is active
+                const cfg = getGitHubConfig();
+                if (cfg.token && cfg.owner && cfg.repo && cfg.autoCommitOnSave) {
+                  const pushRes = await pushPortfolioToGitHub(
+                    { siteSettings: updated, showreels, graphics },
+                    cfg
+                  );
+                  if (pushRes.success) {
+                    appendSecurityLog('Auto-committed to GitHub on save', pushRes.commitUrl);
+                  }
+                }
+              } catch (err: any) {
+                setSettingsStatus({
+                  type: 'error',
+                  text: err.message || 'Failed to save settings.',
+                });
+              } finally {
+                setIsSavingSettings(false);
+              }
+            }}
+            onPushToGitHub={handleTopPushLive}
+            isSaving={isSavingSettings}
+            status={settingsStatus}
+          />
         )}
 
         {/* TAB 4: CLIENT INQUIRIES */}

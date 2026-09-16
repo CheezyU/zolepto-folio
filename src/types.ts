@@ -63,6 +63,25 @@ export interface SiteSettings {
   contactEmail: string;
   featuredReelYoutubeId?: string;
   featuredReelTitle?: string;
+  // Workshop Blueprint customizable steps
+  workshopHeading?: string;
+  workshopSubtitle?: string;
+  step1Title?: string;
+  step1Subtitle?: string;
+  step1Description?: string;
+  step1Note?: string;
+  step2Title?: string;
+  step2Subtitle?: string;
+  step2Description?: string;
+  step2Note?: string;
+  step3Title?: string;
+  step3Subtitle?: string;
+  step3Description?: string;
+  step3Note?: string;
+  step4Title?: string;
+  step4Subtitle?: string;
+  step4Description?: string;
+  step4Note?: string;
 }
 
 export interface SecurityLogEntry {

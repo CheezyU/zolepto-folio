@@ -49,7 +49,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   socialLinkedin: 'https://linkedin.com/in/zolepto',
   socialX: 'https://x.com/zolepto',
   socialGmail: 'cheddarc19@gmail.com',
-  inquiryWebhookUrl: '',
+  formsubmitEmail: 'cheddarc19@gmail.com',
 };
 
 export function getLocalSettings(): SiteSettings {

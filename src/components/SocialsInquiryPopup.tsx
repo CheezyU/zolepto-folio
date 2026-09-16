@@ -34,14 +34,14 @@ export const SocialsInquiryPopup: React.FC<SocialsInquiryPopupProps> = ({
           className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-xl"
         >
           <div className="bg-zinc-950/95 backdrop-blur-md text-white border border-zinc-700/80 shadow-[0_20px_50px_rgba(0,0,0,0.45)] rounded-2xl p-3.5 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
-            {/* Left: Friendly short message */}
+            {/* Left: Welcoming subtle message */}
             <div className="flex items-center gap-2.5 text-center sm:text-left">
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="text-xs sm:text-sm font-medium text-zinc-200 tracking-wide">
-                Talk to me here, just in case:
+                You can also connect with me directly:
               </span>
             </div>
 

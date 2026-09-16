@@ -871,20 +871,20 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
               <p className="text-[10px] text-zinc-400">Used for direct Gmail composer links</p>
             </div>
 
-            {/* Instant Webhook Alerts */}
+            {/* FormSubmit Instant Email Forwarding */}
             <div className="space-y-1.5 sm:col-span-2 pt-3 border-t border-zinc-200">
               <label className="block text-xs font-semibold text-zinc-700">
-                Instant Notification Webhook (Discord / Slack / Make)
+                FormSubmit Inquiry Forwarding Email
               </label>
               <input
-                type="url"
-                value={form.inquiryWebhookUrl || ''}
-                onChange={(e) => handleChange('inquiryWebhookUrl', e.target.value)}
-                placeholder="https://discord.com/api/webhooks/... or https://hooks.slack.com/..."
+                type="email"
+                value={form.formsubmitEmail || ''}
+                onChange={(e) => handleChange('formsubmitEmail', e.target.value)}
+                placeholder="cheddarc19@gmail.com"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-200 text-xs font-mono text-zinc-900 focus:outline-none focus:border-zinc-900 shadow-2xs"
               />
               <p className="text-[10px] text-zinc-500">
-                Paste a Discord channel webhook to instantly receive sound and phone notifications whenever a client submits an inquiry!
+                Every client brief is sent directly to this address via FormSubmit so you receive instant phone alerts via your Gmail app.
               </p>
             </div>
           </div>

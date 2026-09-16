@@ -87,6 +87,8 @@ export interface SiteSettings {
   socialLinkedin?: string;
   socialX?: string;
   socialGmail?: string;
+  // Instant Notifications Webhook (Discord, Slack, Make, Zapier)
+  inquiryWebhookUrl?: string;
 }
 
 export interface SecurityLogEntry {

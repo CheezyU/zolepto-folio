@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Copy, Check, ArrowRight, Mail, ExternalLink, Sparkles } from 'lucide-react';
+import { CheckCircle2, Copy, Check, ArrowRight, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
-import { ConsultationFormState, SubmittedBooking } from '../types';
-import { saveInquiry, buildMailtoUrl, buildGmailWebUrl } from '../services/inquiryService';
+import { ConsultationFormState, SubmittedBooking, SiteSettings } from '../types';
+import { saveInquiry } from '../services/inquiryService';
+import { SocialsInquiryPopup } from './SocialsInquiryPopup';
 
 const INITIAL_FORM: ConsultationFormState = {
   fullName: '',
@@ -21,18 +22,15 @@ const BUDGET_PRESETS = [
 ];
 
 interface ConsultationFormSectionProps {
-  settings?: {
-    contactEmail?: string;
-  };
+  settings?: SiteSettings;
 }
 
 export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = ({ settings }) => {
-  const contactEmail = settings?.contactEmail || 'zolepto@gmail.com';
   const [formData, setFormData] = useState<ConsultationFormState>(INITIAL_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedBooking, setSubmittedBooking] = useState<SubmittedBooking | null>(null);
   const [copiedId, setCopiedId] = useState(false);
-  const [copiedSummary, setCopiedSummary] = useState(false);
+  const [showSocialsPopup, setShowSocialsPopup] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -58,9 +56,15 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
       status: 'new',
     };
 
-    // Save immediately to Firestore & local storage with zero delay
-    await saveInquiry(bookingRecord);
+    // Save and dispatch through our resilient multi-channel system
+    try {
+      await saveInquiry(bookingRecord, settings?.inquiryWebhookUrl);
+    } catch (err) {
+      console.warn('Inquiry dispatch caught error:', err);
+    }
+
     setSubmittedBooking(bookingRecord);
+    setShowSocialsPopup(true);
     setIsSubmitting(false);
   };
 
@@ -71,16 +75,9 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
     setTimeout(() => setCopiedId(false), 2000);
   };
 
-  const handleCopySummary = () => {
-    if (!submittedBooking) return;
-    const summaryText = `Project Inquiry ${submittedBooking.id}\nName: ${submittedBooking.fullName}\nEmail: ${submittedBooking.email}\nScope: ${submittedBooking.projectType}\nBudget: ${formattedBudget}\nLinks: ${submittedBooking.links || 'None'}\nBrief: ${submittedBooking.brief || 'None'}`;
-    navigator.clipboard.writeText(summaryText);
-    setCopiedSummary(true);
-    setTimeout(() => setCopiedSummary(false), 2000);
-  };
-
   const handleReset = () => {
     setSubmittedBooking(null);
+    setShowSocialsPopup(false);
     setFormData(INITIAL_FORM);
   };
 
@@ -88,15 +85,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
     ? (submittedBooking.estimatedBudget.startsWith('$')
         ? submittedBooking.estimatedBudget
         : `$${submittedBooking.estimatedBudget}`)
-    : 'To be discussed';
-
-  const emailSubject = submittedBooking ? `Project Inquiry ${submittedBooking.id} — ${submittedBooking.fullName}` : '';
-  const emailBody = submittedBooking
-    ? `Hi Zolepto,\n\nI have submitted project inquiry ${submittedBooking.id}.\n\nClient Name: ${submittedBooking.fullName}\nEmail: ${submittedBooking.email}\nProject Type: ${submittedBooking.projectType}\nBudget: ${formattedBudget}\nLinks: ${submittedBooking.links || 'N/A'}\n\nProject Brief:\n${submittedBooking.brief || 'To be discussed'}`
-    : '';
-
-  const mailtoLink = submittedBooking ? buildMailtoUrl(contactEmail, emailSubject, emailBody) : '#';
-  const gmailWebLink = submittedBooking ? buildGmailWebUrl(contactEmail, emailSubject, emailBody) : '#';
+    : 'Flexible / Open';
 
   return (
     <section
@@ -139,18 +128,18 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
           </div>
 
           {submittedBooking ? (
-            /* Success confirmation card */
+            /* Streamlined, calm success confirmation card with single New Inquiry button */
             <div id="booking-confirmation-card" className="space-y-8 py-4 animate-in fade-in zoom-in-95 duration-300">
               <div className="text-center space-y-3">
                 <div className="w-14 h-14 rounded-full bg-zinc-900 text-white flex items-center justify-center mx-auto shadow-md">
-                  <CheckCircle2 className="w-7 h-7 text-white" />
+                  <CheckCircle2 className="w-7 h-7 text-emerald-400" />
                 </div>
                 <h3 className="font-display text-2xl sm:text-3xl font-bold text-zinc-900">
                   Inquiry Received
                 </h3>
                 <p className="text-sm text-zinc-600 font-normal max-w-md mx-auto">
                   Thank you, <span className="text-zinc-900 font-semibold">{submittedBooking.fullName}</span>. 
-                  Your project brief has been routed directly to Zolepto.
+                  Your project brief has been logged and sent directly to Zolepto. I will personally review your vision and reach out to <span className="text-zinc-900 font-medium">{submittedBooking.email}</span> shortly.
                 </p>
               </div>
 
@@ -198,42 +187,16 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                <a
-                  id="direct-gmail-web-send"
-                  href={gmailWebLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs sm:text-sm tracking-wide transition-colors text-center shadow-sm cursor-pointer"
-                >
-                  <Mail className="w-4 h-4 text-zinc-300" />
-                  <span>Send via Gmail Web</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-zinc-400" />
-                </a>
-
-                <a
-                  id="direct-mailto-send"
-                  href={mailtoLink}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-semibold text-xs sm:text-sm tracking-wide transition-colors text-center border border-zinc-300 cursor-pointer"
-                >
-                  <span>Open Default Email Client</span>
-                </a>
-
+              {/* Minimal Single-Action Button for New Inquiry */}
+              <div className="flex items-center justify-center pt-2">
                 <button
-                  type="button"
-                  onClick={handleCopySummary}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 text-xs sm:text-sm font-semibold tracking-wide transition-colors text-center cursor-pointer"
-                >
-                  {copiedSummary ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-zinc-400" />}
-                  <span>{copiedSummary ? 'Brief Copied' : 'Copy Brief'}</span>
-                </button>
-
-                <button
+                  id="new-inquiry-reset-btn"
                   type="button"
                   onClick={handleReset}
-                  className="w-full sm:w-auto px-5 py-3 rounded-full bg-transparent hover:bg-zinc-100 text-zinc-600 text-xs sm:text-sm font-medium tracking-wide transition-colors text-center cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  New Inquiry
+                  <Plus className="w-4 h-4" />
+                  <span>New Inquiry</span>
                 </button>
               </div>
             </div>
@@ -260,7 +223,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
 
                 <div className="space-y-1.5">
                   <label htmlFor="form-email" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Email Address <span className="text-zinc-400">*</span>
+                    Your Email <span className="text-zinc-400">*</span>
                   </label>
                   <input
                     id="form-email"
@@ -269,82 +232,68 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="alex@studio.com"
+                    placeholder="alex@company.com"
                     className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Row 2: Service and Budget (Typing Input + Presets) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="space-y-1.5">
-                  <label htmlFor="form-projectType" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Project Type
+              {/* Row 2: Project Scope & Budget Presets */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="form-project-type" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                    Focus / Project Scope
                   </label>
-                  <select
-                    id="form-projectType"
-                    name="projectType"
-                    value={formData.projectType}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all"
-                  >
-                    <option value="Commercial / Brand Video">Commercial / Brand Video</option>
-                    <option value="YouTube Documentary / Long-Form">YouTube Documentary / Long-Form</option>
-                    <option value="Short-Form Viral Suite">Short-Form Content (TikTok / Reels)</option>
-                    <option value="Motion Graphics & Graphic Design">Motion Graphics & Graphic Design</option>
-                    <option value="1-on-1 Consultation & Strategy">1-on-1 Consultation & Strategy</option>
-                  </select>
+                  <span className="text-[11px] font-mono text-zinc-400">Select best fit</span>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="form-budget" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                      Estimated Budget (USD)
-                    </label>
-                    <span className="text-[10px] font-mono text-zinc-400">or click preset</span>
-                  </div>
+                <select
+                  id="form-project-type"
+                  name="projectType"
+                  value={formData.projectType}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all cursor-pointer"
+                >
+                  <option value="Commercial / Brand Video">Commercial / Brand Video</option>
+                  <option value="Cinematic Narrative / Short Film">Cinematic Narrative / Short Film</option>
+                  <option value="High-Retention YouTube / Creator Cut">High-Retention YouTube / Creator Cut</option>
+                  <option value="Motion Graphics & 3D Visual Packaging">Motion Graphics & 3D Visual Packaging</option>
+                  <option value="Full Creative Direction & Editing Retainer">Full Creative Direction & Editing Retainer</option>
+                  <option value="Other Custom Project">Other Custom Project</option>
+                </select>
 
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-zinc-400 font-mono font-medium">$</span>
-                    <input
-                      id="form-budget"
-                      name="estimatedBudget"
-                      type="text"
-                      value={formData.estimatedBudget}
-                      onChange={handleChange}
-                      placeholder="e.g. 3,500"
-                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all font-mono"
-                    />
-                  </div>
-
-                  {/* Budget Quick-Select Chips with accessible mobile grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                    {BUDGET_PRESETS.map((p) => {
-                      const isSelected = formData.estimatedBudget === p.value;
-                      return (
-                        <button
-                          key={p.value}
-                          type="button"
-                          onClick={() => handleSelectBudgetPreset(p.value)}
-                          className={`min-h-[40px] px-2.5 py-2 rounded-xl text-xs font-mono font-medium transition-all cursor-pointer flex items-center justify-center border text-center ${
-                            isSelected
-                              ? 'bg-zinc-950 text-white border-zinc-950 shadow-xs'
-                              : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200/90 text-zinc-700 active:scale-98'
-                          }`}
-                        >
-                          {p.label}
-                        </button>
-                      );
-                    })}
+                {/* Estimated Budget Quick Selection */}
+                <div className="pt-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
+                    Estimated Budget (USD)
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {BUDGET_PRESETS.map((preset) => (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => handleSelectBudgetPreset(preset.value)}
+                        className={`py-2 px-3 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer text-center ${
+                          formData.estimatedBudget === preset.value
+                            ? 'bg-zinc-900 text-white border-zinc-900 shadow-2xs'
+                            : 'bg-zinc-50/70 hover:bg-zinc-100 text-zinc-700 border-zinc-200'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Row 3: Reference Links (Optional) */}
+              {/* Row 3: Reference Links / Footage Source (Optional) */}
               <div className="space-y-1.5">
-                <label htmlFor="form-links" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                  Drive or Inspo Links <span className="text-zinc-400 text-[11px] font-normal lowercase">(optional)</span>
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="form-links" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                    Footage Links / References <span className="text-zinc-400 font-normal lowercase">(optional)</span>
+                  </label>
+                  <span className="text-[11px] font-mono text-zinc-400">Drive, Dropbox, YouTube</span>
+                </div>
                 <input
                   id="form-links"
                   name="links"
@@ -390,7 +339,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">
                       <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Routing Brief...</span>
+                      <span>Sending Brief...</span>
                     </span>
                   ) : (
                     <>
@@ -404,6 +353,13 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
           )}
         </motion.div>
       </div>
+
+      {/* Floating Animated Socials Popup at the bottom of the website */}
+      <SocialsInquiryPopup
+        isOpen={showSocialsPopup}
+        onClose={() => setShowSocialsPopup(false)}
+        settings={settings}
+      />
     </section>
   );
 };

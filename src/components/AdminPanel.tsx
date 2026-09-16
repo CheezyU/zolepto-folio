@@ -25,6 +25,7 @@ import {
   Eye,
   RefreshCw,
   GitBranch,
+  Mail,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -970,14 +971,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </div>
             </div>
 
-            {/* Direct Email Forwarding Banner */}
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-start gap-3">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            {/* Direct Multi-Channel Intake Banner */}
+            <div className="p-4 rounded-2xl bg-zinc-900 text-white text-xs flex items-start gap-3 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold block">Real-time Email Forwarding Enabled</span>
-                <span className="text-emerald-800">
-                  Client inquiries submitted via the public consultation form are dispatched directly to{' '}
-                  <strong className="font-mono text-emerald-950">zelopte@gmail.com</strong> in real-time via Formsubmit.co. A local copy is also archived below in this browser.
+                <span className="font-semibold block text-zinc-100">Multi-Channel Intake & Global Cloud Vault Active</span>
+                <span className="text-zinc-300">
+                  Client inquiries are saved to your real-time cloud vault, dispatched across email and configured webhooks (Discord/Slack), and synced directly into this dashboard across all your devices.
                 </span>
               </div>
             </div>
@@ -1017,7 +1017,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <a
+                          href={`mailto:${encodeURIComponent(inq.email)}?subject=${encodeURIComponent(`Re: Project Inquiry [${inq.id}] — Zolepto`)}&body=${encodeURIComponent(`Hi ${inq.fullName},\n\nThank you for reaching out regarding your project: ${inq.projectType}.\n\nBest regards,\nZolepto`)}`}
+                          className="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          title="Reply to client via email"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          <span>Reply</span>
+                        </a>
+
                         <select
                           value={inq.status || 'new'}
                           onChange={(e) =>

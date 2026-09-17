@@ -169,28 +169,28 @@ const ScrollPhaseItem: React.FC<{
 
       {/* Col B: Main Narrative Content with Fluid Organic Shapes */}
       <div className="lg:col-span-10 space-y-3 relative z-10">
-        {/* Subtle Fluid Organic Accent Blobs offset to sides - visible aura framing the content on mobile and desktop */}
+        {/* Fluid Organic Accent Blobs - subtle, luminous aura framing each phase across all displays */}
         {step.id === 1 && (
           <div
-            className="absolute -top-8 -right-12 sm:-right-12 w-56 sm:w-88 h-56 sm:h-76 bg-violet-400/20 sm:bg-violet-400/12 blur-2xl sm:blur-3xl pointer-events-none -z-10"
+            className="absolute -top-6 -right-8 sm:-right-12 w-48 sm:w-72 h-48 sm:h-64 bg-violet-400/14 blur-3xl pointer-events-none -z-10"
             style={{ borderRadius: '63% 37% 54% 46% / 44% 59% 41% 56%' }}
           />
         )}
         {step.id === 2 && (
           <div
-            className="absolute -top-8 -left-12 sm:-left-16 w-60 sm:w-96 h-60 sm:h-80 bg-amber-400/20 sm:bg-amber-400/12 blur-2xl sm:blur-3xl pointer-events-none -z-10"
+            className="absolute -top-6 -left-8 sm:-left-12 w-48 sm:w-72 h-48 sm:h-64 bg-amber-400/14 blur-3xl pointer-events-none -z-10"
             style={{ borderRadius: '48% 52% 64% 36% / 58% 38% 62% 42%' }}
           />
         )}
         {step.id === 3 && (
           <div
-            className="absolute -top-8 -right-12 sm:-right-14 w-60 sm:w-96 h-60 sm:h-80 bg-sky-400/20 sm:bg-sky-400/12 blur-2xl sm:blur-3xl pointer-events-none -z-10"
+            className="absolute -top-6 -right-8 sm:-right-12 w-48 sm:w-72 h-48 sm:h-64 bg-sky-400/14 blur-3xl pointer-events-none -z-10"
             style={{ borderRadius: '39% 61% 56% 44% / 63% 47% 53% 37%' }}
           />
         )}
         {step.id === 4 && (
           <div
-            className="absolute -top-8 -left-12 sm:-left-14 w-56 sm:w-90 h-56 sm:h-76 bg-emerald-400/20 sm:bg-emerald-400/12 blur-2xl sm:blur-3xl pointer-events-none -z-10"
+            className="absolute -top-6 -left-8 sm:-left-12 w-48 sm:w-72 h-48 sm:h-64 bg-emerald-400/14 blur-3xl pointer-events-none -z-10"
             style={{ borderRadius: '57% 43% 36% 64% / 45% 61% 39% 55%' }}
           />
         )}
@@ -289,21 +289,21 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
       id="process"
       className="py-16 sm:py-24 relative bg-[#fafafa] overflow-hidden"
     >
-      {/* Random Fluid Organic Gradient Shapes - rich, visible atmospheric glow hugging the perimeter */}
+      {/* Fluid Organic Gradient Shapes - balanced, clearly visible atmospheric glow hugging the perimeter on all displays */}
       <div
-        className="absolute top-[3%] -left-28 sm:-left-52 w-[340px] sm:w-[680px] h-[340px] sm:h-[560px] bg-gradient-to-tr from-violet-500/28 via-fuchsia-400/22 to-rose-400/15 blur-2xl sm:blur-3xl pointer-events-none -z-0"
+        className="absolute top-[2%] -left-16 sm:-left-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-tr from-violet-500/22 via-fuchsia-400/16 to-rose-400/10 blur-3xl pointer-events-none -z-0"
         style={{ borderRadius: '68% 32% 48% 52% / 38% 65% 35% 62%' }}
       />
       <div
-        className="absolute top-[28%] -right-28 sm:-right-48 w-[360px] sm:w-[720px] h-[360px] sm:h-[600px] bg-gradient-to-bl from-amber-500/28 via-orange-400/20 to-rose-400/15 blur-2xl sm:blur-3xl pointer-events-none -z-0"
+        className="absolute top-[26%] -right-16 sm:-right-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-bl from-amber-500/20 via-orange-400/15 to-rose-400/10 blur-3xl pointer-events-none -z-0"
         style={{ borderRadius: '41% 59% 68% 32% / 64% 34% 66% 36%' }}
       />
       <div
-        className="absolute top-[54%] -left-28 sm:-left-56 w-[340px] sm:w-[700px] h-[340px] sm:h-[580px] bg-gradient-to-r from-sky-400/28 via-blue-500/20 to-indigo-500/15 blur-2xl sm:blur-3xl pointer-events-none -z-0"
+        className="absolute top-[52%] -left-16 sm:-left-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-r from-sky-400/20 via-blue-500/15 to-indigo-500/10 blur-3xl pointer-events-none -z-0"
         style={{ borderRadius: '55% 45% 33% 67% / 47% 62% 38% 53%' }}
       />
       <div
-        className="absolute top-[78%] -right-28 sm:-right-52 w-[340px] sm:w-[660px] h-[340px] sm:h-[560px] bg-gradient-to-tl from-emerald-400/28 via-teal-400/20 to-amber-400/15 blur-2xl sm:blur-3xl pointer-events-none -z-0"
+        className="absolute top-[76%] -right-16 sm:-right-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-tl from-emerald-400/20 via-teal-400/15 to-amber-400/10 blur-3xl pointer-events-none -z-0"
         style={{ borderRadius: '46% 54% 60% 40% / 58% 42% 58% 42%' }}
       />
 
@@ -329,7 +329,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
         <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-24 relative">
           <div className="inline-flex items-center justify-center gap-2 mb-4 px-3.5 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-800 font-mono text-[11px] uppercase tracking-widest font-semibold shadow-2xs">
             <span className="w-1.5 h-1.5 rounded-full bg-zinc-900 animate-pulse" />
-            OUR PROCESS
+            WORKFLOW
           </div>
 
           <h3 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-zinc-950 leading-[1.1] mb-2">

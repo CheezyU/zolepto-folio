@@ -15,6 +15,7 @@ import { ConsultationFormSection } from './components/ConsultationFormSection';
 import { FooterBar } from './components/FooterBar';
 import { VideoModal } from './components/VideoModal';
 import { FolderSection, HeroStickyFolder } from './components/FolderSection';
+import { CustomInquiryBadge } from './components/CustomInquiryBadge';
 import { AdminLogin } from './components/AdminLogin';
 import { AdminPanel } from './components/AdminPanel';
 import { VideoProject, GraphicProject, SiteSettings } from './types';
@@ -266,6 +267,11 @@ function MainApp() {
             zIndex={20}
             folderNumber="01"
             folderLabel="PORTFOLIO"
+            headerRight={
+              <CustomInquiryBadge
+                onNavigateToCreate={() => scrollToSection('start')}
+              />
+            }
           >
             <WorkSection
               showreels={showreels}
@@ -282,7 +288,7 @@ function MainApp() {
             id="process-folder-card"
             zIndex={30}
             folderNumber="02"
-            folderLabel="METHODOLOGY"
+            folderLabel="WORKFLOW"
           >
             <ProcessSection
               onStartBooking={() => scrollToSection('start')}

@@ -3,6 +3,7 @@ import { ArrowDownRight, Menu, X, Film } from 'lucide-react';
 
 interface HeaderProps {
   onNavigate: (sectionId: string) => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
@@ -78,7 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
               isScrolled ? 'text-zinc-600 hover:text-zinc-950' : 'text-zinc-300 hover:text-white'
             }`}
           >
-            Our Process
+            Workflow
           </button>
 
           {/* Explicit requirement: text for "about" which scrolls users into personal background/story */}
@@ -103,9 +104,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             Contact & Info
           </button>
 
-          {/* Explicit requirement: "Start" which scrolls visitors into fill up form to book consultation or project request */}
+          {/* Work With Us CTA button */}
           <button
-            id="nav-start-btn"
+            id="nav-work-with-us-btn"
             onClick={() => handleLinkClick('start')}
             className={`group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide uppercase transition-all duration-200 hover:scale-[1.02] shadow-sm active:scale-[0.98] cursor-pointer ${
               isScrolled
@@ -113,26 +114,17 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
                 : 'bg-white text-zinc-950 hover:bg-zinc-100'
             }`}
           >
-            <span>Start</span>
+            <span>Work With Us</span>
             <ArrowDownRight className="w-3.5 h-3.5 transition-transform group-hover:rotate-45" />
           </button>
         </nav>
 
-        {/* Mobile Hamburger Toggle */}
-        <div className="flex sm:hidden items-center gap-2">
-          <button
-            id="mobile-start-btn"
-            onClick={() => handleLinkClick('start')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-              isScrolled ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-950'
-            }`}
-          >
-            Start
-          </button>
+        {/* Mobile Hamburger Toggle (No extra 'start' button cluttering the header) */}
+        <div className="flex sm:hidden items-center">
           <button
             id="mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`p-2 rounded-lg border ${
+            className={`p-2 rounded-lg border transition-colors ${
               isScrolled
                 ? 'bg-zinc-100 text-zinc-700 border-zinc-200'
                 : 'bg-white/10 text-white border-white/20'
@@ -146,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
 
       {/* Mobile Quick Travel Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-zinc-200 bg-white px-4 py-3.5 space-y-1 shadow-lg">
+        <div className="sm:hidden border-t border-zinc-200 bg-white px-4 py-3.5 space-y-1 shadow-lg animate-in slide-in-from-top-1 duration-150">
           <button
             id="mobile-nav-portfolio"
             onClick={() => handleLinkClick('work')}
@@ -159,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             onClick={() => handleLinkClick('process')}
             className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
           >
-            Our Process
+            Workflow
           </button>
           <button
             id="mobile-nav-about"
@@ -169,19 +161,27 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
             About & Story
           </button>
           <button
-            id="mobile-nav-start"
-            onClick={() => handleLinkClick('start')}
-            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
-          >
-            Let's Create Together
-          </button>
-          <button
             id="mobile-nav-footer"
             onClick={() => handleLinkClick('footer')}
-            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-900 bg-zinc-50 hover:bg-zinc-100 transition-colors"
+            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
           >
             Contact & Info
           </button>
+
+          {/* Main Action Button inside Menu: Replaces both "Start" and "Let's Create Together" */}
+          <div className="pt-2 border-t border-zinc-100 mt-2">
+            <button
+              id="mobile-nav-main-action"
+              onClick={() => handleLinkClick('start')}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 text-sm font-semibold tracking-wide transition-all shadow-md group cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Work With Us</span>
+              </div>
+              <ArrowDownRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+            </button>
+          </div>
         </div>
       )}
     </header>

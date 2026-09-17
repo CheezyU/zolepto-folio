@@ -38,6 +38,7 @@ import {
   SecurityLogEntry,
 } from '../types';
 import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '../lib/youtube';
+import { cleanImageUrl, detectImgbbFormat, resolveImgbbViewerUrl } from '../lib/imageUtils';
 import {
   addShowreel,
   updateShowreel,
@@ -196,6 +197,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   });
   const [graphicFile, setGraphicFile] = useState<File | null>(null);
   const [graphicPreviewUrl, setGraphicPreviewUrl] = useState<string | null>(null);
+  const [detectedImgbbFormat, setDetectedImgbbFormat] = useState<string | null>(null);
   const [graphicFormStatus, setGraphicFormStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isSavingGraphic, setIsSavingGraphic] = useState(false);
 
@@ -384,6 +386,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     });
     setGraphicFile(null);
     setGraphicPreviewUrl(graphic.imageUrl);
+    setDetectedImgbbFormat(detectImgbbFormat(graphic.imageUrl));
     setGraphicFormStatus(null);
   };
 
@@ -403,7 +406,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     });
     setGraphicFile(null);
     setGraphicPreviewUrl(null);
+    setDetectedImgbbFormat(null);
     setGraphicFormStatus(null);
+  };
+
+  const handleGraphicUrlChange = async (value: string) => {
+    const detected = detectImgbbFormat(value);
+    setDetectedImgbbFormat(detected);
+
+    const cleaned = cleanImageUrl(value);
+    const targetUrl = cleaned || value;
+    setGraphicFormData((prev) => ({ ...prev, imageUrl: targetUrl }));
+    setGraphicPreviewUrl(targetUrl);
+
+    // If it's an ImgBB viewer link (e.g. ibb.co/xyz), attempt automatic resolution
+    if (value.includes('ibb.co') && !value.includes('i.ibb.co')) {
+      try {
+        const resolved = await resolveImgbbViewerUrl(value);
+        if (resolved && resolved !== value) {
+          setGraphicFormData((prev) => ({ ...prev, imageUrl: resolved }));
+          setGraphicPreviewUrl(resolved);
+        }
+      } catch {}
+    }
   };
 
   const handleGraphicFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -434,13 +459,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       .filter(Boolean);
 
     try {
+      const sanitizedImageUrl = cleanImageUrl(graphicFormData.imageUrl);
+
       if (editingGraphic) {
         await updateGraphicDesign(editingGraphic.id, {
           title: graphicFormData.title.trim(),
           client: graphicFormData.client.trim() || 'Studio Art',
           category: graphicFormData.category,
           categoryLabel: graphicFormData.categoryLabel.trim() || undefined,
-          imageUrl: graphicFormData.imageUrl,
+          imageUrl: sanitizedImageUrl,
           aspect: graphicFormData.aspect,
           year: graphicFormData.year.trim() || '2026',
           description: graphicFormData.description.trim(),
@@ -458,7 +485,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           aspect: graphicFormData.aspect,
           description: graphicFormData.description.trim(),
           tools: toolsList.length > 0 ? toolsList : ['Photoshop'],
-          imageUrl: graphicFormData.imageUrl,
+          imageUrl: sanitizedImageUrl,
           file: graphicFile,
         });
         appendSecurityLog(`Created New Graphic: ${graphicFormData.title}`, 'Added to portfolio');
@@ -766,11 +793,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-black/75 backdrop-blur-xs text-[10px] font-mono text-white">
                         {video.categoryLabel || video.category}
                       </span>
-                      {video.duration && (
-                        <span className="absolute bottom-2.5 right-2.5 px-1.5 py-0.5 rounded bg-black/75 text-[10px] font-mono text-white">
-                          {video.duration}
-                        </span>
-                      )}
                     </div>
 
                     <div className="p-4 space-y-2">
@@ -1244,7 +1266,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">
                     Category
@@ -1278,21 +1300,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       setVideoFormData((prev) => ({ ...prev, categoryLabel: e.target.value }))
                     }
                     placeholder="e.g. Commercial"
-                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                    Runtime Duration
-                  </label>
-                  <input
-                    type="text"
-                    value={videoFormData.duration}
-                    onChange={(e) =>
-                      setVideoFormData((prev) => ({ ...prev, duration: e.target.value }))
-                    }
-                    placeholder="e.g. 1:15"
                     className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                   />
                 </div>
@@ -1466,17 +1473,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       onChange={handleGraphicFileChange}
                       className="block w-full text-xs text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer"
                     />
-                    <div className="text-[11px] font-mono text-zinc-400">or provide image URL:</div>
-                    <input
-                      type="url"
+                    <div className="flex items-center justify-between gap-2 pt-1">
+                      <div className="text-[11px] font-mono text-zinc-500">
+                        Or paste direct link / ImgBB code:
+                      </div>
+                      {detectedImgbbFormat && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-medium">
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          <span>{detectedImgbbFormat}</span>
+                        </span>
+                      )}
+                    </div>
+                    <textarea
+                      rows={2}
                       value={graphicFormData.imageUrl}
-                      onChange={(e) => {
-                        setGraphicFormData((prev) => ({ ...prev, imageUrl: e.target.value }));
-                        setGraphicPreviewUrl(e.target.value);
-                      }}
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      onChange={(e) => handleGraphicUrlChange(e.target.value)}
+                      placeholder="Paste ImgBB link, HTML code, BBCode, Viewer link, or Embed code..."
+                      className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs font-mono text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 resize-none leading-relaxed"
                     />
+                    <p className="text-[11px] text-zinc-400 leading-normal">
+                      Full support for ImgBB codes: Embed codes, Viewer links, Direct links, HTML full/thumb linked, and BBCode full/thumb linked (thumbnails automatically upgraded to full-res).
+                    </p>
                   </div>
 
                   {graphicPreviewUrl && (
@@ -1484,6 +1501,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       <img
                         src={graphicPreviewUrl}
                         alt="Preview"
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />
                     </div>

@@ -6,7 +6,7 @@ export interface VideoProject {
   client: string;
   category: VideoCategory;
   categoryLabel: string;
-  duration: string;
+  duration?: string;
   year: string;
   youtubeId: string;
   embedUrl: string;
@@ -98,9 +98,10 @@ export interface SiteSettings {
   socialLinkedin?: string;
   socialX?: string;
   socialGmail?: string;
-  // Web3Forms Integration
+  // Web3Forms & Webhook Integration
   web3formsAccessKey?: string;
   formsubmitEmail?: string;
+  inquiryWebhookUrl?: string;
 }
 
 export interface SecurityLogEntry {

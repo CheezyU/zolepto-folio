@@ -6,6 +6,7 @@ interface FolderSectionProps {
   zIndex: number;
   folderLabel?: string;
   folderNumber?: string;
+  headerRight?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   cardBg?: string;
@@ -22,6 +23,7 @@ export const FolderSection: React.FC<FolderSectionProps> = ({
   zIndex,
   folderLabel,
   folderNumber,
+  headerRight,
   children,
   className = '',
   cardBg = 'bg-[#fafafa]',
@@ -32,9 +34,9 @@ export const FolderSection: React.FC<FolderSectionProps> = ({
       className={`relative -mt-10 sm:-mt-16 transform-gpu will-change-transform ${className}`}
       style={{ zIndex }}
     >
-      <div className={`rounded-t-[32px] sm:rounded-t-[44px] ${cardBg} border-t border-zinc-200/90 shadow-[0_-18px_40px_-10px_rgba(0,0,0,0.22),0_-6px_16px_-6px_rgba(0,0,0,0.1),0_-1px_0_0_rgba(255,255,255,0.95)_inset] relative overflow-hidden`}>
+      <div className={`rounded-t-[32px] sm:rounded-t-[44px] ${cardBg} border-t border-zinc-200/90 shadow-[0_-18px_40px_-10px_rgba(0,0,0,0.22),0_-6px_16px_-6px_rgba(0,0,0,0.1),0_-1px_0_0_rgba(255,255,255,0.95)_inset] relative`}>
         {/* Tactile 3D Folder Index Tab & Grip Handle (Clean, no side watermark clutter) */}
-        <div className={`relative pt-3 pb-2.5 px-6 sm:px-10 flex items-center justify-between pointer-events-none select-none border-b border-zinc-200/60 ${cardBg} rounded-t-[32px] sm:rounded-t-[44px]`}>
+        <div className={`relative z-50 pt-3 pb-2.5 px-6 sm:px-10 flex items-center justify-between pointer-events-none select-none border-b border-zinc-200/60 ${cardBg} rounded-t-[32px] sm:rounded-t-[44px]`}>
           {/* Left Folder Index: Simple "01 > Portfolio" format */}
           <div className="flex items-center gap-2">
             {folderNumber && (
@@ -57,12 +59,14 @@ export const FolderSection: React.FC<FolderSectionProps> = ({
             <span className="block w-12 sm:w-16 h-1 sm:h-1.5 rounded-full bg-zinc-300 shadow-inner" />
           </div>
 
-          {/* Clean spacer on right */}
-          <div className="w-10" />
+          {/* Upper Right Round Corner Slot */}
+          <div className="flex items-center justify-end min-w-8 pointer-events-auto relative z-50">
+            {headerRight || <div className="w-10" />}
+          </div>
         </div>
 
         {/* 100% Solid Opaque Section Content (Prevents any ghosting or bleed-through) */}
-        <div className={`relative ${cardBg}`}>{children}</div>
+        <div className={`relative z-0 ${cardBg}`}>{children}</div>
       </div>
     </div>
   );

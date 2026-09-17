@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Play,
-  ExternalLink,
-  X,
-  Sparkles,
-  Layers,
-  Volume2,
-  Film,
-  ArrowDownRight,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Play } from 'lucide-react';
+import { motion } from 'motion/react';
 import { MAIN_SHOWREEL } from '../data/portfolioData';
 import { VideoProject, GraphicProject } from '../types';
 import { GraphicModal } from './GraphicModal';
@@ -33,12 +22,10 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
   activeTab = 'all',
   onTabChange,
   onOpenVideoModal,
-  onNavigateToCreate,
 }) => {
   const [currentTab, setCurrentTab] = useState<MainTab>(activeTab);
   const [isPlayingMaster, setIsPlayingMaster] = useState(false);
   const [selectedGraphic, setSelectedGraphic] = useState<GraphicProject | null>(null);
-  const [showCustomPrompt, setShowCustomPrompt] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -49,26 +36,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       setCurrentTab(activeTab);
     }
   }, [activeTab]);
-
-  // Dismiss custom inquiry tooltip on outside click or Escape
-  useEffect(() => {
-    if (!showCustomPrompt) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowCustomPrompt(false);
-    };
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('#what-i-build-question-badge') && !target.closest('#custom-inquiry-tooltip')) {
-        setShowCustomPrompt(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showCustomPrompt]);
 
   // Handle switching tabs while strictly keeping work section comfortably in viewport
   const handleTabClick = (tab: MainTab) => {
@@ -124,183 +91,82 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       <div id="work" className="absolute -top-24 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header with Apple-style Minimalist Segmented Control with motion indicator */}
+        {/* Centered Minimalist Section Header maintaining proportional vertical space */}
         <motion.div
           initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-14 gap-6 relative z-40"
+          className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 relative"
         >
-          <div className="relative z-40">
-            <div className="flex items-center gap-3 relative">
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
-                What I Build
-              </h2>
+          {/* Centered Title - Clean, left alone, perfectly centered */}
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
+            What I Build
+          </h2>
 
-              {/* Hand-drawn Question Mark Button Badge */}
-              <div className="relative inline-flex items-center">
-                <button
-                  id="what-i-build-question-badge"
-                  type="button"
-                  onClick={() => setShowCustomPrompt((prev) => !prev)}
-                  className="relative group p-1 text-zinc-500 hover:text-zinc-950 transition-all duration-200 focus:outline-none cursor-pointer hover:scale-105 active:scale-95"
-                  title="Can't find what you're looking for?"
-                  aria-label="Can't find what you're looking for?"
-                >
-                  <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 100 100" fill="none">
-                    {/* Hand-drawn sketchy circular ring */}
-                    <path
-                      d="M 50,10 C 74,8 92,26 90,52 C 88,76 72,92 48,91 C 24,90 10,74 11,50 C 12,26 28,11 52,10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
-                    {/* Hand-drawn question mark */}
-                    <path
-                      d="M 40,36 C 40,28 47,23 53,23 C 60,23 65,27 65,34 C 65,42 53,46 53,54"
-                      stroke="currentColor"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                    <circle cx="53" cy="67" r="3.5" fill="currentColor" />
-                  </svg>
-                </button>
+          {/* Centered Subtitle */}
+          <p className="text-zinc-600 text-sm sm:text-base max-w-xl mx-auto mt-3 font-normal leading-relaxed">
+            See what your story could look and feel like when brought to life. Every project here was crafted hand-in-hand with creators—and yours can be next.
+          </p>
 
-                {/* Hand-drawn Tooltip popover placed relatively near the question mark button, on top of everything */}
-                <AnimatePresence>
-                  {showCustomPrompt && (
-                    <>
-                      {/* Transparent mobile backdrop for outside dismiss - zero darkening, zero hard edges */}
-                      <div
-                        onClick={() => setShowCustomPrompt(false)}
-                        className="fixed inset-0 z-[95] sm:hidden cursor-default"
-                        aria-hidden="true"
-                      />
+          {/* Centered Category Buttons Underneath with Apple-style Segmented Slide */}
+          <div className="mt-8 flex justify-center">
+            <div className="relative inline-flex items-center p-1 rounded-full bg-zinc-200/70 border border-zinc-300/60 shadow-2xs">
+              <button
+                id="work-tab-all"
+                onClick={() => handleTabClick('all')}
+                className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+                  currentTab === 'all' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
+                }`}
+              >
+                {currentTab === 'all' && (
+                  <motion.div
+                    layoutId="activeWorkTabPill"
+                    className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                  />
+                )}
+                All Work
+              </button>
 
-                      <motion.div
-                        id="custom-inquiry-tooltip"
-                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                        transition={{ type: 'spring', stiffness: 420, damping: 30 }}
-                        className="absolute left-[-120px] xs:left-[-100px] sm:left-full top-full mt-3 sm:top-1/2 sm:-translate-y-1/2 sm:mt-0 sm:ml-4 z-[100] w-[calc(100vw-3rem)] max-w-xs sm:w-84 p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white shadow-2xl border border-zinc-800"
-                      >
-                        {/* Desktop arrow indicator pointing left towards the question mark */}
-                        <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-3 bg-zinc-950 border-b border-l border-zinc-800 rotate-45" />
+              <button
+                id="work-tab-showreels"
+                onClick={() => handleTabClick('showreels')}
+                className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+                  currentTab === 'showreels' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
+                }`}
+              >
+                {currentTab === 'showreels' && (
+                  <motion.div
+                    layoutId="activeWorkTabPill"
+                    className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                  />
+                )}
+                Showreels
+              </button>
 
-                        {/* Mobile arrow indicator pointing up towards question mark */}
-                        <div className="sm:hidden absolute -top-1.5 left-32 xs:left-28 w-3 h-3 bg-zinc-950 border-t border-l border-zinc-800 rotate-45" />
-
-                        {/* Close button */}
-                        <button
-                          id="close-custom-inquiry-tooltip"
-                          type="button"
-                          onClick={() => setShowCustomPrompt(false)}
-                          className="absolute top-3 right-3 text-zinc-400 hover:text-white p-1 rounded-md transition-colors cursor-pointer"
-                          aria-label="Close message"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-zinc-800 text-[10px] font-mono text-zinc-300 uppercase tracking-wider font-semibold">
-                              Looking for something else?
-                            </span>
-                          </div>
-
-                          <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-body">
-                            Can't find what you're looking for? I'm versatile and adaptable—willing to step out of my comfort zone, try new styles, and do test work to see what clicks.
-                          </p>
-
-                          {/* "Let's Go" button underneath that triggers the "Let's Create Together" section */}
-                          <button
-                            id="what-i-build-lets-go-btn"
-                            type="button"
-                            onClick={() => {
-                              setShowCustomPrompt(false);
-                              if (onNavigateToCreate) {
-                                onNavigateToCreate();
-                              } else {
-                                const el = document.getElementById('start');
-                                if (el) el.scrollIntoView({ behavior: 'smooth' });
-                              }
-                            }}
-                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-950 text-xs font-semibold tracking-wide transition-all shadow-sm group/btn cursor-pointer"
-                          >
-                            <span>Let's Go</span>
-                            <ArrowDownRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:translate-y-0.5" />
-                          </button>
-                        </div>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
+              <button
+                id="work-tab-design"
+                onClick={() => handleTabClick('design')}
+                className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+                  currentTab === 'design' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
+                }`}
+              >
+                {currentTab === 'design' && (
+                  <motion.div
+                    layoutId="activeWorkTabPill"
+                    className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                  />
+                )}
+                Graphic Design
+              </button>
             </div>
-
-            <p className="text-zinc-600 text-sm sm:text-base max-w-xl mt-2 font-normal leading-relaxed">
-              See what your story could look and feel like when brought to life. Every project here was crafted hand-in-hand with creators—and yours can be next.
-            </p>
-          </div>
-
-          {/* Segmented Apple-style Switcher with smooth background slide */}
-          <div className="relative inline-flex items-center p-1 rounded-full bg-zinc-200/70 border border-zinc-300/60 shadow-2xs self-start sm:self-auto">
-            <button
-              id="work-tab-all"
-              onClick={() => handleTabClick('all')}
-              className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
-                currentTab === 'all' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
-              }`}
-            >
-              {currentTab === 'all' && (
-                <motion.div
-                  layoutId="activeWorkTabPill"
-                  className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
-                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                />
-              )}
-              All Work
-            </button>
-
-            <button
-              id="work-tab-showreels"
-              onClick={() => handleTabClick('showreels')}
-              className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
-                currentTab === 'showreels' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
-              }`}
-            >
-              {currentTab === 'showreels' && (
-                <motion.div
-                  layoutId="activeWorkTabPill"
-                  className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
-                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                />
-              )}
-              Showreels
-            </button>
-
-            <button
-              id="work-tab-design"
-              onClick={() => handleTabClick('design')}
-              className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
-                currentTab === 'design' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
-              }`}
-            >
-              {currentTab === 'design' && (
-                <motion.div
-                  layoutId="activeWorkTabPill"
-                  className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
-                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                />
-              )}
-              Graphic Design
-            </button>
           </div>
         </motion.div>
 
-        {/* Master Cinema Showreel Player (Showcased when viewing Showreels) */}
+        {/* Master Cinema Showreel Player (Showcased when viewing Showreels) - Streamlined, no duration */}
         {currentTab === 'showreels' && (
           <motion.div
             initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
@@ -341,7 +207,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                       <div>
                         <div className="inline-flex items-center gap-2 mb-1.5">
                           <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400">
-                            Master Showreel • {MAIN_SHOWREEL.duration}
+                            Master Showreel
                           </span>
                           <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
                             4K PRORES
@@ -362,15 +228,25 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
           </motion.div>
         )}
 
-        {/* Showcase Cards Container */}
+        {/* Minimalist Showcase Cards Container: Thumbnails Stand Out Fully, Exactly 3 Elements (Title, Creator/Client, Category) */}
         <div className="relative">
+          {/* Subtle edge fade-off overlays on left and right sides of viewport for mobile/tablet displays */}
+          <div
+            className="md:hidden pointer-events-none absolute top-0 bottom-4 -left-4 sm:-left-6 w-7 sm:w-10 bg-gradient-to-r from-[#fafafa] via-[#fafafa]/80 to-transparent z-10"
+            aria-hidden="true"
+          />
+          <div
+            className="md:hidden pointer-events-none absolute top-0 bottom-4 -right-4 sm:-right-6 w-7 sm:w-10 bg-gradient-to-l from-[#fafafa] via-[#fafafa]/80 to-transparent z-10"
+            aria-hidden="true"
+          />
+
           <motion.div
             key={currentTab}
             initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             ref={sliderRef}
-            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-none -mx-4 sm:-mx-6 md:mx-0 px-4 sm:px-6 md:px-0 scroll-pl-4 sm:scroll-pl-6"
+            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-none -mx-4 sm:-mx-6 md:mx-0 px-4 sm:px-6 md:px-0 scroll-pl-4 sm:scroll-pl-6"
           >
             {unifiedItems.map((item) => {
               if (item.type === 'video') {
@@ -382,7 +258,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     onClick={() => onOpenVideoModal(video)}
                     className="group shrink-0 w-[84vw] sm:w-[360px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer"
                   >
-                    {/* Clean Cinematic 16:9 Thumbnail */}
+                    {/* Clean Cinematic 16:9 Thumbnail with Frosted Category Pill in Upper Right Corner */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
                       <img
                         src={video.thumbnailUrl || fallbackThumbnail}
@@ -395,16 +271,16 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         }}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors duration-300" />
+                      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/25 transition-colors duration-300" />
 
-                      {/* Frosted Duration Badge */}
-                      {video.duration && (
-                        <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[11px] font-mono text-zinc-100 font-medium shadow-xs">
-                          {video.duration}
+                      {/* Frosted Category Pill in Upper Right Corner */}
+                      <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
+                          {video.categoryLabel || video.category}
                         </span>
-                      )}
+                      </div>
 
-                      {/* Minimalist Centered Play Orb */}
+                      {/* Minimalist Centered Play Orb on Hover */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
                         <div className="w-12 h-12 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
                           <Play className="w-5 h-5 fill-current ml-0.5 text-zinc-950" />
@@ -412,39 +288,20 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                       </div>
                     </div>
 
-                    {/* Breathable, Simplified Content Layout */}
-                    <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-2">
-                        {/* Clear subtle meta row: Client & Category */}
-                        <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
-                          <span>{video.client}</span>
-                          <span>{video.categoryLabel || video.category}</span>
-                        </div>
-
-                        {/* Bold, clean title */}
-                        <h4 className="font-display font-bold text-base sm:text-lg text-zinc-950 group-hover:text-zinc-700 transition-colors line-clamp-1 leading-snug">
-                          {video.title}
-                        </h4>
-
-                        {/* Crisp essence description */}
-                        {video.description && (
-                          <p className="text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed font-body">
-                            {video.description}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Clean Card Footer: Role & Watch Action */}
-                      <div className="pt-3.5 border-t border-zinc-100 flex items-center justify-between gap-3 text-xs">
-                        <span className="text-[11px] font-mono text-zinc-500 flex items-center gap-1.5">
-                          <Film className="w-3.5 h-3.5 text-zinc-400" />
-                          <span>{video.role || video.year || 'Lead Editor'}</span>
-                        </span>
-
-                        <span className="font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors inline-flex items-center gap-1">
-                          Watch Reel <span className="transform group-hover:translate-x-0.5 transition-transform">→</span>
-                        </span>
-                      </div>
+                    {/* Side by Side: Title on the Left, Creator / Client on the Right (Balanced Scale & No Squashing) */}
+                    <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
+                      <h4
+                        title={video.title}
+                        className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
+                      >
+                        {video.title}
+                      </h4>
+                      <span
+                        title={video.client}
+                        className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                      >
+                        {video.client}
+                      </span>
                     </div>
                   </div>
                 );
@@ -452,9 +309,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                 const graphic = item.data;
                 const graphicSrc =
                   (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
-                const toolList = Array.isArray(graphic.tools)
-                  ? graphic.tools.join(' • ')
-                  : (typeof graphic.tools === 'string' ? graphic.tools : 'Design');
 
                 return (
                   <div
@@ -463,7 +317,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     onClick={() => setSelectedGraphic(graphic)}
                     className="group shrink-0 w-[84vw] sm:w-[360px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer"
                   >
-                    {/* Graphic Preview */}
+                    {/* Clean Graphic Thumbnail with Frosted Category Pill in Upper Right Corner */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
                       <img
                         src={graphicSrc}
@@ -476,38 +330,30 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         }}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors duration-300" />
+                      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-300" />
 
-                      <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[10px] font-mono text-zinc-300 uppercase">
-                        {graphic.aspect || 'Graphic'}
-                      </span>
+                      {/* Frosted Category Pill in Upper Right Corner */}
+                      <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
+                          {graphic.categoryLabel || graphic.category}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Card Meta */}
-                    <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
-                          <span>{graphic.client}</span>
-                          <span>{graphic.categoryLabel || graphic.category}</span>
-                        </div>
-                        <h4 className="font-display font-bold text-base sm:text-lg text-zinc-950 group-hover:text-zinc-700 transition-colors line-clamp-1 leading-snug">
-                          {graphic.title}
-                        </h4>
-                        {graphic.description && (
-                          <p className="text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed font-body">
-                            {graphic.description}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="pt-3.5 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span className="font-mono text-[11px] text-zinc-500 truncate max-w-[180px]">
-                          {toolList}
-                        </span>
-                        <span className="font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors inline-flex items-center gap-1">
-                          View Still <span className="transform group-hover:translate-x-0.5 transition-transform">→</span>
-                        </span>
-                      </div>
+                    {/* Side by Side: Title on the Left, Creator / Client on the Right (Balanced Scale & No Squashing) */}
+                    <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
+                      <h4
+                        title={graphic.title}
+                        className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
+                      >
+                        {graphic.title}
+                      </h4>
+                      <span
+                        title={graphic.client}
+                        className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                      >
+                        {graphic.client}
+                      </span>
                     </div>
                   </div>
                 );
@@ -516,43 +362,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
             {/* End spacer for smooth mobile snap padding */}
             <div className="w-4 shrink-0 md:hidden pointer-events-none" aria-hidden="true" />
           </motion.div>
-
-          {/* Simple left/right navigation buttons for mobile carousel (replaces swipe text) */}
-          <div className="flex md:hidden items-center justify-between mt-5 px-1">
-            <button
-              id="work-carousel-prev-btn"
-              type="button"
-              onClick={() => {
-                if (sliderRef.current) {
-                  sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-                }
-              }}
-              className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-white border border-zinc-200 text-zinc-800 text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Prev</span>
-            </button>
-
-            <span className="text-[11px] font-mono text-zinc-400">
-              {unifiedItems.length} curated works
-            </span>
-
-            <button
-              id="work-carousel-next-btn"
-              type="button"
-              onClick={() => {
-                if (sliderRef.current) {
-                  sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-                }
-              }}
-              className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-white border border-zinc-200 text-zinc-800 text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
-              aria-label="Scroll right"
-            >
-              <span>Next</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
         </div>
       </div>
 

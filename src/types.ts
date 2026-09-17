@@ -58,13 +58,22 @@ export interface SiteSettings {
   availabilityStatus: string;
   showAvailabilityDot: boolean;
   aboutHeading: string;
-  aboutQuote: string;
+  aboutQuote?: string;
   aboutBio1: string;
   aboutBio2: string;
+  aboutDirectorNote?: string;
+  aboutTools?: string[];
   contactEmail: string;
   profilePictureUrl?: string;
   featuredReelYoutubeId?: string;
   featuredReelTitle?: string;
+  // Hero Credibility Metrics
+  heroStat1Value?: string;
+  heroStat1Label?: string;
+  heroStat2Value?: string;
+  heroStat2Label?: string;
+  heroStat3Value?: string;
+  heroStat3Label?: string;
   // Workshop Blueprint customizable steps
   workshopHeading?: string;
   workshopSubtitle?: string;

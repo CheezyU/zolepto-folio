@@ -203,26 +203,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             >
               <div className="px-1.5 sm:px-0 space-y-0.5">
                 <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight">
-                  14M+
+                  {settings?.heroStat1Value || '14M+'}
                 </span>
                 <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">
-                  Organic Views
+                  {settings?.heroStat1Label || 'Organic Views'}
                 </span>
               </div>
               <div className="px-1.5 sm:pl-6 space-y-0.5">
                 <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight whitespace-nowrap">
-                  4+ Years
+                  {settings?.heroStat2Value || '4+ Years'}
                 </span>
                 <span className="block text-[9px] sm:text-xs font-mono text-zinc-400 leading-tight">
-                  Multimedia & Content Creation
+                  {settings?.heroStat2Label || 'Multimedia & Content Creation'}
                 </span>
               </div>
               <div className="px-1.5 sm:pl-6 space-y-0.5">
                 <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight">
-                  1-on-1
+                  {settings?.heroStat3Value || '1-on-1'}
                 </span>
                 <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">
-                  Direct Direction
+                  {settings?.heroStat3Label || 'Direct Direction'}
                 </span>
               </div>
             </motion.div>

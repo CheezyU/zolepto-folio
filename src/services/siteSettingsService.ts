@@ -12,17 +12,25 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     'I craft high-retention commercial cuts, cinematic narratives, and digital formats where every single frame earns its place. Direct 1-on-1 collaboration that makes your work impossible to ignore.',
   availabilityStatus: 'Available for incoming projects!',
   showAvailabilityDot: true,
-  aboutHeading: 'About',
-  aboutQuote:
-    '“An edit isn’t just assembling footage. It’s an emotional rhythm that decides whether a viewer clicks away in three seconds or stays until the final frame.”',
+  aboutHeading: 'Crafting edits that audiences refuse to skip.',
   aboutBio1:
-    'I’m Zolepto Hiraya. For over four years, I’ve lived inside the timeline—obsessing over the millisecond a cut lands, why retention drops at forty-five seconds, and how subconscious sound design transforms an ordinary video into an unforgettable experience.',
+    'I’m a director and lead editor dedicated to visual storytelling that grips people from the first second. Over the last four years, I’ve shaped commercial edits, narrative shorts, and high-retention creator cuts totaling over 14 million organic views.',
   aboutBio2:
-    'I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.',
+    'My philosophy is simple: cut the safety filler. If a second doesn’t push emotional velocity or drive the narrative forward, it dies on the cutting room floor. The result is pure, high-density momentum.',
+  aboutDirectorNote:
+    '“When people watch a great video, they don\'t notice the cuts—they feel the momentum.”',
+  aboutTools: ['Premiere Pro', 'After Effects', 'Photoshop', 'YouTube Studio'],
   contactEmail: 'zolepto@gmail.com',
   profilePictureUrl: '',
   featuredReelYoutubeId: 'aqz-KE-bpKQ',
   featuredReelTitle: 'ZOLEPTO — 2026 Director & Editing Master Showreel',
+  // Hero Credibility Metrics
+  heroStat1Value: '14M+',
+  heroStat1Label: 'Organic Views',
+  heroStat2Value: '4+ Years',
+  heroStat2Label: 'Multimedia & Content Creation',
+  heroStat3Value: '1-on-1',
+  heroStat3Label: 'Direct Direction',
   // Workshop Blueprint customizable steps
   workshopHeading: 'How the story unfolds.',
   workshopSubtitle:
@@ -36,7 +44,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   step2Subtitle: 'Ruthless Dissection & Trimming the Fat',
   step2Description:
     'Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.',
-  step2Note: '✂ Cut the safety filler. If it doesn’t push the story forward, it dies here.',
+  step2Note: 'Cut the safety filler. If it doesn’t push the story forward, it dies here.',
   step3Title: 'Emotional Rhythm & Subconscious Sound',
   step3Subtitle: 'The Kinetic Pulse & Visceral Foley',
   step3Description:
@@ -46,7 +54,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   step4Subtitle: 'Color Science, Key-Art & Cultural Authority',
   step4Description:
     'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.',
-  step4Note: '✦ Ready for export. Approved for master release across all formats.',
+  step4Note: 'Ready for export. Approved for master release across all formats.',
   socialInstagram: 'https://www.instagram.com/zoleptos.motion/',
   socialLinkedin: 'https://www.linkedin.com/in/zolepto-haraya-936b622b7/',
   socialX: 'https://x.com/Zolep138657',

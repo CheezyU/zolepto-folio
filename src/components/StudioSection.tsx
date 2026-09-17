@@ -10,6 +10,9 @@ interface StudioSectionProps {
 export const StudioSection: React.FC<StudioSectionProps> = ({
   settings,
 }) => {
+  const heading =
+    settings?.aboutHeading || 'Crafting edits that audiences refuse to skip.';
+
   const bio1 =
     settings?.aboutBio1 ||
     'I’m a director and lead editor dedicated to visual storytelling that grips people from the first second. Over the last four years, I’ve shaped commercial edits, narrative shorts, and high-retention creator cuts totaling over 14 million organic views.';
@@ -17,6 +20,14 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
   const bio2 =
     settings?.aboutBio2 ||
     'My philosophy is simple: cut the safety filler. If a second doesn’t push emotional velocity or drive the narrative forward, it dies on the cutting room floor. The result is pure, high-density momentum.';
+
+  const directorNote =
+    settings?.aboutDirectorNote ||
+    '“When people watch a great video, they don\'t notice the cuts—they feel the momentum.”';
+
+  const tools = settings?.aboutTools && settings.aboutTools.length > 0
+    ? settings.aboutTools
+    : ['Premiere Pro', 'After Effects', 'Photoshop', 'YouTube Studio'];
 
   return (
     <section
@@ -34,7 +45,7 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
             className="lg:col-span-5 space-y-4"
           >
             <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.12]">
-              Crafting edits that audiences refuse to skip.
+              {heading}
             </h2>
           </motion.div>
 
@@ -60,22 +71,12 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
                 TOOLS
               </span>
               <div className="flex flex-wrap items-center gap-x-7 gap-y-2.5 font-mono text-xs sm:text-sm text-zinc-800">
-                <span className="flex items-center gap-2 font-medium tracking-tight">
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                  Premiere Pro
-                </span>
-                <span className="flex items-center gap-2 font-medium tracking-tight">
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                  After Effects
-                </span>
-                <span className="flex items-center gap-2 font-medium tracking-tight">
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                  Photoshop
-                </span>
-                <span className="flex items-center gap-2 font-medium tracking-tight">
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                  YouTube Studio
-                </span>
+                {tools.map((tool, idx) => (
+                  <span key={idx} className="flex items-center gap-2 font-medium tracking-tight">
+                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
+                    {tool}
+                  </span>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -94,7 +95,7 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
               DIRECTOR'S NOTE
             </div>
             <p className="font-handwriting text-xl sm:text-2xl leading-relaxed text-zinc-800 pt-1">
-              “When people watch a great video, they don't notice the cuts—they feel the momentum.”
+              {directorNote}
             </p>
           </div>
         </motion.div>

@@ -15,6 +15,7 @@ export interface VideoProject {
   role: string;
   tags: string[];
   metrics?: string;
+  views?: string;
   aspectRatio?: '16/9' | '9/16';
   featured?: boolean;
 }

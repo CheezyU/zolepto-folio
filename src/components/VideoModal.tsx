@@ -15,12 +15,11 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
     };
 
     if (project) {
-      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
 
       return () => {
-        document.body.style.overflow = originalOverflow;
+        document.body.style.overflow = '';
         window.removeEventListener('keydown', handleKeyDown);
       };
     }
@@ -28,18 +27,20 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
 
   if (!project) return null;
 
-  // Build clean autoplay iframe embed url
-  const separator = project.embedUrl.includes('?') ? '&' : '?';
-  const iframeSrc = `${project.embedUrl}${separator}autoplay=1&enablejsapi=1`;
+  // Build clean autoplay iframe embed url safely
+  const validEmbedUrl = project?.embedUrl?.trim();
+  const iframeSrc = validEmbedUrl
+    ? `${validEmbedUrl}${validEmbedUrl.includes('?') ? '&' : '?'}autoplay=1&enablejsapi=1`
+    : null;
 
   const modalNode = (
     <div
       id="video-theater-modal"
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-zinc-950/75 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl bg-white border border-zinc-200 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-auto max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-5xl bg-white border border-zinc-200 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl shadow-black/25 my-auto max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header bar of modal with sticky close button */}
@@ -55,16 +56,18 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <a
-              href={`https://www.youtube.com/watch?v=${project.youtubeId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-xs font-mono text-zinc-700 hover:text-zinc-950 transition-colors"
-              title="Open directly on YouTube"
-            >
-              <span>YouTube</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            {project.youtubeId && (
+              <a
+                href={`https://www.youtube.com/watch?v=${project.youtubeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-xs font-mono text-zinc-700 hover:text-zinc-950 transition-colors"
+                title="Open directly on YouTube"
+              >
+                <span>YouTube</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
 
             <button
               id="close-video-modal-btn"
@@ -79,13 +82,19 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
 
         {/* Video Embed Frame */}
         <div className="relative aspect-video w-full bg-zinc-950 shrink-0">
-          <iframe
-            src={iframeSrc}
-            title={project.title}
-            className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
+          {iframeSrc ? (
+            <iframe
+              src={iframeSrc}
+              title={project.title}
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-zinc-400 font-mono text-xs">
+              Preview player unavailable
+            </div>
+          )}
         </div>
 
         {/* Video details & editorial notes with internal scroll for mobile */}

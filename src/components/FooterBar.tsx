@@ -44,7 +44,7 @@ export const FooterBar: React.FC<FooterBarProps> = ({ onOpenAdmin, settings }) =
     <footer
       id="footer"
       data-section="site-footer"
-      className="bg-white border-t border-zinc-200 py-10 px-4 sm:px-6 lg:px-8 relative z-10"
+      className="bg-white border-t border-zinc-200/90 py-10 px-4 sm:px-6 lg:px-8 relative z-50 shadow-[0_-1px_0_0_rgba(255,255,255,1)_inset]"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm">
         {/* Left: copyright 2026, Zolepto, and rotating role */}

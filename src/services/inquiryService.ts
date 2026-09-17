@@ -148,65 +148,8 @@ export async function testWebhookPing(webhookUrl: string): Promise<{ success: bo
   }
 }
 
-/**
- * Dispatches the inquiry via browser background fallback iframe form to Web3Forms.
- * Native HTML form posts are immunized against CORS shields and strict adblockers.
- * Features Web3Forms native botcheck honeypot field.
- */
-function dispatchWeb3FormsNativeForm(accessKey: string, inquiry: SubmittedBooking) {
-  try {
-    if (typeof document === 'undefined') return;
-
-    let sinkFrame = document.getElementById('zolepto-inquiry-sink') as HTMLIFrameElement;
-    if (!sinkFrame) {
-      sinkFrame = document.createElement('iframe');
-      sinkFrame.id = 'zolepto-inquiry-sink';
-      sinkFrame.name = 'zolepto-inquiry-sink';
-      sinkFrame.style.display = 'none';
-      document.body.appendChild(sinkFrame);
-    }
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://api.web3forms.com/submit';
-    form.target = 'zolepto-inquiry-sink';
-    form.style.display = 'none';
-
-    const fields: Record<string, string> = {
-      access_key: accessKey,
-      name: sanitizeInput(inquiry.fullName),
-      email: sanitizeInput(inquiry.email),
-      subject: `New Project Inquiry [${sanitizeInput(inquiry.id)}] — ${sanitizeInput(inquiry.fullName)}`,
-      from_name: `Portfolio Inquiry (${sanitizeInput(inquiry.fullName)})`,
-      replyto: sanitizeInput(inquiry.email),
-      project_scope: sanitizeInput(inquiry.projectType),
-      budget: sanitizeInput(inquiry.estimatedBudget || 'Flexible / Open'),
-      links: sanitizeInput(inquiry.links || 'None provided', true),
-      inquiry_id: sanitizeInput(inquiry.id),
-      submitted_at: sanitizeInput(inquiry.submittedAt),
-      message: sanitizeInput(inquiry.brief || 'None provided', true),
-      botcheck: '', // Web3Forms built-in anti-spam honeypot: humans leave empty, bots fill it
-    };
-
-    for (const [k, v] of Object.entries(fields)) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = k;
-      input.value = v;
-      form.appendChild(input);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-    setTimeout(() => {
-      try {
-        form.remove();
-      } catch {}
-    }, 2000);
-  } catch (e) {
-    // Non-blocking fallback
-  }
-}
+// Active in-flight inquiry guard to prevent duplicate API dispatches and double usage counts
+const inFlightInquiryIds = new Set<string>();
 
 /**
  * Saves an inquiry to the persistent global cloud store so it immediately reflects
@@ -225,6 +168,18 @@ export async function saveInquiry(
     console.warn('Spam bot intercepted by client honeypot trap.');
     return { id: inquiry.id, emailSent: true, cloudSynced: false, webhookSent: false };
   }
+
+  // Prevent duplicate execution for the same inquiry ID (e.g. rapid clicks or retries)
+  if (inFlightInquiryIds.has(inquiry.id)) {
+    console.log(`Inquiry ${inquiry.id} is already in-flight, preventing duplicate dispatch.`);
+    return { id: inquiry.id, emailSent: true, cloudSynced: true, webhookSent: true };
+  }
+  inFlightInquiryIds.add(inquiry.id);
+
+  // Auto-clear from in-flight tracker after 15 seconds to allow fresh submissions later
+  setTimeout(() => {
+    inFlightInquiryIds.delete(inquiry.id);
+  }, 15000);
 
   // Sanitize all inquiry fields
   const cleanInquiry: SubmittedBooking = {
@@ -288,7 +243,7 @@ export async function saveInquiry(
     }
   }
 
-  // 4. Web3Forms Free Plan Email Dispatch
+  // 4. Web3Forms Free Plan Email Dispatch (Single, clean JSON submission)
   let emailSent = false;
   const accessKey =
     (customWeb3FormsKey && customWeb3FormsKey.trim() && customWeb3FormsKey !== '64d852a4-5696-414c-a11b-10f845dca889'
@@ -300,7 +255,7 @@ export async function saveInquiry(
       access_key: accessKey,
       name: cleanInquiry.fullName,
       email: cleanInquiry.email,
-      subject: `New Project Inquiry [${cleanInquiry.id}] — ${cleanInquiry.fullName}`,
+      subject: `[${cleanInquiry.id}] New Inquiry from ${cleanInquiry.fullName}`,
       from_name: `Portfolio Inquiry (${cleanInquiry.fullName})`,
       replyto: cleanInquiry.email,
       project_scope: cleanInquiry.projectType,
@@ -308,7 +263,7 @@ export async function saveInquiry(
       links: cleanInquiry.links || 'None provided',
       inquiry_id: cleanInquiry.id,
       submitted_at: cleanInquiry.submittedAt,
-      message: cleanInquiry.brief || 'None provided',
+      message: cleanInquiry.brief || 'No written brief provided',
       botcheck: '', // Web3Forms built-in anti-spam honeypot: clean for real humans
     };
 
@@ -328,15 +283,7 @@ export async function saveInquiry(
       }
     }
   } catch (err) {
-    console.warn('Web3Forms fetch dispatch failed, triggering native fallback:', err);
-  }
-
-  // Native background fallback ONLY if direct fetch failed (e.g. adblocker or CORS restriction)
-  if (!emailSent) {
-    try {
-      dispatchWeb3FormsNativeForm(accessKey, cleanInquiry);
-      emailSent = true;
-    } catch {}
+    console.warn('Web3Forms fetch dispatch error:', err);
   }
 
   return { id: cleanInquiry.id, emailSent, cloudSynced, webhookSent };

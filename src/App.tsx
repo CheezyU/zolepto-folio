@@ -13,6 +13,7 @@ import { AboutSection } from './components/AboutSection';
 import { ConsultationFormSection } from './components/ConsultationFormSection';
 import { FooterBar } from './components/FooterBar';
 import { VideoModal } from './components/VideoModal';
+import { FolderSection, HeroStickyFolder } from './components/FolderSection';
 import { AdminLogin } from './components/AdminLogin';
 import { AdminPanel } from './components/AdminPanel';
 import { VideoProject, GraphicProject, SiteSettings } from './types';
@@ -224,7 +225,7 @@ function MainApp() {
 
   // Public Long-Scrollable Portfolio View
   return (
-    <div className="relative min-h-screen bg-[#fafafa] text-[#18181b] flex flex-col selection:bg-zinc-200 selection:text-zinc-900 font-body antialiased overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#fafafa] text-[#18181b] flex flex-col selection:bg-zinc-200 selection:text-zinc-900 font-body antialiased overflow-x-clip">
       {/* Top Pre-render Timeline Buffer Sweep Line */}
       <motion.div
         initial={{ scaleX: 0, opacity: 1 }}
@@ -234,11 +235,11 @@ function MainApp() {
         className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-zinc-950 via-zinc-700 to-zinc-400 z-[999] pointer-events-none"
       />
 
-      {/* Cinematic Site IN-Animation: Soft Blur-In and Subtle Glide */}
+      {/* Cinematic Site IN-Animation: Soft Fade-In without permanent filter traps */}
       <motion.div
-        initial={{ opacity: 0, filter: 'blur(16px)', y: 8 }}
-        animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         className="flex-1 flex flex-col"
       >
         {/* Sticky Top Header */}
@@ -247,37 +248,66 @@ function MainApp() {
           onOpenAdmin={navigateToAdmin}
         />
 
-        {/* Main Long-Scrollable Content */}
+        {/* Main Long-Scrollable Content with 3D Tactile Stacking Folder System */}
         <main className="flex-1">
-          {/* Hero Section */}
-          <HeroSection
-            onNavigate={scrollToSection}
-            onPlayFeatured={handlePlayMasterShowreel}
-            settings={siteSettings}
-          />
+          {/* Section 00: Hero (Stationary Upper Page that recedes in depth as card slides over) */}
+          <HeroStickyFolder>
+            <HeroSection
+              onNavigate={scrollToSection}
+              onPlayFeatured={handlePlayMasterShowreel}
+              settings={siteSettings}
+            />
+          </HeroStickyFolder>
 
-          {/* Unified Work Section (Showreels & Graphic Designs with mobile/tablet slider) */}
-          <WorkSection
-            showreels={showreels}
-            graphics={graphics}
-            activeTab={activeWorkTab}
-            onTabChange={setActiveWorkTab}
-            onOpenVideoModal={(p) => setActiveTheaterProject(p)}
-            onNavigateToCreate={() => scrollToSection('start')}
-          />
+          {/* Stacking Card 01: Selected Work & Directorial Portfolio */}
+          <FolderSection
+            id="work-folder-card"
+            zIndex={20}
+            folderNumber="01"
+            folderLabel="PORTFOLIO // SELECTED WORK"
+            watermark="DIRECTORIAL ARCHIVE"
+          >
+            <WorkSection
+              showreels={showreels}
+              graphics={graphics}
+              activeTab={activeWorkTab}
+              onTabChange={setActiveWorkTab}
+              onOpenVideoModal={(p) => setActiveTheaterProject(p)}
+              onNavigateToCreate={() => scrollToSection('start')}
+            />
+          </FolderSection>
 
-          {/* About & Personal Background / Story Section (with Blueprint Workshop & Identifying You) */}
-          <AboutSection
-            onStartBooking={() => scrollToSection('start')}
-            settings={siteSettings}
-          />
+          {/* Stacking Card 02: Workshop Blueprint & Narrative Process */}
+          <FolderSection
+            id="about-folder-card"
+            zIndex={30}
+            folderNumber="02"
+            folderLabel="METHODOLOGY // HOW THE STORY UNFOLDS"
+            watermark="THE BLUEPRINT"
+          >
+            <AboutSection
+              onStartBooking={() => scrollToSection('start')}
+              settings={siteSettings}
+            />
+          </FolderSection>
 
-          {/* Project Request & Consultation Booking Form Section */}
-          <ConsultationFormSection settings={siteSettings} />
+          {/* Stacking Card 03: Project Request & Direct Commission */}
+          <FolderSection
+            id="contact-folder-card"
+            zIndex={40}
+            folderNumber="03"
+            folderLabel="COMMISSION // START A PROJECT"
+            watermark="DIRECT BOOKING"
+            cardBg="bg-white"
+          >
+            <ConsultationFormSection settings={siteSettings} />
+          </FolderSection>
         </main>
 
         {/* Footer with copyright, rotating role, email, and admin link */}
-        <FooterBar onOpenAdmin={navigateToAdmin} settings={siteSettings} />
+        <div className="relative z-50 bg-[#0d0e13]">
+          <FooterBar onOpenAdmin={navigateToAdmin} settings={siteSettings} />
+        </div>
       </motion.div>
 
       {/* Video Modal Theater - Mounted at top-level outside motion.div */}

@@ -24,6 +24,7 @@ export const MAIN_SHOWREEL: VideoProject = {
   role: 'Lead Editor, Sound Design, Color Grading, Title Sequence',
   tags: ['Premiere Pro', 'DaVinci Resolve', 'Sound Foley', '4K Color Grading'],
   metrics: '2.4M+ Combined Reach • 82% Avg. View Duration',
+  views: '2.4M views',
   featured: true,
 };
 
@@ -43,6 +44,7 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Pacing, Speed Ramping, Kinetic SFX, Color Cast',
     tags: ['Automotive', 'Speed Ramping', 'Bass Design', 'Commercial'],
     metrics: '94% Client Brand Recall',
+    views: '1.4M views',
   },
   {
     id: 'vid-2',
@@ -59,6 +61,7 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Documentary Story Arc, Scene Assembly, 35mm Grain Emulation',
     tags: ['Documentary', 'Narrative', 'Atmospheric Foley', 'DaVinci Resolve'],
     metrics: 'Winner: Best Editing — Indie Vision 2025',
+    views: '820K views',
   },
   {
     id: 'vid-3',
@@ -75,6 +78,7 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Retention Script Pacing, Motion Graphics, Sound Stems',
     tags: ['Short-Form', 'Kinetic Typography', 'Retention Editing', 'After Effects'],
     metrics: '8.7M Views on TikTok & YouTube Shorts',
+    views: '8.7M views',
   },
   {
     id: 'vid-4',
@@ -91,6 +95,7 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Audio Reactive Visuals, Rhythm Cutting, Color Shifts',
     tags: ['Music Video', 'Audio Reactive', 'Glitch Art', 'Cinema 4D'],
     metrics: '1.2M Streams Visual Identity',
+    views: '1.2M views',
   },
   {
     id: 'vid-5',
@@ -107,6 +112,7 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Editorial Pacing, Architectural Color Grade, Audio Sculpting',
     tags: ['Architecture', 'Minimalist Pacing', 'Neutral Grade', 'Commercial'],
     metrics: 'Featured on Dezeen & ArchDaily',
+    views: '640K views',
   },
   {
     id: 'vid-6',
@@ -123,6 +129,7 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Trailer Editing, Sound Design, VFX Composite Timing',
     tags: ['Sci-Fi', 'Film Trailer', 'Dynamic Contrast', 'After Effects'],
     metrics: 'Official Selection Cannes Short Film Corner',
+    views: '2.1M views',
   },
 ];
 

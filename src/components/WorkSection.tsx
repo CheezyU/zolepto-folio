@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { MAIN_SHOWREEL } from '../data/portfolioData';
 import { VideoProject, GraphicProject } from '../types';
+import { GraphicModal } from './GraphicModal';
 
 interface WorkSectionProps {
   showreels: VideoProject[];
@@ -48,23 +49,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       setCurrentTab(activeTab);
     }
   }, [activeTab]);
-
-  // Lock body scroll during graphic lightbox
-  useEffect(() => {
-    if (!selectedGraphic) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedGraphic(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedGraphic]);
 
   // Dismiss custom inquiry tooltip on outside click or Escape
   useEffect(() => {
@@ -132,7 +116,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
     <section
       ref={sectionRef}
       id="work-section"
-      className="py-20 sm:py-28 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-10 sm:-mt-16 z-20 border-t border-zinc-300/80 bg-[#fafafa] shadow-[0_-32px_64px_rgba(0,0,0,0.22),0_-8px_24px_rgba(0,0,0,0.12)]"
+      className="py-16 sm:py-24 relative bg-[#fafafa]"
     >
       {/* Anchor targets */}
       <div id="showreels" className="absolute -top-24 pointer-events-none" />
@@ -268,7 +252,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
             <button
               id="work-tab-all"
               onClick={() => handleTabClick('all')}
-              className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+              className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
                 currentTab === 'all' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
               }`}
             >
@@ -285,7 +269,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
             <button
               id="work-tab-showreels"
               onClick={() => handleTabClick('showreels')}
-              className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+              className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
                 currentTab === 'showreels' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
               }`}
             >
@@ -302,7 +286,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
             <button
               id="work-tab-design"
               onClick={() => handleTabClick('design')}
-              className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+              className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
                 currentTab === 'design' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
               }`}
             >
@@ -398,9 +382,9 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     key={`vid-${video.id}`}
                     id={`video-card-${video.id}`}
                     onClick={() => onOpenVideoModal(video)}
-                    className="group shrink-0 w-[82vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="group shrink-0 w-[84vw] sm:w-[360px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer"
                   >
-                    {/* Video Thumbnail */}
+                    {/* Clean Cinematic 16:9 Thumbnail */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
                       <img
                         src={video.thumbnailUrl || fallbackThumbnail}
@@ -411,54 +395,56 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = fallbackThumbnail;
                         }}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors" />
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors duration-300" />
 
-                      {/* Runtime Badge */}
+                      {/* Frosted Duration Badge */}
                       {video.duration && (
-                        <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-[11px] font-mono text-white font-medium">
+                        <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[11px] font-mono text-zinc-100 font-medium shadow-xs">
                           {video.duration}
                         </span>
                       )}
 
-                      {/* Category Tag */}
-                      <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[10px] font-semibold text-zinc-900 shadow-2xs">
-                        {video.categoryLabel || video.category}
-                      </span>
-
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <div className="w-12 h-12 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform">
+                      {/* Minimalist Centered Play Orb */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+                        <div className="w-12 h-12 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
                           <Play className="w-5 h-5 fill-current ml-0.5 text-zinc-950" />
                         </div>
                       </div>
                     </div>
 
-                    {/* Card Meta with Timeline Craft Details */}
-                    <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                      <div>
-                        <div className="flex items-center justify-between text-xs font-mono text-zinc-400 mb-1.5">
+                    {/* Breathable, Simplified Content Layout */}
+                    <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-2">
+                        {/* Clear subtle meta row: Client & Category */}
+                        <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
                           <span>{video.client}</span>
-                          <span>{video.year || '2026'}</span>
+                          <span>{video.categoryLabel || video.category}</span>
                         </div>
-                        <h4 className="font-display font-semibold text-base sm:text-lg text-zinc-950 group-hover:text-zinc-700 transition-colors line-clamp-1">
+
+                        {/* Bold, clean title */}
+                        <h4 className="font-display font-bold text-base sm:text-lg text-zinc-950 group-hover:text-zinc-700 transition-colors line-clamp-1 leading-snug">
                           {video.title}
                         </h4>
+
+                        {/* Crisp essence description */}
                         {video.description && (
-                          <p className="mt-1.5 text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed font-body">
                             {video.description}
                           </p>
                         )}
                       </div>
 
-                      <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span className="font-mono text-[11px] text-zinc-500 flex items-center gap-1">
-                          <Film className="w-3 h-3 text-zinc-400" />
-                          {video.role || 'Lead Editor'}
+                      {/* Clean Card Footer: Role & Watch Action */}
+                      <div className="pt-3.5 border-t border-zinc-100 flex items-center justify-between gap-3 text-xs">
+                        <span className="text-[11px] font-mono text-zinc-500 flex items-center gap-1.5">
+                          <Film className="w-3.5 h-3.5 text-zinc-400" />
+                          <span>{video.role || video.year || 'Lead Editor'}</span>
                         </span>
-                        <span className="font-medium text-zinc-900 group-hover:underline">
-                          Watch Project →
+
+                        <span className="font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors inline-flex items-center gap-1">
+                          Watch Reel <span className="transform group-hover:translate-x-0.5 transition-transform">→</span>
                         </span>
                       </div>
                     </div>
@@ -466,7 +452,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                 );
               } else {
                 const graphic = item.data;
-                const graphicSrc = graphic.imageUrl || fallbackGraphic;
+                const graphicSrc =
+                  (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
                 const toolList = Array.isArray(graphic.tools)
                   ? graphic.tools.join(' • ')
                   : (typeof graphic.tools === 'string' ? graphic.tools : 'Design');
@@ -476,7 +463,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     key={`graph-${graphic.id}`}
                     id={`graphic-card-${graphic.id}`}
                     onClick={() => setSelectedGraphic(graphic)}
-                    className="group shrink-0 w-[82vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="group shrink-0 w-[84vw] sm:w-[360px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     {/* Graphic Preview */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
@@ -489,43 +476,38 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = fallbackGraphic;
                         }}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors" />
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors duration-300" />
 
-                      <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-xs text-[10px] font-semibold text-zinc-900 shadow-2xs">
-                        {graphic.categoryLabel || graphic.category}
-                      </span>
-
-                      {/* Aspect Ratio Badge */}
-                      <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-[10px] font-mono text-zinc-300 uppercase">
+                      <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[10px] font-mono text-zinc-300 uppercase">
                         {graphic.aspect || 'Graphic'}
                       </span>
                     </div>
 
                     {/* Card Meta */}
-                    <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                      <div>
-                        <div className="flex items-center justify-between text-xs font-mono text-zinc-400 mb-1.5">
+                    <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
                           <span>{graphic.client}</span>
-                          <span>{graphic.year}</span>
+                          <span>{graphic.categoryLabel || graphic.category}</span>
                         </div>
-                        <h4 className="font-display font-semibold text-base sm:text-lg text-zinc-950 group-hover:text-zinc-700 transition-colors line-clamp-1">
+                        <h4 className="font-display font-bold text-base sm:text-lg text-zinc-950 group-hover:text-zinc-700 transition-colors line-clamp-1 leading-snug">
                           {graphic.title}
                         </h4>
                         {graphic.description && (
-                          <p className="mt-1.5 text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-zinc-500 line-clamp-2 leading-relaxed font-body">
                             {graphic.description}
                           </p>
                         )}
                       </div>
 
-                      <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+                      <div className="pt-3.5 border-t border-zinc-100 flex items-center justify-between text-xs">
                         <span className="font-mono text-[11px] text-zinc-500 truncate max-w-[180px]">
                           {toolList}
                         </span>
-                        <span className="font-medium text-zinc-900 group-hover:underline">
-                          View Still →
+                        <span className="font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors inline-flex items-center gap-1">
+                          View Still <span className="transform group-hover:translate-x-0.5 transition-transform">→</span>
                         </span>
                       </div>
                     </div>
@@ -577,69 +559,10 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       </div>
 
       {/* Graphic Design Lightbox Modal */}
-      {selectedGraphic && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-8 transition-opacity"
-          onClick={() => setSelectedGraphic(null)}
-        >
-          <button
-            onClick={() => setSelectedGraphic(null)}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors cursor-pointer"
-            aria-label="Close image"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          <div
-            className="relative max-w-4xl w-full max-h-[90vh] flex flex-col bg-zinc-950 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="relative flex-1 bg-black/90 flex items-center justify-center overflow-hidden min-h-[320px] max-h-[65vh]">
-              <img
-                src={selectedGraphic.imageUrl || fallbackGraphic}
-                alt={selectedGraphic.title}
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = fallbackGraphic;
-                }}
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-
-            <div className="p-6 sm:p-7 bg-zinc-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 mb-1">
-                  <span>{selectedGraphic.client}</span>
-                  <span>•</span>
-                  <span>{selectedGraphic.categoryLabel || selectedGraphic.category}</span>
-                  <span>•</span>
-                  <span>{selectedGraphic.year}</span>
-                </div>
-                <h3 className="font-display font-bold text-lg sm:text-xl text-white">
-                  {selectedGraphic.title}
-                </h3>
-                {selectedGraphic.description && (
-                  <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-xl font-normal">
-                    {selectedGraphic.description}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <a
-                  href={selectedGraphic.imageUrl || fallbackGraphic}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-full bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white flex items-center gap-1.5 transition-colors"
-                >
-                  <span>Open Full Resolution</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <GraphicModal
+        graphic={selectedGraphic}
+        onClose={() => setSelectedGraphic(null)}
+      />
     </section>
   );
 };

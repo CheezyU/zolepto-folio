@@ -603,8 +603,8 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                   [ PHASE 01 // SIGNAL EXTRACTION ]
                 </span>
               </div>
-              <span className="font-handwriting text-base text-emerald-700 font-semibold">
-                ✦ user favorite core step
+              <span className="font-mono text-xs text-emerald-700 font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200">
+                ✦ Identifying You
               </span>
             </div>
 

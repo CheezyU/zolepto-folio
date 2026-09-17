@@ -32,7 +32,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="hero"
-      className="relative pt-24 sm:pt-40 pb-16 sm:pb-36 overflow-hidden bg-[#0d0e13] text-zinc-100"
+      className="relative pt-24 sm:pt-40 pb-20 sm:pb-40 overflow-hidden bg-[#0d0e13] text-zinc-100 z-10"
     >
       {/* Upper Page Studio Atmosphere & Creator Backdrop */}
       <div className="absolute inset-0 pointer-events-none">

@@ -826,7 +826,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div>
                     <div className="relative aspect-video bg-zinc-100 overflow-hidden">
                       <img
-                        src={graphic.imageUrl}
+                        src={
+                          graphic.imageUrl?.trim() ||
+                          'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
+                        }
                         alt={graphic.title}
                         className="w-full h-full object-cover"
                       />

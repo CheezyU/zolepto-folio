@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import {
   ArrowUpRight,
   Sparkles,
@@ -9,7 +9,7 @@ import {
   Sliders,
   Layers,
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useInView, useScroll, useTransform } from 'motion/react';
 import { SiteSettings } from '../types';
 
 interface AboutSectionProps {
@@ -17,8 +17,201 @@ interface AboutSectionProps {
   settings?: SiteSettings;
 }
 
+interface ProcessStepItem {
+  id: number;
+  number: string;
+  title: string;
+  tag: string;
+  timecode: string;
+  subtitle: string;
+  icon: string;
+  description: string;
+  handwrittenNote: string;
+}
+
+/**
+ * ScrollPhaseItem: Reacts to viewport scroll progression with subtle color gradient blobs
+ * placed organically per phase, emphasized title typography (with handwritten gradient 'YOU'),
+ * free-floating icons, and an animated circular marker with background shielding.
+ */
+const ScrollPhaseItem: React.FC<{
+  step: ProcessStepItem;
+  idx: number;
+  isLast: boolean;
+}> = ({ step, isLast }) => {
+  const itemRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(itemRef, {
+    amount: 0.35,
+    margin: '-10% 0px -25% 0px',
+  });
+
+  const renderTitle = () => {
+    if (step.id === 1) {
+      return (
+        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+          <span>Identifying</span>
+          <span className="font-handwriting font-bold tracking-wider text-2xl sm:text-3xl bg-gradient-to-r from-violet-600 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent transform -rotate-2 inline-block px-1 drop-shadow-xs">
+            YOU
+          </span>
+        </h4>
+      );
+    }
+
+    if (step.id === 2) {
+      return (
+        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
+          <span>Deconstructing the</span>
+          <span className="font-display font-black tracking-tight bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 bg-clip-text text-transparent">
+            Narrative
+          </span>
+        </h4>
+      );
+    }
+
+    if (step.id === 3) {
+      return (
+        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
+          <span>Emotional Rhythm &</span>
+          <span className="font-display font-black tracking-tight bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            Subconscious Sound
+          </span>
+        </h4>
+      );
+    }
+
+    if (step.id === 4) {
+      return (
+        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
+          <span>Visual Prestige &</span>
+          <span className="font-display font-black tracking-tight bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-600 bg-clip-text text-transparent">
+            Delivery
+          </span>
+        </h4>
+      );
+    }
+
+    return (
+      <h4
+        className={`font-display text-xl sm:text-2xl font-bold tracking-tight transition-colors duration-500 ${
+          isInView ? 'text-zinc-950' : 'text-zinc-700'
+        }`}
+      >
+        {step.title}
+      </h4>
+    );
+  };
+
+  return (
+    <div
+      ref={itemRef}
+      id={`process-phase-${step.id}`}
+      className="relative group transition-all duration-500 isolate"
+    >
+      {/* Subtle organic color gradient accents placed with offset and hugging outer flanks */}
+      {step.id === 1 && (
+        <div className="absolute -top-8 -left-12 sm:-left-20 w-80 h-44 rounded-full bg-gradient-to-tr from-violet-500/14 via-fuchsia-400/10 to-transparent blur-2xl pointer-events-none -z-10" />
+      )}
+
+      {step.id === 2 && (
+        <div className="absolute -top-6 -right-12 sm:-right-20 w-80 h-44 rounded-full bg-gradient-to-tl from-amber-500/14 via-orange-400/10 to-transparent blur-2xl pointer-events-none -z-10" />
+      )}
+
+      {step.id === 3 && (
+        <div className="absolute -top-8 -left-12 sm:-left-20 w-80 h-44 rounded-full bg-gradient-to-tr from-sky-400/14 via-blue-500/10 to-transparent blur-2xl pointer-events-none -z-10" />
+      )}
+
+      {step.id === 4 && (
+        <div className="absolute -top-6 -right-12 sm:-right-20 w-80 h-44 rounded-full bg-gradient-to-tl from-emerald-400/14 via-teal-400/10 to-transparent blur-2xl pointer-events-none -z-10" />
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start relative z-10">
+        {/* Left Step Marker with Hand-Drawn Circle reacting to scroll & shielded background */}
+        <div className="lg:col-span-5 flex items-start gap-4 relative">
+          <div className="relative flex-shrink-0 w-16 h-16 flex items-center justify-center bg-[#fafafa] rounded-full z-10 shadow-2xs">
+            <svg
+              viewBox="0 0 100 100"
+              className={`absolute inset-0 w-full h-full transition-all duration-500 transform-gpu ${
+                isInView
+                  ? 'scale-110 rotate-8 text-zinc-950 stroke-[3.5]'
+                  : 'scale-95 rotate-0 text-zinc-300 stroke-[2.2]'
+              }`}
+            >
+              <path
+                d="M 50,8 C 76,6 94,22 93,51 C 92,78 74,94 48,93 C 21,92 7,74 8,47 C 9,21 28,10 52,8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={isInView ? '3.5' : '2.2'}
+                strokeLinecap="round"
+              />
+            </svg>
+            <span
+              className={`font-display font-bold text-xl relative z-10 transition-all duration-500 ${
+                isInView ? 'text-zinc-950 scale-105' : 'text-zinc-400 scale-100'
+              }`}
+            >
+              {step.number}
+            </span>
+          </div>
+
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center gap-2.5">
+              {/* Free-floating icon with NO container shapeholder */}
+              <span className="text-base sm:text-lg text-zinc-400 select-none pointer-events-none transition-transform duration-300 group-hover:scale-110 shrink-0">
+                {step.icon}
+              </span>
+              {renderTitle()}
+            </div>
+            <span className="text-xs font-mono text-zinc-400 block pl-7">
+              {step.subtitle}
+            </span>
+          </div>
+        </div>
+
+        {/* Right Narrative & Clean Workshop Annotations */}
+        <div className="lg:col-span-7 space-y-4 relative">
+          <p className="text-zinc-700 text-base sm:text-lg leading-relaxed font-body">
+            {step.description}
+          </p>
+
+          {/* Hand-drawn Commentary Annotation with rough doodle */}
+          <div className="pt-2 flex items-center gap-3">
+            <svg
+              className={`w-7 h-7 flex-shrink-0 transition-colors duration-500 ${
+                isInView ? 'text-zinc-800' : 'text-zinc-300'
+              }`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+
+            <p
+              className={`font-handwriting text-xl sm:text-2xl font-medium tracking-wide transition-colors duration-500 ${
+                isInView ? 'text-zinc-900' : 'text-zinc-600'
+              }`}
+            >
+              {step.handwrittenNote}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {!isLast && <div className="h-6 sm:h-12" />}
+    </div>
+  );
+};
+
 export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, settings }) => {
-  const [activeStepHover, setActiveStepHover] = useState<number | null>(null);
+  const stepsContainerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: stepsScrollProgress } = useScroll({
+    target: stepsContainerRef,
+    offset: ['start center', 'end center'],
+  });
 
   const quote =
     settings?.aboutQuote ||
@@ -30,7 +223,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
     settings?.aboutBio2 ||
     'I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.';
 
-  const PROCESS_STEPS = [
+  // Refined, subtle monochromatic palette with zero saturated rainbow colors
+  const PROCESS_STEPS: ProcessStepItem[] = [
     {
       id: 1,
       number: '01',
@@ -38,15 +232,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
       tag: '[ PHASE 01 // SIGNAL EXTRACTION ]',
       timecode: 'TC 00:00:00:00',
       subtitle: settings?.step1Subtitle || 'The Core Signal & Creative DNA',
+      icon: '✦',
       description:
         settings?.step1Description ||
         'Before a single clip is dragged to the timeline or a cut is made, we identify you. Who you are, what your voice stands for, who your real audience is, and the psychological hook that makes your content undeniably yours. We don’t copy trends or use cookie-cutter templates—we locate your authentic edge and reverse-engineer the entire narrative around it.',
       handwrittenNote:
         settings?.step1Note ||
         '“Who you are > fancy transitions. This is where real retention is born.”',
-      doodleType: 'circle-signal',
-      accentColor: 'text-zinc-900',
-      tagColor: 'bg-zinc-100 text-zinc-800',
     },
     {
       id: 2,
@@ -55,15 +247,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
       tag: '[ PHASE 02 // THE BREAKDOWN ]',
       timecode: 'TC 00:01:24:12',
       subtitle: settings?.step2Subtitle || 'Ruthless Dissection & Trimming the Fat',
+      icon: '✂',
       description:
         settings?.step2Description ||
         'Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.',
       handwrittenNote:
         settings?.step2Note ||
         '✂ Cut the safety filler. If it doesn’t push the story forward, it dies here.',
-      doodleType: 'scissor-cut',
-      accentColor: 'text-zinc-900',
-      tagColor: 'bg-zinc-100 text-zinc-800',
     },
     {
       id: 3,
@@ -72,15 +262,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
       tag: '[ PHASE 03 // ACOUSTIC ARCHITECTURE ]',
       timecode: 'TC 00:02:48:06',
       subtitle: settings?.step3Subtitle || 'The Kinetic Pulse & Visceral Foley',
+      icon: '♫',
       description:
         settings?.step3Description ||
         'Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.',
       handwrittenNote:
         settings?.step3Note ||
         'Subconscious audio cues [40Hz - 12kHz] — spatial depth & tactile rhythm',
-      doodleType: 'sound-wave',
-      accentColor: 'text-zinc-900',
-      tagColor: 'bg-zinc-100 text-zinc-800',
     },
     {
       id: 4,
@@ -89,23 +277,27 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
       tag: '[ PHASE 04 // MASTER POLISH & LAUNCH ]',
       timecode: 'TC 00:04:12:00',
       subtitle: settings?.step4Subtitle || 'Color Science, Key-Art & Cultural Authority',
+      icon: '✓',
       description:
         settings?.step4Description ||
         'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.',
       handwrittenNote:
         settings?.step4Note ||
         '✦ Ready for export. Approved for master release across all formats.',
-      doodleType: 'star-master',
-      accentColor: 'text-zinc-900',
-      tagColor: 'bg-zinc-100 text-zinc-800',
     },
   ];
 
   return (
     <section
       id="blueprint-about"
-      className="py-24 sm:py-32 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-8 sm:-mt-12 z-30 border-t border-zinc-300/80 bg-[#fafafa] shadow-[0_-32px_64px_rgba(0,0,0,0.22),0_-8px_24px_rgba(0,0,0,0.12)] overflow-hidden"
+      className="py-16 sm:py-24 relative bg-[#fafafa] overflow-hidden"
     >
+      {/* Viewport Side-Hugging Ambient Gradient Blobs (Spread far out, hugging screen sides) */}
+      <div className="absolute top-[8%] -left-24 sm:-left-36 md:-left-48 w-72 sm:w-[420px] h-80 sm:h-[480px] rounded-full bg-gradient-to-tr from-violet-500/18 via-fuchsia-400/12 to-rose-400/10 blur-3xl pointer-events-none -z-0" />
+      <div className="absolute top-[28%] -right-24 sm:-right-36 md:-right-48 w-72 sm:w-[420px] h-80 sm:h-[480px] rounded-full bg-gradient-to-bl from-amber-500/18 via-orange-400/12 to-rose-400/10 blur-3xl pointer-events-none -z-0" />
+      <div className="absolute top-[48%] -left-24 sm:-left-36 md:-left-48 w-72 sm:w-[420px] h-80 sm:h-[480px] rounded-full bg-gradient-to-r from-sky-400/18 via-blue-500/12 to-indigo-500/10 blur-3xl pointer-events-none -z-0" />
+      <div className="absolute top-[68%] -right-24 sm:-right-36 md:-right-48 w-72 sm:w-[420px] h-80 sm:h-[480px] rounded-full bg-gradient-to-tl from-emerald-400/18 via-teal-400/12 to-amber-400/10 blur-3xl pointer-events-none -z-0" />
+
       {/* Anchor targets */}
       <div id="process" className="absolute -top-24 pointer-events-none" />
       <div id="blueprint" className="absolute -top-24 pointer-events-none" />
@@ -174,128 +366,45 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
           </div>
 
           {/* FREE-FLOW PROGRESSION CONTAINER: No hard card borders */}
-          <div className="relative space-y-16 sm:space-y-24">
-            {/* Continuous dashed line guiding through the steps */}
-            <div className="hidden lg:block absolute left-[38px] top-10 bottom-16 w-0.5 border-l-2 border-dashed border-zinc-300 pointer-events-none">
-              <div className="absolute -top-1 -left-[3px] w-2 h-2 rounded-full bg-zinc-400" />
-              <div className="absolute -bottom-1 -left-[3px] w-2 h-2 rounded-full bg-zinc-400" />
+          <div ref={stepsContainerRef} className="relative space-y-16 sm:space-y-24">
+            {/* Continuous dashed progression track with subtle handwritten swirls connecting behind the steps */}
+            <div className="hidden lg:block absolute left-[32px] -translate-x-1/2 top-8 bottom-16 w-12 pointer-events-none z-0">
+              <svg
+                className="w-full h-full overflow-visible"
+                viewBox="0 0 48 1000"
+                preserveAspectRatio="none"
+              >
+                {/* Background dashed guide line with gentle organic curves and subtle swirls */}
+                <path
+                  d="M 24 0 C 24 90, 20 150, 24 210 C 28 245, 36 275, 24 310 C 14 340, 16 365, 24 390 C 32 435, 18 500, 24 560 C 28 600, 34 635, 24 680 C 14 720, 18 750, 24 785 C 30 835, 20 890, 24 1000"
+                  fill="none"
+                  stroke="#e4e4e7"
+                  strokeWidth="2"
+                  strokeDasharray="6 8"
+                  strokeLinecap="round"
+                />
+
+                {/* Animated progress dashed line driven by scroll progression */}
+                <motion.path
+                  d="M 24 0 C 24 90, 20 150, 24 210 C 28 245, 36 275, 24 310 C 14 340, 16 365, 24 390 C 32 435, 18 500, 24 560 C 28 600, 34 635, 24 680 C 14 720, 18 750, 24 785 C 30 835, 20 890, 24 1000"
+                  fill="none"
+                  stroke="#27272a"
+                  strokeWidth="2.5"
+                  strokeDasharray="6 8"
+                  strokeLinecap="round"
+                  style={{ pathLength: stepsScrollProgress }}
+                />
+              </svg>
             </div>
 
-            {PROCESS_STEPS.map((step, idx) => {
-              const isHovered = activeStepHover === step.id;
-
-              return (
-                <motion.div
-                  key={step.id}
-                  initial={{ opacity: 0, y: 32, filter: 'blur(4px)' }}
-                  whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.7, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                  onMouseEnter={() => setActiveStepHover(step.id)}
-                  onMouseLeave={() => setActiveStepHover(null)}
-                  onClick={() => setActiveStepHover((prev) => (prev === step.id ? null : step.id))}
-                  className="relative group transition-all duration-300 cursor-pointer touch-manipulation"
-                >
-                  {/* Organic layout: NO hard card border, purely breathable typography & hand-drawn annotations */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start relative">
-                    
-                    {/* Left Step Marker with Hand-Drawn Circle with Hover & Mobile Tap Active */}
-                    <div className="lg:col-span-4 flex items-start gap-4 relative">
-                      {/* Hand-Drawn Sketch Circle around number - responsive to hover and tap */}
-                      <div className="relative flex-shrink-0 w-16 h-16 flex items-center justify-center">
-                        <svg
-                          viewBox="0 0 100 100"
-                          className={`absolute inset-0 w-full h-full transition-transform duration-300 ${
-                            isHovered
-                              ? 'scale-110 rotate-12 text-zinc-950 stroke-[4]'
-                              : 'text-zinc-400 group-hover:text-zinc-700 group-active:scale-110 group-active:rotate-12 group-active:text-zinc-950'
-                          }`}
-                        >
-                          <path
-                            d="M 50,8 C 76,6 94,22 93,51 C 92,78 74,94 48,93 C 21,92 7,74 8,47 C 9,21 28,10 52,8"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3.5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        <span className={`font-display font-bold text-xl relative z-10 transition-colors ${
-                          isHovered ? 'text-zinc-950' : 'text-zinc-900 group-hover:text-zinc-950'
-                        }`}>
-                          {step.number}
-                        </span>
-                      </div>
-
-                      <div className="space-y-1 pt-1.5">
-                        <h4 className="font-display text-xl sm:text-2xl font-bold text-zinc-950 group-hover:text-zinc-800 transition-colors">
-                          {step.title}
-                        </h4>
-                        <span className="text-xs font-mono text-zinc-500 block">
-                          {step.subtitle}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right Narrative & Clean Workshop Annotations */}
-                    <div className="lg:col-span-8 space-y-4 relative">
-                      {/* Step category indicator contained in brackets with respective color */}
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        {idx === 0 && (
-                          <span className="font-handwriting text-lg text-emerald-700 font-semibold">
-                            [ ✦ &nbsp;user favorite core step ]
-                          </span>
-                        )}
-                        {idx === 1 && (
-                          <span className="font-handwriting text-lg text-rose-700 font-semibold">
-                            [ ✂ &nbsp;the breakdown begins ]
-                          </span>
-                        )}
-                        {idx === 2 && (
-                          <span className="font-handwriting text-lg text-indigo-700 font-semibold">
-                            [ ♫ &nbsp;40Hz sub-bass layer ]
-                          </span>
-                        )}
-                        {idx === 3 && (
-                          <span className="font-handwriting text-lg text-amber-700 font-semibold">
-                            [ ✓ &nbsp;export locked ]
-                          </span>
-                        )}
-                      </div>
-
-                      {/* The Main Narrative */}
-                      <p className="text-zinc-700 text-base sm:text-lg leading-relaxed font-body">
-                        {step.description}
-                      </p>
-
-                      {/* Hand-drawn Commentary Annotation with rough doodle */}
-                      <div className="pt-2 flex items-center gap-3">
-                        <svg
-                          className="w-7 h-7 text-zinc-400 flex-shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M5 12h14" />
-                          <path d="m12 5 7 7-7 7" />
-                        </svg>
-
-                        <p className="font-handwriting text-xl sm:text-2xl text-zinc-800 font-medium tracking-wide">
-                          {step.handwrittenNote}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Clean breathable spacing between steps without artificial separator lines or CONTINUE text */}
-                  {idx < PROCESS_STEPS.length - 1 && (
-                    <div className="h-4 sm:h-8" />
-                  )}
-                </motion.div>
-              );
-            })}
+            {PROCESS_STEPS.map((step, idx) => (
+              <ScrollPhaseItem
+                key={step.id}
+                step={step}
+                idx={idx}
+                isLast={idx === PROCESS_STEPS.length - 1}
+              />
+            ))}
           </div>
 
           {/* Blueprint Workshop Summary Stamp Footer */}

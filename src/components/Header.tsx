@@ -4,11 +4,17 @@ import { ArrowDownRight, Menu, X, Film } from 'lucide-react';
 interface HeaderProps {
   onNavigate: (sectionId: string) => void;
   onOpenAdmin?: () => void;
+  logoUrl?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
+export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
+
+  useEffect(() => {
+    setLogoFailed(false);
+  }, [logoUrl]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +31,8 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
     setMobileMenuOpen(false);
   };
 
+  const hasCustomLogo = Boolean(logoUrl && logoUrl.trim() && !logoFailed);
+
   return (
     <header
       id="top-sticky-header"
@@ -35,20 +43,37 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate }) => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Left Corner: Placeholder Logo Icon & Name "Zolepto" (with press-and-hold secret backdoor) */}
+        {/* Left Corner: Brand Logo / Home Button & Name "Zolepto" */}
         <div className="flex items-center gap-3">
           <button
             id="brand-logo-btn"
             onClick={() => handleLinkClick('hero')}
+            aria-label="Zolepto Home"
             className="group relative flex items-center gap-2.5 text-left focus:outline-none cursor-pointer select-none"
           >
-            {/* Placeholder logo icon */}
+            {/* Customizable brand logo icon or default mark */}
             <div
-              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all group-hover:scale-105 shadow-xs ${
-                isScrolled ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-950'
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all group-hover:scale-105 shadow-xs overflow-hidden ${
+                hasCustomLogo
+                  ? isScrolled
+                    ? 'bg-zinc-100/90 border border-zinc-200/80 p-0.5'
+                    : 'bg-white/10 border border-white/20 p-0.5'
+                  : isScrolled
+                    ? 'bg-zinc-900 text-white'
+                    : 'bg-white text-zinc-950'
               }`}
             >
-              <Film className="w-3.5 h-3.5" />
+              {hasCustomLogo ? (
+                <img
+                  src={logoUrl}
+                  alt="Zolepto Logo"
+                  referrerPolicy="no-referrer"
+                  onError={() => setLogoFailed(true)}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <Film className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              )}
             </div>
             <span
               className={`relative font-display font-bold text-base sm:text-lg tracking-normal transition-colors ${

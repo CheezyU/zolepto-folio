@@ -87,12 +87,25 @@ export interface NewGraphicInput {
   imageUrl?: string;
 }
 
+function isLegacyDummyItem(item: { title?: string }): boolean {
+  if (!item || !item.title) return false;
+  const t = item.title.toUpperCase();
+  return (
+    t.includes('HYPERION') ||
+    t.includes('ECLIPSE PROTOCOL') ||
+    t.includes('SILENT EXPEDITION') ||
+    t.includes('NEO-SHIBUYA') ||
+    t.includes('CHRONO DRIFT')
+  );
+}
+
 let authoritativeShowreels: VideoProject[] | null = null;
 let authoritativeGraphics: GraphicProject[] | null = null;
 
 export function getAuthoritativeShowreels(): VideoProject[] {
   if (authoritativeShowreels && authoritativeShowreels.length > 0) {
-    return authoritativeShowreels;
+    const clean = authoritativeShowreels.filter((s) => !isLegacyDummyItem(s));
+    if (clean.length > 0) return clean;
   }
 
   // 1. Prioritize pushed/published payload from GitHub / Admin publish
@@ -100,15 +113,18 @@ export function getAuthoritativeShowreels(): VideoProject[] {
     const pushedRaw = localStorage.getItem('zolepto_last_pushed_payload');
     if (pushedRaw) {
       const parsed = JSON.parse(pushedRaw);
-      if (Array.isArray(parsed.showreels) && parsed.showreels.length > 0) {
-        authoritativeShowreels = parsed.showreels;
-        return parsed.showreels;
+      if (Array.isArray(parsed.showreels)) {
+        const clean = parsed.showreels.filter((s: any) => !isLegacyDummyItem(s));
+        if (clean.length > 0) {
+          authoritativeShowreels = clean;
+          return clean;
+        }
       }
     }
   } catch {}
 
   // 2. Custom showreels from admin edits
-  const local = getLocalShowreels();
+  const local = getLocalShowreels().filter((s) => !isLegacyDummyItem(s));
   if (local && local.length > 0) {
     authoritativeShowreels = local;
     return local;
@@ -120,7 +136,8 @@ export function getAuthoritativeShowreels(): VideoProject[] {
 
 export function getAuthoritativeGraphics(): GraphicProject[] {
   if (authoritativeGraphics && authoritativeGraphics.length > 0) {
-    return authoritativeGraphics;
+    const clean = authoritativeGraphics.filter((g) => !isLegacyDummyItem(g));
+    if (clean.length > 0) return clean;
   }
 
   // 1. Prioritize pushed/published payload
@@ -128,15 +145,18 @@ export function getAuthoritativeGraphics(): GraphicProject[] {
     const pushedRaw = localStorage.getItem('zolepto_last_pushed_payload');
     if (pushedRaw) {
       const parsed = JSON.parse(pushedRaw);
-      if (Array.isArray(parsed.graphics) && parsed.graphics.length > 0) {
-        authoritativeGraphics = parsed.graphics;
-        return parsed.graphics;
+      if (Array.isArray(parsed.graphics)) {
+        const clean = parsed.graphics.filter((g: any) => !isLegacyDummyItem(g));
+        if (clean.length > 0) {
+          authoritativeGraphics = clean;
+          return clean;
+        }
       }
     }
   } catch {}
 
   // 2. Custom graphics from admin edits
-  const local = getLocalGraphics();
+  const local = getLocalGraphics().filter((g) => !isLegacyDummyItem(g));
   if (local && local.length > 0) {
     authoritativeGraphics = local;
     return local;

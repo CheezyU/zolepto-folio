@@ -76,7 +76,7 @@ export async function dispatchWebhookNotification(
             color: 2470550, // Emerald green tone
             fields: [
               { name: '📧 Client Email', value: inquiry.email || 'N/A', inline: true },
-              { name: '🎯 Focus / Scope', value: inquiry.projectType || 'General', inline: true },
+              { name: '🎯 Selected Service', value: inquiry.projectType || 'Video Editing', inline: true },
               { name: '💰 Target Budget', value: inquiry.estimatedBudget || 'Flexible / Open', inline: true },
               { name: '🔗 Assets & Links', value: inquiry.links ? inquiry.links : 'None', inline: false },
               { name: '🆔 Tracking Code', value: inquiry.id, inline: true },
@@ -89,7 +89,7 @@ export async function dispatchWebhookNotification(
       };
     } else if (isSlack) {
       bodyPayload = {
-        text: `*New Portfolio Inquiry [${inquiry.id}]*\n*Client:* ${inquiry.fullName} (${inquiry.email})\n*Scope:* ${inquiry.projectType}\n*Budget:* ${inquiry.estimatedBudget}\n*Brief:* ${inquiry.brief || 'None'}\n*Links:* ${inquiry.links || 'None'}`,
+        text: `*New Portfolio Inquiry [${inquiry.id}]*\n*Client:* ${inquiry.fullName} (${inquiry.email})\n*Service:* ${inquiry.projectType}\n*Budget:* ${inquiry.estimatedBudget}\n*Brief:* ${inquiry.brief || 'None'}\n*Links:* ${inquiry.links || 'None'}`,
       };
     } else {
       // Generic Webhook payload (Zapier, Make, custom server)
@@ -258,7 +258,7 @@ export async function saveInquiry(
       subject: `[${cleanInquiry.id}] New Inquiry from ${cleanInquiry.fullName}`,
       from_name: `Portfolio Inquiry (${cleanInquiry.fullName})`,
       replyto: cleanInquiry.email,
-      project_scope: cleanInquiry.projectType,
+      service: cleanInquiry.projectType,
       budget: cleanInquiry.estimatedBudget || 'Flexible / Open',
       links: cleanInquiry.links || 'None provided',
       inquiry_id: cleanInquiry.id,

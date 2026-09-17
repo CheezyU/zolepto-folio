@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { CheckCircle2, Copy, Check, ArrowRight, Plus, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Copy, Check, ArrowRight, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ConsultationFormState, SubmittedBooking, SiteSettings } from '../types';
 import { saveInquiry } from '../services/inquiryService';
@@ -8,7 +8,7 @@ import { SocialsInquiryPopup } from './SocialsInquiryPopup';
 const INITIAL_FORM: ConsultationFormState = {
   fullName: '',
   email: '',
-  projectType: 'Commercial / Brand Video',
+  projectType: 'Video Editing',
   estimatedBudget: '',
   brief: '',
   links: '',
@@ -162,7 +162,11 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
           </div>
 
           <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.12]">
-            Let's create together.
+            Let's{' '}
+            <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 bg-clip-text text-transparent font-extrabold drop-shadow-xs">
+              create
+            </span>{' '}
+            together.
           </h2>
 
           <p className="mt-3.5 text-zinc-600 text-sm sm:text-base font-normal leading-relaxed">
@@ -222,14 +226,10 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
 
                 <div className="grid grid-cols-2 gap-4 text-xs font-mono">
                   <div>
-                    <span className="text-zinc-500 block">Project Scope:</span>
-                    <span className="text-zinc-800 font-medium truncate block">{submittedBooking.projectType}</span>
-                  </div>
-                  <div>
                     <span className="text-zinc-500 block">Target Budget:</span>
                     <span className="text-zinc-800 font-medium block">{formattedBudget}</span>
                   </div>
-                  <div className="col-span-2">
+                  <div>
                     <span className="text-zinc-500 block">Contact:</span>
                     <span className="text-zinc-800 font-medium truncate block">{submittedBooking.email}</span>
                   </div>
@@ -304,7 +304,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder="Alex Rivera"
+                    placeholder="e.g. John Doe"
                     className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 transition-all"
                   />
                 </div>
@@ -320,34 +320,13 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="alex@company.com"
+                    placeholder="e.g. abc@gmail.com"
                     className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Row 2: Project Scope */}
-              <div className="space-y-1.5">
-                <label htmlFor="form-project-type" className="block text-xs font-semibold text-zinc-700">
-                  Project Scope
-                </label>
-                <select
-                  id="form-project-type"
-                  name="projectType"
-                  value={formData.projectType}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all cursor-pointer"
-                >
-                  <option value="Commercial & Brand Film">Commercial & Brand Film</option>
-                  <option value="YouTube & Creator Cut">YouTube & Creator Cut</option>
-                  <option value="Cinematic Short & Narrative">Cinematic Short & Narrative</option>
-                  <option value="Motion & 3D Visuals">Motion & 3D Visuals</option>
-                  <option value="Editing Retainer & Direction">Editing Retainer & Direction</option>
-                  <option value="Custom Project">Custom Project</option>
-                </select>
-              </div>
-
-              {/* Row 3: Estimated Budget (Presets + Name Your Own Price Input) */}
+              {/* Row 2: Estimated Budget (Presets + Custom Input) */}
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-zinc-700">
                   Estimated Budget
@@ -376,13 +355,13 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     type="text"
                     value={customBudgetInput}
                     onChange={handleCustomBudgetChange}
-                    placeholder="Or name your own price (e.g. $750)"
+                    placeholder="e.g. $500 or flexible"
                     className="w-full px-4 py-2.5 rounded-xl bg-zinc-50/70 border border-zinc-200 text-xs sm:text-sm font-mono text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Row 4: Project Vision (Brief) */}
+              {/* Row 3: Project Vision (Brief) */}
               <div className="space-y-1.5">
                 <label htmlFor="form-brief" className="block text-xs font-semibold text-zinc-700">
                   Your Vision
@@ -393,12 +372,12 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                   rows={4}
                   value={formData.brief}
                   onChange={handleChange}
-                  placeholder="Tell us what you're making, the emotion or pacing you want to evoke, desired timeline, or any specific ideas..."
+                  placeholder="e.g. High-energy cuts with rhythmic sound design, punchy match cuts, and visual retention hooks that keep viewers locked in until the final frame..."
                   className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all resize-none"
                 />
               </div>
 
-              {/* Row 5: Reference Links (Moved UNDER Project Vision) */}
+              {/* Row 4: Reference Links */}
               <div className="space-y-1.5">
                 <label htmlFor="form-links" className="block text-xs font-semibold text-zinc-700">
                   Reference Links <span className="text-zinc-400 font-normal lowercase">(optional)</span>
@@ -406,10 +385,10 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                 <input
                   id="form-links"
                   name="links"
-                  type="url"
+                  type="text"
                   value={formData.links || ''}
                   onChange={handleChange}
-                  placeholder="Links to footage, Google Drive, Dropbox, or style references..."
+                  placeholder="e.g. drive.google.com/..., youtube.com/watch?v=..., dropbox.com/..."
                   className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all"
                 />
               </div>

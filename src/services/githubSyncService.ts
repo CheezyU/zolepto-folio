@@ -546,9 +546,32 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
   const timestamp = Date.now();
   const candidates: PortfolioContentPayload[] = [];
 
+  const isLegacyItem = (item: any): boolean => {
+    if (!item || !item.title) return false;
+    const t = String(item.title).toUpperCase();
+    return (
+      t.includes('HYPERION') ||
+      t.includes('ECLIPSE PROTOCOL') ||
+      t.includes('SILENT EXPEDITION') ||
+      t.includes('NEO-SHIBUYA') ||
+      t.includes('CHRONO DRIFT')
+    );
+  };
+
+  const sanitizeCandidate = (item: any): PortfolioContentPayload => {
+    const clone = { ...item };
+    if (Array.isArray(clone.showreels)) {
+      clone.showreels = clone.showreels.filter((s: any) => !isLegacyItem(s));
+    }
+    if (Array.isArray(clone.graphics)) {
+      clone.graphics = clone.graphics.filter((g: any) => !isLegacyItem(g));
+    }
+    return clone as PortfolioContentPayload;
+  };
+
   const addCandidate = (item: any) => {
     if (item && item.siteSettings && (item.showreels || item.graphics)) {
-      candidates.push(item as PortfolioContentPayload);
+      candidates.push(sanitizeCandidate(item));
     }
   };
 

@@ -6,6 +6,7 @@ const DRAFT_SETTINGS_KEY = 'zolepto_site_settings_draft';
 const SETTINGS_EVENT = 'zolepto:site-settings-changed';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  headerLogoUrl: '',
   heroTitleLine1: 'Your visual storyteller',
   heroTitleLine2: '& content creation director.',
   heroSubtitle:

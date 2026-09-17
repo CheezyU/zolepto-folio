@@ -248,6 +248,7 @@ function MainApp() {
         <Header
           onNavigate={scrollToSection}
           onOpenAdmin={navigateToAdmin}
+          logoUrl={siteSettings.headerLogoUrl}
         />
 
         {/* Main Long-Scrollable Content with 3D Tactile Stacking Folder System */}

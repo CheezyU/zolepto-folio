@@ -61,7 +61,7 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
               </div>
 
               <div className="flex items-center gap-3">
-                {isPlayingMaster && (
+                {isPlayingMaster && MAIN_SHOWREEL.embedUrl && (
                   <button
                     onClick={() => setIsPlayingMaster(false)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-200 hover:bg-zinc-300 text-xs font-mono text-zinc-800 transition-colors cursor-pointer"
@@ -70,15 +70,17 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                   </button>
                 )}
 
-                <a
-                  href={`https://www.youtube.com/watch?v=${MAIN_SHOWREEL.youtubeId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-600 hover:text-zinc-900 transition-colors"
-                >
-                  <span>YouTube Direct</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                {MAIN_SHOWREEL.youtubeId && (
+                  <a
+                    href={`https://www.youtube.com/watch?v=${MAIN_SHOWREEL.youtubeId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-600 hover:text-zinc-900 transition-colors"
+                  >
+                    <span>YouTube Direct</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
 
                 <button
                   id="expand-master-reel-btn"
@@ -105,7 +107,13 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
               ) : (
                 <div
                   className="group relative w-full h-full cursor-pointer flex items-center justify-center select-none"
-                  onClick={() => setIsPlayingMaster(true)}
+                  onClick={() => {
+                    if (MAIN_SHOWREEL.embedUrl) {
+                      setIsPlayingMaster(true);
+                    } else {
+                      onOpenVideoModal(MAIN_SHOWREEL);
+                    }
+                  }}
                 >
                   <img
                     src={MAIN_SHOWREEL.thumbnailUrl}
@@ -130,7 +138,7 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                     </button>
                     <div className="text-center">
                       <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white font-mono text-xs tracking-wider uppercase font-semibold">
-                        Click to Play Stream • {MAIN_SHOWREEL.duration}
+                        {MAIN_SHOWREEL.embedUrl ? 'Click to Play Stream' : 'Click to View Reel Preview'} • {MAIN_SHOWREEL.duration}
                       </span>
                     </div>
                   </div>

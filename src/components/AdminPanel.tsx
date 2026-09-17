@@ -700,7 +700,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             }`}
           >
             <Globe className="w-4 h-4" />
-            <span>Live Website Copy Editor</span>
+            <span>Live Website Copy & Brand</span>
           </button>
 
           <button

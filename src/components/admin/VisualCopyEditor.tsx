@@ -15,9 +15,11 @@ import {
   Trash2,
   Play,
   ArrowUpRight,
+  Film,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
 import { DEFAULT_SITE_SETTINGS } from '../../services/siteSettingsService';
+import { cleanImageUrl } from '../../lib/imageUtils';
 
 interface VisualCopyEditorProps {
   settings: SiteSettings;
@@ -64,6 +66,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     return Boolean(localStorage.getItem('zolepto_site_settings_draft'));
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     localStorage.setItem('zolepto_admin_editing_active', 'true');
@@ -127,6 +130,24 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     reader.onload = () => {
       if (typeof reader.result === 'string') {
         handleChange('profilePictureUrl', reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Logo file size should be less than 4MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        handleChange('headerLogoUrl', reader.result);
       }
     };
     reader.readAsDataURL(file);
@@ -252,7 +273,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       {/* Section Switcher Tabs */}
       <div className="flex items-center gap-2 border-b border-zinc-200 pb-3 overflow-x-auto no-scrollbar">
         {[
-          { id: 'hero', label: '01. Hero & Identity', icon: Globe },
+          { id: 'hero', label: '01. Header & Hero', icon: Globe },
           { id: 'workshop', label: '02. How the Story Unfolds', icon: Layers },
           { id: 'about', label: '03. About Me', icon: Scissors },
           { id: 'socials', label: '04. Social Profiles', icon: Share2 },
@@ -279,10 +300,141 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       </div>
 
       {/* ================================================================ */}
-      {/* SECTION 1: HERO & IDENTITY (VISUAL REPLICA)                     */}
+      {/* SECTION 1: HEADER & HERO IDENTITY (VISUAL REPLICA)               */}
       {/* ================================================================ */}
       {activeSection === 'hero' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
+          {/* Header Brand Logo & Home Button Card */}
+          <div className="rounded-3xl bg-white border border-zinc-200 p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
+              <div>
+                <h3 className="font-display text-base font-bold text-zinc-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                  <span>Header Brand Logo & Home Button</span>
+                </h3>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Replaces the film reel icon beside "Zolepto" in the main navigation header with your own custom logo.
+                </p>
+              </div>
+
+              {form.headerLogoUrl && (
+                <button
+                  type="button"
+                  onClick={() => handleChange('headerLogoUrl', '')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors cursor-pointer self-start sm:self-auto"
+                  title="Revert to default film reel mark"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Revert to Default Mark</span>
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Left Column: Live Header Replicas */}
+              <div className="lg:col-span-6 space-y-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
+                  Live Sticky Header Appearance
+                </span>
+
+                {/* Dark Header state preview (when at top of page) */}
+                <div className="p-3.5 rounded-2xl bg-[#0d0e12] border border-white/10 flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 p-0.5 flex items-center justify-center overflow-hidden">
+                      {form.headerLogoUrl ? (
+                        <img
+                          src={form.headerLogoUrl}
+                          alt="Custom logo"
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.opacity = '0.3';
+                          }}
+                        />
+                      ) : (
+                        <Film className="w-4 h-4 text-white" />
+                      )}
+                    </div>
+                    <span className="font-display font-bold text-sm text-white">Zolepto</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-400 px-2 py-0.5 rounded bg-white/5 border border-white/10">
+                    Dark Header (Top)
+                  </span>
+                </div>
+
+                {/* Light Header state preview (when scrolled down) */}
+                <div className="p-3.5 rounded-2xl bg-white border border-zinc-200 flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-100 border border-zinc-200 p-0.5 flex items-center justify-center overflow-hidden">
+                      {form.headerLogoUrl ? (
+                        <img
+                          src={form.headerLogoUrl}
+                          alt="Custom logo"
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.opacity = '0.3';
+                          }}
+                        />
+                      ) : (
+                        <Film className="w-4 h-4 text-zinc-950" />
+                      )}
+                    </div>
+                    <span className="font-display font-bold text-sm text-zinc-900">Zolepto</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-500 px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">
+                    Light Header (Scrolled)
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Column: Upload Controls & Direct URL Input */}
+              <div className="lg:col-span-6 space-y-3">
+                <input
+                  type="file"
+                  ref={logoFileInputRef}
+                  onChange={handleLogoUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => logoFileInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-all cursor-pointer shadow-xs"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Logo Image</span>
+                  </button>
+
+                  <span className="text-[11px] font-mono text-zinc-400">
+                    PNG, SVG, WebP, JPG (up to 4MB)
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-600 block font-medium">
+                    Or Paste Custom Logo Image URL:
+                  </label>
+                  <input
+                    type="text"
+                    value={form.headerLogoUrl || ''}
+                    onChange={(e) => {
+                      const cleaned = cleanImageUrl(e.target.value);
+                      handleChange('headerLogoUrl', cleaned);
+                    }}
+                    placeholder="https://... (direct image link, ImgBB, etc.)"
+                    className="w-full text-xs font-mono text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-zinc-900 focus:bg-white transition-colors"
+                  />
+                  <p className="text-[10px] text-zinc-400 font-mono">
+                    Changes preview live instantly. Click "Publish to GitHub" in the top bar to publish permanently.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between px-1 text-xs font-mono text-zinc-500">
             <span>VISUAL REPLICA // HERO SECTION</span>
             <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">

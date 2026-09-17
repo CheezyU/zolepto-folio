@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { X, Play } from 'lucide-react';
 import { VideoProject } from '../types';
 
 interface VideoModalProps {
@@ -78,8 +78,16 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
                 allowFullScreen
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-400 font-mono text-xs">
-                Preview player unavailable
+              <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-zinc-950 text-zinc-300 select-none">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mb-3 shadow-inner">
+                  <Play className="w-6 h-6 ml-0.5 text-zinc-300" />
+                </div>
+                <h4 className="font-display font-semibold text-sm sm:text-base text-zinc-100">
+                  {project.title} • Video Preview
+                </h4>
+                <p className="text-zinc-500 font-mono text-[11px] sm:text-xs mt-1 max-w-sm">
+                  Placeholder video slot — custom client cuts and raw footage review available upon project consultation.
+                </p>
               </div>
             )}
           </div>

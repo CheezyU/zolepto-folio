@@ -52,6 +52,7 @@ export interface SubmittedBooking extends ConsultationFormState {
 }
 
 export interface SiteSettings {
+  headerLogoUrl?: string;
   heroTitleLine1: string;
   heroTitleLine2: string;
   heroSubtitle: string;

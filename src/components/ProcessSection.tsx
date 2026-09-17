@@ -98,77 +98,74 @@ const ScrollPhaseItem: React.FC<{
     );
   };
 
+  const renderMarker = () => (
+    <div className="relative shrink-0">
+      <motion.div
+        animate={{
+          scale: isInView ? [1, 1.14, 1] : 1,
+        }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        className="w-13 h-13 sm:w-16 sm:h-16 flex items-center justify-center relative select-none"
+      >
+        {/* Hand-drawn authentic ink shape: zero residue because stroke and fill belong to the same path */}
+        <svg
+          className="absolute inset-0 w-full h-full overflow-visible drop-shadow-2xs pointer-events-none"
+          viewBox="0 0 100 100"
+        >
+          {/* Secondary faint outer sketch wobble outline */}
+          <path
+            d={SKETCH_OUTLINES[step.id] || SKETCH_OUTLINES[1]}
+            fill="none"
+            stroke={isInView ? '#52525b' : '#d4d4d8'}
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            className="transition-colors duration-300"
+          />
+
+          {/* Main hand-drawn filled container */}
+          <path
+            d={HANDDRAWN_STEP_PATHS[step.id] || HANDDRAWN_STEP_PATHS[1]}
+            fill={isInView ? '#09090b' : '#ffffff'}
+            stroke={isInView ? '#09090b' : '#27272a'}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="transition-all duration-300"
+          />
+        </svg>
+
+        <span
+          className={`font-mono text-base sm:text-lg font-bold tracking-tight relative z-10 transition-colors duration-300 ${
+            isInView ? 'text-white' : 'text-zinc-950'
+          }`}
+        >
+          {step.number}
+        </span>
+      </motion.div>
+
+      {/* Floating Action Glyph */}
+      <div
+        className={`absolute -bottom-1 -right-1 w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs shadow-xs border transition-colors z-20 ${
+          isInView
+            ? 'bg-white text-zinc-950 border-zinc-300'
+            : 'bg-zinc-100 text-zinc-500 border-zinc-200'
+        }`}
+      >
+        {step.id === 1 && <Sparkles className="w-3 h-3" />}
+        {step.id === 2 && <Scissors className="w-3 h-3" />}
+        {step.id === 3 && <Volume2 className="w-3 h-3" />}
+        {step.id === 4 && <CheckCircle className="w-3 h-3" />}
+      </div>
+    </div>
+  );
+
   return (
     <div
       ref={itemRef}
-      className={`relative grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start ${
-        !isLast ? 'pb-16 sm:pb-24' : ''
-      }`}
+      className={`relative ${!isLast ? 'pb-16 sm:pb-24' : ''}`}
     >
-      {/* Col A: Natural Hand-drawn Circular Phase Marker with Pop + Fill */}
-      <div className="lg:col-span-2 flex items-center lg:items-start gap-4 lg:gap-3 relative z-10">
-        <div className="relative">
-          <motion.div
-            animate={{
-              scale: isInView ? [1, 1.14, 1] : 1,
-            }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center relative select-none"
-          >
-            {/* Hand-drawn authentic ink shape: zero residue because stroke and fill belong to the same path */}
-            <svg
-              className="absolute inset-0 w-full h-full overflow-visible drop-shadow-2xs pointer-events-none"
-              viewBox="0 0 100 100"
-            >
-              {/* Secondary faint outer sketch wobble outline */}
-              <path
-                d={SKETCH_OUTLINES[step.id] || SKETCH_OUTLINES[1]}
-                fill="none"
-                stroke={isInView ? '#52525b' : '#d4d4d8'}
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                className="transition-colors duration-300"
-              />
-
-              {/* Main hand-drawn filled container */}
-              <path
-                d={HANDDRAWN_STEP_PATHS[step.id] || HANDDRAWN_STEP_PATHS[1]}
-                fill={isInView ? '#09090b' : '#ffffff'}
-                stroke={isInView ? '#09090b' : '#27272a'}
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="transition-all duration-300"
-              />
-            </svg>
-
-            <span
-              className={`font-mono text-base sm:text-lg font-bold tracking-tight relative z-10 transition-colors duration-300 ${
-                isInView ? 'text-white' : 'text-zinc-950'
-              }`}
-            >
-              {step.number}
-            </span>
-          </motion.div>
-
-          {/* Floating Action Glyph */}
-          <div
-            className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs border transition-colors z-20 ${
-              isInView
-                ? 'bg-white text-zinc-950 border-zinc-300'
-                : 'bg-zinc-100 text-zinc-500 border-zinc-200'
-            }`}
-          >
-            {step.id === 1 && <Sparkles className="w-3 h-3" />}
-            {step.id === 2 && <Scissors className="w-3 h-3" />}
-            {step.id === 3 && <Volume2 className="w-3 h-3" />}
-            {step.id === 4 && <CheckCircle className="w-3 h-3" />}
-          </div>
-        </div>
-      </div>
-
       {/* Col B: Main Narrative Content with Fluid Organic Shapes */}
-      <div className="lg:col-span-10 space-y-3 relative z-10">
+      <div className="relative z-10">
         {/* Fluid Organic Accent Blobs - subtle, luminous aura framing each phase across all displays */}
         {step.id === 1 && (
           <div
@@ -195,25 +192,47 @@ const ScrollPhaseItem: React.FC<{
           />
         )}
 
-        <div>
-          {renderTitle()}
-          <p className="text-xs sm:text-sm font-mono text-zinc-500 mt-1 uppercase tracking-wider">
-            {step.subtitle}
-          </p>
-        </div>
-
-        <p className="text-zinc-600 text-sm sm:text-base font-normal leading-relaxed max-w-3xl">
-          {step.description}
-        </p>
-
-        {/* Natural Handwritten Note (Pure cursive without stiff boxes or label tags) */}
-        {step.handwrittenNote && (
-          <div className="pt-2">
-            <p className="font-handwriting text-lg sm:text-xl text-zinc-600 italic">
-              {step.handwrittenNote}
+        {/* Mobile View: Phase number sits directly beside the phase title & subtitle */}
+        <div className="lg:hidden flex items-center gap-3.5 sm:gap-4 mb-3.5">
+          {renderMarker()}
+          <div className="min-w-0">
+            {renderTitle()}
+            <p className="text-xs sm:text-sm font-mono text-zinc-500 mt-0.5 uppercase tracking-wider">
+              {step.subtitle}
             </p>
           </div>
-        )}
+        </div>
+
+        {/* Desktop View: 2-column grid layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+          {/* Desktop Col A: Phase Marker */}
+          <div className="hidden lg:flex lg:col-span-2 items-start relative z-10">
+            {renderMarker()}
+          </div>
+
+          {/* Col B: Desktop Title, Subtitle, Description & Handwritten Note */}
+          <div className="lg:col-span-10 space-y-3 relative z-10">
+            <div className="hidden lg:block">
+              {renderTitle()}
+              <p className="text-xs sm:text-sm font-mono text-zinc-500 mt-1 uppercase tracking-wider">
+                {step.subtitle}
+              </p>
+            </div>
+
+            <p className="text-zinc-600 text-sm sm:text-base font-normal leading-relaxed max-w-3xl">
+              {step.description}
+            </p>
+
+            {/* Natural Handwritten Note */}
+            {step.handwrittenNote && (
+              <div className="pt-2">
+                <p className="font-handwriting text-lg sm:text-xl text-zinc-600 italic">
+                  {step.handwrittenNote}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

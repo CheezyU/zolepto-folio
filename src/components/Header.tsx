@@ -51,30 +51,28 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
             aria-label="Zolepto Home"
             className="group relative flex items-center gap-2.5 text-left focus:outline-none cursor-pointer select-none"
           >
-            {/* Customizable brand logo icon or default mark */}
-            <div
-              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all group-hover:scale-105 shadow-xs overflow-hidden ${
-                hasCustomLogo
-                  ? isScrolled
-                    ? 'bg-zinc-100/90 border border-zinc-200/80 p-0.5'
-                    : 'bg-white/10 border border-white/20 p-0.5'
-                  : isScrolled
-                    ? 'bg-zinc-900 text-white'
-                    : 'bg-white text-zinc-950'
-              }`}
-            >
-              {hasCustomLogo ? (
+            {/* Customizable floating brand logo or default mark */}
+            {hasCustomLogo ? (
+              <div className="relative flex items-center justify-center transition-transform duration-200 group-hover:scale-105 shrink-0 select-none">
                 <img
                   src={logoUrl}
                   alt="Zolepto Logo"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
                   referrerPolicy="no-referrer"
                   onError={() => setLogoFailed(true)}
-                  className="w-full h-full object-contain"
+                  className="h-8 sm:h-9 md:h-10 w-auto max-w-[140px] max-h-10 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] select-none pointer-events-none"
                 />
-              ) : (
+              </div>
+            ) : (
+              <div
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all group-hover:scale-105 shadow-xs ${
+                  isScrolled ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-950'
+                }`}
+              >
                 <Film className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              )}
-            </div>
+              </div>
+            )}
             <span
               className={`relative font-display font-bold text-base sm:text-lg tracking-normal transition-colors ${
                 isScrolled ? 'text-zinc-900 group-hover:text-zinc-700' : 'text-white group-hover:text-zinc-300'

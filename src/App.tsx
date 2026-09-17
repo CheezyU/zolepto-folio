@@ -86,6 +86,47 @@ function MainApp() {
     };
   }, []);
 
+  // Protect all uploaded media: disable context menu, drag-and-drop save, and image opening
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (
+        target.tagName === 'IMG' ||
+        target.tagName === 'VIDEO' ||
+        target.tagName === 'PICTURE' ||
+        target.tagName === 'CANVAS' ||
+        target.closest('img, video, picture, canvas, [data-protected-media], .media-protected')
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    };
+
+    const handleDragStart = (e: DragEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (
+        target.tagName === 'IMG' ||
+        target.tagName === 'VIDEO' ||
+        target.tagName === 'PICTURE' ||
+        target.tagName === 'CANVAS' ||
+        target.closest('img, video, picture, canvas, [data-protected-media], .media-protected')
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    window.addEventListener('contextmenu', handleContextMenu, true);
+    window.addEventListener('dragstart', handleDragStart, true);
+    return () => {
+      window.removeEventListener('contextmenu', handleContextMenu, true);
+      window.removeEventListener('dragstart', handleDragStart, true);
+    };
+  }, []);
+
   const currentViewRef = useRef(currentView);
   currentViewRef.current = currentView;
   const isVideoActiveRef = useRef(activeTheaterProject !== null);

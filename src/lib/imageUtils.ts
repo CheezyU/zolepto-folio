@@ -13,7 +13,12 @@
 
 export function cleanImageUrl(input: string): string {
   if (!input) return '';
-  const trimmed = input.trim();
+  let trimmed = input.trim();
+
+  // If user pasted something like "ibb.co/..." or "i.ibb.co/..." without protocol, prepend https://
+  if (!/^(?:https?:)?\/\//i.test(trimmed) && /^(?:i\.)?ibb\.co(?:\.com)?\//i.test(trimmed)) {
+    trimmed = `https://${trimmed}`;
+  }
 
   // 1. HTML <img> tag (e.g. ImgBB HTML full / thumbnail embed code: <img src="https://i.ibb.co/..." />)
   const htmlImgMatch = trimmed.match(/<img[^>]+src=["']([^"']+)["']/i);
@@ -58,6 +63,19 @@ export function cleanImageUrl(input: string): string {
   }
 
   return trimmed;
+}
+
+/**
+ * Checks if a URL is an ImgBB viewer page (e.g. https://ibb.co/xyz or ibb.co.com/xyz)
+ * rather than a direct image link.
+ */
+export function isImgbbViewerUrl(url: string): boolean {
+  if (!url) return false;
+  const s = url.trim();
+  return (
+    /https?:\/\/(?:www\.)?ibb\.co(?:\.com)?\/[a-zA-Z0-9]+/i.test(s) &&
+    !s.includes('i.ibb.co')
+  );
 }
 
 /**
@@ -115,14 +133,14 @@ export function detectImgbbFormat(input: string): string | null {
     return 'ImgBB Direct Link';
   }
   if (/https?:\/\/(?:www\.)?ibb\.co(?:\.com)?\/[a-zA-Z0-9]+/i.test(s)) {
-    return 'ImgBB Viewer Link';
+    return 'ImgBB Viewer Link (Auto-Resolving to Direct Image)';
   }
   return null;
 }
 
 /**
  * Resolves an ImgBB Viewer link (e.g. https://ibb.co/xyz) to its direct image URL
- * by fetching open-graph metadata if needed.
+ * by fetching open-graph metadata with multiple resilient proxies.
  */
 export async function resolveImgbbViewerUrl(input: string): Promise<string> {
   const cleaned = cleanImageUrl(input);
@@ -140,22 +158,35 @@ export async function resolveImgbbViewerUrl(input: string): Promise<string> {
 
   const viewerUrl = viewerMatch[0];
 
-  try {
-    // Attempt resolution via public CORS proxy to parse the og:image meta tag
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(viewerUrl)}`;
-    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(5000) });
-    if (res.ok) {
-      const html = await res.text();
-      // Look for og:image or direct image in HTML
-      const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
-                      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i) ||
-                      html.match(/<img[^>]+id=["']image-viewer["'][^>]+src=["']([^"']+)["']/i);
-      if (ogMatch && ogMatch[1]) {
-        return normalizeDirectImageUrl(ogMatch[1]);
+  // List of lightweight CORS proxies for high resilience
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(viewerUrl)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(viewerUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(viewerUrl)}`,
+  ];
+
+  for (const proxyUrl of proxies) {
+    try {
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(4500) });
+      if (res.ok) {
+        const html = await res.text();
+        // Look for og:image, twitter:image, image_src, or direct i.ibb.co image in HTML
+        const ogMatch =
+          html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
+          html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i) ||
+          html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) ||
+          html.match(/<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i) ||
+          html.match(/<img[^>]+id=["']image-viewer["'][^>]+src=["']([^"']+)["']/i) ||
+          html.match(/(https?:\/\/i\.ibb\.co(?:\.com)?\/[a-zA-Z0-9_\/.-]+(?:\.(?:png|jpe?g|webp|gif)))/i);
+
+        if (ogMatch && ogMatch[1]) {
+          return normalizeDirectImageUrl(ogMatch[1]);
+        }
       }
+    } catch {
+      // Try next proxy
+      continue;
     }
-  } catch (err) {
-    console.warn('Could not auto-resolve ImgBB viewer page directly:', err);
   }
 
   return cleaned;

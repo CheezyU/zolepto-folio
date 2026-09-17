@@ -16,10 +16,12 @@ import {
   Play,
   ArrowUpRight,
   Film,
+  TrendingUp,
+  Loader2,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
 import { DEFAULT_SITE_SETTINGS } from '../../services/siteSettingsService';
-import { cleanImageUrl } from '../../lib/imageUtils';
+import { cleanImageUrl, isImgbbViewerUrl, resolveImgbbViewerUrl } from '../../lib/imageUtils';
 
 interface VisualCopyEditorProps {
   settings: SiteSettings;
@@ -102,6 +104,9 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     contactEmail: 60,
   };
 
+  const [isResolvingProfileUrl, setIsResolvingProfileUrl] = useState(false);
+  const [profileUrlNotice, setProfileUrlNotice] = useState<string | null>(null);
+
   const handleChange = (field: keyof SiteSettings, value: any, maxLength?: number) => {
     let finalVal = value;
     if (maxLength && typeof value === 'string' && value.length > maxLength) {
@@ -115,6 +120,46 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       return updated;
     });
     setHasChanges(true);
+  };
+
+  const handleProfileUrlInput = async (val: string) => {
+    const cleaned = cleanImageUrl(val);
+    handleChange('profilePictureUrl', cleaned);
+
+    if (isImgbbViewerUrl(cleaned) || isImgbbViewerUrl(val)) {
+      setIsResolvingProfileUrl(true);
+      setProfileUrlNotice('Resolving ImgBB page to full-res direct image...');
+      try {
+        const direct = await resolveImgbbViewerUrl(cleaned || val);
+        if (direct && direct !== cleaned) {
+          handleChange('profilePictureUrl', direct);
+          setProfileUrlNotice('✓ ImgBB image resolved to direct link');
+          setTimeout(() => setProfileUrlNotice(null), 3000);
+        } else {
+          setProfileUrlNotice(null);
+        }
+      } catch {
+        setProfileUrlNotice(null);
+      } finally {
+        setIsResolvingProfileUrl(false);
+      }
+    } else {
+      setProfileUrlNotice(null);
+    }
+  };
+
+  const handleLogoUrlInput = async (val: string) => {
+    const cleaned = cleanImageUrl(val);
+    handleChange('headerLogoUrl', cleaned);
+
+    if (isImgbbViewerUrl(cleaned) || isImgbbViewerUrl(val)) {
+      try {
+        const direct = await resolveImgbbViewerUrl(cleaned || val);
+        if (direct && direct !== cleaned) {
+          handleChange('headerLogoUrl', direct);
+        }
+      } catch {}
+    }
   };
 
   const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -340,21 +385,25 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 {/* Dark Header state preview (when at top of page) */}
                 <div className="p-3.5 rounded-2xl bg-[#0d0e12] border border-white/10 flex items-center justify-between shadow-xs">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 p-0.5 flex items-center justify-center overflow-hidden">
-                      {form.headerLogoUrl ? (
+                    {form.headerLogoUrl ? (
+                      <div className="relative flex items-center justify-center shrink-0">
                         <img
                           src={form.headerLogoUrl}
                           alt="Custom logo"
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-contain"
+                          className="h-8 sm:h-9 w-auto max-w-[120px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] select-none pointer-events-none"
                           onError={(e) => {
                             (e.target as HTMLElement).style.opacity = '0.3';
                           }}
                         />
-                      ) : (
-                        <Film className="w-4 h-4 text-white" />
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 p-0.5 flex items-center justify-center">
+                        <Film className="w-3.5 h-3.5 text-white" />
+                      </div>
+                    )}
                     <span className="font-display font-bold text-sm text-white">Zolepto</span>
                   </div>
                   <span className="text-[10px] font-mono text-zinc-400 px-2 py-0.5 rounded bg-white/5 border border-white/10">
@@ -365,21 +414,25 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 {/* Light Header state preview (when scrolled down) */}
                 <div className="p-3.5 rounded-2xl bg-white border border-zinc-200 flex items-center justify-between shadow-xs">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-zinc-100 border border-zinc-200 p-0.5 flex items-center justify-center overflow-hidden">
-                      {form.headerLogoUrl ? (
+                    {form.headerLogoUrl ? (
+                      <div className="relative flex items-center justify-center shrink-0">
                         <img
                           src={form.headerLogoUrl}
                           alt="Custom logo"
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-contain"
+                          className="h-8 sm:h-9 w-auto max-w-[120px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)] select-none pointer-events-none"
                           onError={(e) => {
                             (e.target as HTMLElement).style.opacity = '0.3';
                           }}
                         />
-                      ) : (
-                        <Film className="w-4 h-4 text-zinc-950" />
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="w-7 h-7 rounded-lg bg-zinc-100 border border-zinc-200 p-0.5 flex items-center justify-center">
+                        <Film className="w-3.5 h-3.5 text-zinc-950" />
+                      </div>
+                    )}
                     <span className="font-display font-bold text-sm text-zinc-900">Zolepto</span>
                   </div>
                   <span className="text-[10px] font-mono text-zinc-500 px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">
@@ -420,10 +473,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                   <input
                     type="text"
                     value={form.headerLogoUrl || ''}
-                    onChange={(e) => {
-                      const cleaned = cleanImageUrl(e.target.value);
-                      handleChange('headerLogoUrl', cleaned);
-                    }}
+                    onChange={(e) => handleLogoUrlInput(e.target.value)}
                     placeholder="https://... (direct image link, ImgBB, etc.)"
                     className="w-full text-xs font-mono text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-zinc-900 focus:bg-white transition-colors"
                   />
@@ -437,9 +487,23 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
 
           <div className="flex items-center justify-between px-1 text-xs font-mono text-zinc-500">
             <span>VISUAL REPLICA // HERO SECTION</span>
-            <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-              Interactive In-Canvas Editing
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('zolepto:replay_intro'));
+                  alert('Retention graph intro animation triggered! Switch to portfolio view to watch the intro sequence.');
+                }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-mono transition-colors cursor-pointer"
+                title="Test and replay the retention graph intro animation"
+              >
+                <TrendingUp className="w-3 h-3" />
+                <span>Test Intro Animation</span>
+              </button>
+              <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                Interactive In-Canvas Editing
+              </span>
+            </div>
           </div>
 
           {/* Real Hero Section Frame Replica */}
@@ -460,7 +524,19 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                       <img
                         src={form.profilePictureUrl}
                         alt="Profile avatar"
-                        className="w-full h-full object-cover"
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        className="w-full h-full object-cover select-none pointer-events-none"
+                        onError={async (e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (form.profilePictureUrl && isImgbbViewerUrl(form.profilePictureUrl)) {
+                            const direct = await resolveImgbbViewerUrl(form.profilePictureUrl);
+                            if (direct && direct !== form.profilePictureUrl) {
+                              target.src = direct;
+                              handleChange('profilePictureUrl', direct);
+                            }
+                          }
+                        }}
                       />
                     ) : (
                       <svg
@@ -543,12 +619,18 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                       )}
                     </div>
                     <input
-                      type="url"
+                      type="text"
                       value={form.profilePictureUrl || ''}
-                      onChange={(e) => handleChange('profilePictureUrl', e.target.value)}
-                      placeholder="Or paste direct image URL (https://...)"
+                      onChange={(e) => handleProfileUrlInput(e.target.value)}
+                      placeholder="Paste image link, ImgBB link, or BBCode"
                       className="w-full text-[11px] font-mono text-zinc-200 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-white/30 text-center"
                     />
+                    {profileUrlNotice && (
+                      <div className="text-[10px] font-mono text-emerald-300 flex items-center justify-center gap-1.5 pt-0.5">
+                        {isResolvingProfileUrl && <Loader2 className="w-3 h-3 animate-spin text-emerald-400" />}
+                        <span>{profileUrlNotice}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -77,3 +77,23 @@ body,
   height: 0px !important;
 }
 
+/* Comprehensive media protection: disable drag, user selection, and context menus */
+img,
+video,
+picture,
+canvas,
+[data-protected-media],
+.media-protected {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none !important;
+}
+
+

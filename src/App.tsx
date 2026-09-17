@@ -198,6 +198,13 @@ function MainApp() {
   };
 
   const handleScrollTo = (sectionId: string) => {
+    // Unconditionally scroll directly to top without computing offset
+    if (sectionId === 'hero' || sectionId === 'home' || sectionId === 'top') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (sectionId === 'footer' || sectionId === 'contact' || sectionId === 'site-footer') {
       const footerEl = document.getElementById('footer') || document.getElementById('site-footer') || document.getElementById('start');
       if (footerEl) {
@@ -225,7 +232,7 @@ function MainApp() {
     const el = document.getElementById(sectionId);
     if (el) {
       const yOffset = -75;
-      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset + yOffset);
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
@@ -290,6 +297,8 @@ function MainApp() {
           onNavigate={scrollToSection}
           onOpenAdmin={navigateToAdmin}
           logoUrl={siteSettings.headerLogoUrl}
+          logoDarkUrl={siteSettings.headerLogoDarkUrl || siteSettings.headerLogoUrl}
+          logoLightUrl={siteSettings.headerLogoLightUrl || siteSettings.headerLogoDarkUrl || siteSettings.headerLogoUrl}
         />
 
         {/* Main Long-Scrollable Content with 3D Tactile Stacking Folder System */}

@@ -5,22 +5,34 @@ interface HeaderProps {
   onNavigate: (sectionId: string) => void;
   onOpenAdmin?: () => void;
   logoUrl?: string;
+  logoDarkUrl?: string;
+  logoLightUrl?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onNavigate,
+  logoUrl,
+  logoDarkUrl,
+  logoLightUrl,
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
 
+  // Active logo depends on whether header is in dark (top) or light (scrolled) state
+  const activeLogo = isScrolled
+    ? (logoLightUrl?.trim() || logoDarkUrl?.trim() || logoUrl?.trim() || '')
+    : (logoDarkUrl?.trim() || logoUrl?.trim() || logoLightUrl?.trim() || '');
+
   useEffect(() => {
     setLogoFailed(false);
-  }, [logoUrl]);
+  }, [activeLogo]);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -31,15 +43,23 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
     setMobileMenuOpen(false);
   };
 
-  const hasCustomLogo = Boolean(logoUrl && logoUrl.trim() && !logoFailed);
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    onNavigate('hero');
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    document.documentElement.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  };
+
+  const hasCustomLogo = Boolean(activeLogo && !logoFailed);
 
   return (
     <header
       id="top-sticky-header"
-      className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[60] transform-gpu will-change-[background-color,backdrop-filter,border-color] transition-colors duration-300 backdrop-blur-xl ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-zinc-200/90 py-3 shadow-xs text-zinc-900'
-          : 'bg-[#0d0e12]/90 backdrop-blur-md border-b border-white/10 py-3.5 sm:py-4 text-white'
+          ? 'bg-white/75 border-b border-zinc-200/60 py-3 shadow-[0_4px_24px_-2px_rgba(0,0,0,0.06)] text-zinc-900'
+          : 'bg-[#0d0e12]/75 border-b border-white/[0.09] py-3.5 sm:py-4 text-white shadow-[0_4px_24px_-2px_rgba(0,0,0,0.3)]'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -47,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
         <div className="flex items-center gap-3">
           <button
             id="brand-logo-btn"
-            onClick={() => handleLinkClick('hero')}
+            onClick={handleHomeClick}
             aria-label="Zolepto Home"
             className="group relative flex items-center gap-2.5 text-left focus:outline-none cursor-pointer select-none"
           >
@@ -55,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
             {hasCustomLogo ? (
               <div className="relative flex items-center justify-center transition-transform duration-200 group-hover:scale-105 shrink-0 select-none">
                 <img
-                  src={logoUrl}
+                  src={activeLogo}
                   alt="Zolepto Logo"
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
@@ -161,42 +181,58 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, logoUrl }) => {
 
       {/* Mobile Quick Travel Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-zinc-200 bg-white px-4 py-3.5 space-y-1 shadow-lg animate-in slide-in-from-top-1 duration-150">
+        <div
+          className={`sm:hidden border-t px-4 py-3.5 space-y-1 shadow-xl backdrop-blur-xl animate-in slide-in-from-top-1 duration-150 ${
+            isScrolled
+              ? 'bg-white/85 border-zinc-200/80 text-zinc-900'
+              : 'bg-[#0d0e12]/92 border-white/10 text-white'
+          }`}
+        >
           <button
             id="mobile-nav-portfolio"
             onClick={() => handleLinkClick('work')}
-            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+            className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isScrolled ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+            }`}
           >
             Portfolio
           </button>
           <button
             id="mobile-nav-blueprint"
             onClick={() => handleLinkClick('process')}
-            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+            className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isScrolled ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+            }`}
           >
             Workflow
           </button>
           <button
             id="mobile-nav-about"
             onClick={() => handleLinkClick('about')}
-            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+            className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isScrolled ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+            }`}
           >
             About & Story
           </button>
           <button
             id="mobile-nav-footer"
             onClick={() => handleLinkClick('footer')}
-            className="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-950 transition-colors"
+            className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isScrolled ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+            }`}
           >
             Contact & Info
           </button>
 
           {/* Main Action Button inside Menu: Replaces both "Start" and "Let's Create Together" */}
-          <div className="pt-2 border-t border-zinc-100 mt-2">
+          <div className={`pt-2 border-t mt-2 ${isScrolled ? 'border-zinc-200/60' : 'border-white/10'}`}>
             <button
               id="mobile-nav-main-action"
               onClick={() => handleLinkClick('start')}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 text-sm font-semibold tracking-wide transition-all shadow-md group cursor-pointer"
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold tracking-wide transition-all shadow-md group cursor-pointer ${
+                isScrolled ? 'bg-zinc-950 text-white hover:bg-zinc-800' : 'bg-white text-zinc-950 hover:bg-zinc-100'
+              }`}
             >
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />

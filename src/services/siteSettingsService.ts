@@ -7,6 +7,8 @@ const SETTINGS_EVENT = 'zolepto:site-settings-changed';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   headerLogoUrl: '',
+  headerLogoDarkUrl: '',
+  headerLogoLightUrl: '',
   heroTitleLine1: 'Your visual storyteller',
   heroTitleLine2: '& content creation director.',
   heroSubtitle:

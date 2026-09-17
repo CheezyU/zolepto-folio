@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Globe,
   Layers,
@@ -16,12 +17,12 @@ import {
   Play,
   ArrowUpRight,
   Film,
-  TrendingUp,
   Loader2,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
 import { DEFAULT_SITE_SETTINGS } from '../../services/siteSettingsService';
 import { cleanImageUrl, isImgbbViewerUrl, resolveImgbbViewerUrl } from '../../lib/imageUtils';
+import { ROTATING_ROLES } from '../../data/portfolioData';
 
 interface VisualCopyEditorProps {
   settings: SiteSettings;
@@ -68,7 +69,17 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     return Boolean(localStorage.getItem('zolepto_site_settings_draft'));
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const logoFileInputRef = useRef<HTMLInputElement>(null);
+  const darkLogoFileInputRef = useRef<HTMLInputElement>(null);
+  const lightLogoFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Rotating roles synchronization for profile avatar preview (2800ms)
+  const [roleIndex, setRoleIndex] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % ROTATING_ROLES.length);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('zolepto_admin_editing_active', 'true');
@@ -148,15 +159,31 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     }
   };
 
-  const handleLogoUrlInput = async (val: string) => {
+  const handleDarkLogoUrlInput = async (val: string) => {
     const cleaned = cleanImageUrl(val);
-    handleChange('headerLogoUrl', cleaned);
+    handleChange('headerLogoDarkUrl', cleaned);
+    handleChange('headerLogoUrl', cleaned); // sync fallback
 
     if (isImgbbViewerUrl(cleaned) || isImgbbViewerUrl(val)) {
       try {
         const direct = await resolveImgbbViewerUrl(cleaned || val);
         if (direct && direct !== cleaned) {
+          handleChange('headerLogoDarkUrl', direct);
           handleChange('headerLogoUrl', direct);
+        }
+      } catch {}
+    }
+  };
+
+  const handleLightLogoUrlInput = async (val: string) => {
+    const cleaned = cleanImageUrl(val);
+    handleChange('headerLogoLightUrl', cleaned);
+
+    if (isImgbbViewerUrl(cleaned) || isImgbbViewerUrl(val)) {
+      try {
+        const direct = await resolveImgbbViewerUrl(cleaned || val);
+        if (direct && direct !== cleaned) {
+          handleChange('headerLogoLightUrl', direct);
         }
       } catch {}
     }
@@ -180,7 +207,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     reader.readAsDataURL(file);
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDarkLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -192,7 +219,26 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
+        handleChange('headerLogoDarkUrl', reader.result);
         handleChange('headerLogoUrl', reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLightLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Logo file size should be less than 4MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        handleChange('headerLogoLightUrl', reader.result);
       }
     };
     reader.readAsDataURL(file);
@@ -350,7 +396,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       {activeSection === 'hero' && (
         <div className="space-y-6">
           {/* Header Brand Logo & Home Button Card */}
-          <div className="rounded-3xl bg-white border border-zinc-200 p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl bg-white border border-zinc-200 p-5 sm:p-6 shadow-xs space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
               <div>
                 <h3 className="font-display text-base font-bold text-zinc-900 flex items-center gap-2">
@@ -358,42 +404,70 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                   <span>Header Brand Logo & Home Button</span>
                 </h3>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  Replaces the film reel icon beside "Zolepto" in the main navigation header with your own custom logo.
+                  Upload or link separate logos for dark (top of page) and light (scrolled) navigation states so your logo color always contrasts perfectly.
                 </p>
               </div>
 
-              {form.headerLogoUrl && (
+              {((form.headerLogoDarkUrl || form.headerLogoUrl) || form.headerLogoLightUrl) && (
                 <button
                   type="button"
-                  onClick={() => handleChange('headerLogoUrl', '')}
+                  onClick={() => {
+                    handleChange('headerLogoDarkUrl', '');
+                    handleChange('headerLogoLightUrl', '');
+                    handleChange('headerLogoUrl', '');
+                  }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors cursor-pointer self-start sm:self-auto"
-                  title="Revert to default film reel mark"
+                  title="Revert both logos to default film reel mark"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Revert to Default Mark</span>
+                  <span>Revert Both to Default</span>
                 </button>
               )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Left Column: Live Header Replicas */}
-              <div className="lg:col-span-6 space-y-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
-                  Live Sticky Header Appearance
-                </span>
+            {/* Hidden File Inputs for Dual Logo Uploads */}
+            <input
+              type="file"
+              ref={darkLogoFileInputRef}
+              onChange={handleDarkLogoUpload}
+              accept="image/*"
+              className="hidden"
+            />
+            <input
+              type="file"
+              ref={lightLogoFileInputRef}
+              onChange={handleLightLogoUpload}
+              accept="image/*"
+              className="hidden"
+            />
 
-                {/* Dark Header state preview (when at top of page) */}
-                <div className="p-3.5 rounded-2xl bg-[#0d0e12] border border-white/10 flex items-center justify-between shadow-xs">
+            {/* Two Images Option Grid: Dark Header & Light Header */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              
+              {/* Option 1: Dark Header Logo (Top of page / Dark background) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50/80 border border-zinc-200/90 space-y-3.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-zinc-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-zinc-900" />
+                    <span>1. Dark Header Logo (Top of Page)</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-zinc-500 px-2 py-0.5 rounded bg-zinc-200/70">
+                    Dark Background
+                  </span>
+                </div>
+
+                {/* Dark State Visual Preview */}
+                <div className="p-3.5 rounded-xl bg-[#0d0e12] border border-white/10 flex items-center justify-between shadow-xs">
                   <div className="flex items-center gap-2.5">
-                    {form.headerLogoUrl ? (
+                    {(form.headerLogoDarkUrl || form.headerLogoUrl) ? (
                       <div className="relative flex items-center justify-center shrink-0">
                         <img
-                          src={form.headerLogoUrl}
-                          alt="Custom logo"
+                          src={form.headerLogoDarkUrl || form.headerLogoUrl}
+                          alt="Dark header logo"
                           draggable={false}
                           onContextMenu={(e) => e.preventDefault()}
                           referrerPolicy="no-referrer"
-                          className="h-8 sm:h-9 w-auto max-w-[120px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] select-none pointer-events-none"
+                          className="h-8 sm:h-9 w-auto max-w-[120px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] select-none pointer-events-none"
                           onError={(e) => {
                             (e.target as HTMLElement).style.opacity = '0.3';
                           }}
@@ -406,23 +480,77 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     )}
                     <span className="font-display font-bold text-sm text-white">Zolepto</span>
                   </div>
-                  <span className="text-[10px] font-mono text-zinc-400 px-2 py-0.5 rounded bg-white/5 border border-white/10">
-                    Dark Header (Top)
+                  <span className="text-[10px] font-mono text-zinc-400">Frosted Glass</span>
+                </div>
+
+                {/* Dark Logo Controls */}
+                <div className="space-y-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => darkLogoFileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-all cursor-pointer shadow-xs"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload Dark Logo</span>
+                    </button>
+
+                    {(form.headerLogoDarkUrl || form.headerLogoUrl) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleChange('headerLogoDarkUrl', '');
+                          handleChange('headerLogoUrl', '');
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-rose-600 hover:bg-rose-50 border border-zinc-200 transition-colors cursor-pointer"
+                        title="Reset dark logo"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>Clear</span>
+                      </button>
+                    )}
+                    <span className="text-[10px] font-mono text-zinc-400 ml-auto">White / Light asset</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-600 block font-medium">
+                      Or Paste Dark Logo Image URL:
+                    </label>
+                    <input
+                      type="text"
+                      value={form.headerLogoDarkUrl || form.headerLogoUrl || ''}
+                      onChange={(e) => handleDarkLogoUrlInput(e.target.value)}
+                      placeholder="https://... (direct image link, ImgBB, etc.)"
+                      className="w-full text-xs font-mono text-zinc-800 bg-white border border-zinc-200 rounded-xl px-3 py-2 focus:outline-none focus:border-zinc-900 transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Option 2: Light Header Logo (Scrolled down / Light background) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50/80 border border-zinc-200/90 space-y-3.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-zinc-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    <span>2. Light Header Logo (Scrolled)</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-zinc-500 px-2 py-0.5 rounded bg-zinc-200/70">
+                    Light Background
                   </span>
                 </div>
 
-                {/* Light Header state preview (when scrolled down) */}
-                <div className="p-3.5 rounded-2xl bg-white border border-zinc-200 flex items-center justify-between shadow-xs">
+                {/* Light State Visual Preview */}
+                <div className="p-3.5 rounded-xl bg-white border border-zinc-200 flex items-center justify-between shadow-xs">
                   <div className="flex items-center gap-2.5">
-                    {form.headerLogoUrl ? (
+                    {(form.headerLogoLightUrl || form.headerLogoDarkUrl || form.headerLogoUrl) ? (
                       <div className="relative flex items-center justify-center shrink-0">
                         <img
-                          src={form.headerLogoUrl}
-                          alt="Custom logo"
+                          src={form.headerLogoLightUrl || form.headerLogoDarkUrl || form.headerLogoUrl}
+                          alt="Light header logo"
                           draggable={false}
                           onContextMenu={(e) => e.preventDefault()}
                           referrerPolicy="no-referrer"
-                          className="h-8 sm:h-9 w-auto max-w-[120px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)] select-none pointer-events-none"
+                          className="h-8 sm:h-9 w-auto max-w-[120px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none"
                           onError={(e) => {
                             (e.target as HTMLElement).style.opacity = '0.3';
                           }}
@@ -435,75 +563,58 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     )}
                     <span className="font-display font-bold text-sm text-zinc-900">Zolepto</span>
                   </div>
-                  <span className="text-[10px] font-mono text-zinc-500 px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">
-                    Light Header (Scrolled)
-                  </span>
+                  <span className="text-[10px] font-mono text-zinc-500">Frosted Glass</span>
+                </div>
+
+                {/* Light Logo Controls */}
+                <div className="space-y-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => lightLogoFileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-all cursor-pointer shadow-xs"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload Light Logo</span>
+                    </button>
+
+                    {form.headerLogoLightUrl && (
+                      <button
+                        type="button"
+                        onClick={() => handleChange('headerLogoLightUrl', '')}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-rose-600 hover:bg-rose-50 border border-zinc-200 transition-colors cursor-pointer"
+                        title="Reset light logo"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>Clear</span>
+                      </button>
+                    )}
+                    <span className="text-[10px] font-mono text-zinc-400 ml-auto">Dark / Black asset</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-600 block font-medium">
+                      Or Paste Light Logo Image URL:
+                    </label>
+                    <input
+                      type="text"
+                      value={form.headerLogoLightUrl || ''}
+                      onChange={(e) => handleLightLogoUrlInput(e.target.value)}
+                      placeholder="https://... (direct image link, ImgBB, etc.)"
+                      className="w-full text-xs font-mono text-zinc-800 bg-white border border-zinc-200 rounded-xl px-3 py-2 focus:outline-none focus:border-zinc-900 transition-colors"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Right Column: Upload Controls & Direct URL Input */}
-              <div className="lg:col-span-6 space-y-3">
-                <input
-                  type="file"
-                  ref={logoFileInputRef}
-                  onChange={handleLogoUpload}
-                  accept="image/*"
-                  className="hidden"
-                />
-
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => logoFileInputRef.current?.click()}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-all cursor-pointer shadow-xs"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Upload Logo Image</span>
-                  </button>
-
-                  <span className="text-[11px] font-mono text-zinc-400">
-                    PNG, SVG, WebP, JPG (up to 4MB)
-                  </span>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-600 block font-medium">
-                    Or Paste Custom Logo Image URL:
-                  </label>
-                  <input
-                    type="text"
-                    value={form.headerLogoUrl || ''}
-                    onChange={(e) => handleLogoUrlInput(e.target.value)}
-                    placeholder="https://... (direct image link, ImgBB, etc.)"
-                    className="w-full text-xs font-mono text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-zinc-900 focus:bg-white transition-colors"
-                  />
-                  <p className="text-[10px] text-zinc-400 font-mono">
-                    Changes preview live instantly. Click "Publish to GitHub" in the top bar to publish permanently.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
 
           <div className="flex items-center justify-between px-1 text-xs font-mono text-zinc-500">
             <span>VISUAL REPLICA // HERO SECTION</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  window.dispatchEvent(new CustomEvent('zolepto:replay_intro'));
-                  alert('Retention graph intro animation triggered! Switch to portfolio view to watch the intro sequence.');
-                }}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-mono transition-colors cursor-pointer"
-                title="Test and replay the retention graph intro animation"
-              >
-                <TrendingUp className="w-3 h-3" />
-                <span>Test Intro Animation</span>
-              </button>
-              <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                Interactive In-Canvas Editing
-              </span>
-            </div>
+            <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Interactive In-Canvas Editing
+            </span>
           </div>
 
           {/* Real Hero Section Frame Replica */}
@@ -518,40 +629,90 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
               {/* Creator Profile Avatar & Availability Status */}
               <div className="order-first lg:order-last lg:col-span-5 flex flex-col items-center justify-center">
                 <div className="relative flex flex-col items-center">
-                  {/* Round Avatar Container */}
-                  <div className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-full border-2 border-white/25 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl flex items-center justify-center overflow-hidden ring-4 ring-white/10 group">
-                    {form.profilePictureUrl ? (
-                      <img
-                        src={form.profilePictureUrl}
-                        alt="Profile avatar"
-                        draggable={false}
-                        onContextMenu={(e) => e.preventDefault()}
-                        className="w-full h-full object-cover select-none pointer-events-none"
-                        onError={async (e) => {
-                          const target = e.target as HTMLImageElement;
-                          if (form.profilePictureUrl && isImgbbViewerUrl(form.profilePictureUrl)) {
-                            const direct = await resolveImgbbViewerUrl(form.profilePictureUrl);
-                            if (direct && direct !== form.profilePictureUrl) {
-                              target.src = direct;
-                              handleChange('profilePictureUrl', direct);
-                            }
-                          }
-                        }}
-                      />
-                    ) : (
+                  {/* Arched Rotating Role Indicator Frame */}
+                  <div className="relative flex items-center justify-center">
+                    {/* SVG Arch Element wrapping the top curve of avatar */}
+                    <div
+                      className="absolute -inset-5 sm:-inset-6 pointer-events-none select-none z-20 overflow-visible flex items-center justify-center"
+                      aria-label="Current role preview"
+                    >
                       <svg
-                        className="w-full h-full text-zinc-400/50 translate-y-3"
-                        viewBox="0 0 200 200"
-                        fill="currentColor"
+                        viewBox="0 0 320 320"
+                        className="w-full h-full overflow-visible"
                       >
-                        <circle cx="100" cy="74" r="34" />
-                        <path d="M92 104H108V120H92z" />
-                        <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
+                        <defs>
+                          <path
+                            id="adminAvatarRoleArc"
+                            d="M 22,160 A 138,138 0 0,1 298,160"
+                            fill="none"
+                          />
+                        </defs>
+                        <path
+                          d="M 30,160 A 130,130 0 0,1 290,160"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.14)"
+                          strokeWidth="1"
+                          strokeDasharray="3 4"
+                        />
+                        <AnimatePresence mode="wait">
+                          <motion.g
+                            key={roleIndex}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            <text
+                              className="fill-zinc-100 text-[11px] font-mono font-bold tracking-[0.24em] uppercase select-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]"
+                            >
+                              <textPath
+                                href="#adminAvatarRoleArc"
+                                startOffset="50%"
+                                textAnchor="middle"
+                              >
+                                {ROTATING_ROLES[roleIndex]}
+                              </textPath>
+                            </text>
+                          </motion.g>
+                        </AnimatePresence>
                       </svg>
-                    )}
+                    </div>
 
-                    {/* Active Status Dot */}
-                    <div className="absolute bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs" />
+                    {/* Round Avatar Container */}
+                    <div className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-full border-2 border-white/25 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl flex items-center justify-center overflow-hidden ring-4 ring-white/10 group">
+                      {form.profilePictureUrl ? (
+                        <img
+                          src={form.profilePictureUrl}
+                          alt="Profile avatar"
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
+                          className="w-full h-full object-cover select-none pointer-events-none"
+                          onError={async (e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (form.profilePictureUrl && isImgbbViewerUrl(form.profilePictureUrl)) {
+                              const direct = await resolveImgbbViewerUrl(form.profilePictureUrl);
+                              if (direct && direct !== form.profilePictureUrl) {
+                                target.src = direct;
+                                handleChange('profilePictureUrl', direct);
+                              }
+                            }
+                          }}
+                        />
+                      ) : (
+                        <svg
+                          className="w-full h-full text-zinc-400/50 translate-y-3"
+                          viewBox="0 0 200 200"
+                          fill="currentColor"
+                        >
+                          <circle cx="100" cy="74" r="34" />
+                          <path d="M92 104H108V120H92z" />
+                          <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
+                        </svg>
+                      )}
+
+                      {/* Active Status Dot */}
+                      <div className="absolute bottom-2.5 right-2.5 sm:bottom-3.5 sm:right-3.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs" />
+                    </div>
                   </div>
 
                   {/* Handdrawn Freeform Availability Script */}
@@ -667,7 +828,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     onChange={(e) =>
                       handleChange('heroTitleLine2', e.target.value, LIMITS.heroTitleLine2)
                     }
-                    className="w-full font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-400 leading-[1.12] bg-white/5 hover:bg-white/10 focus:bg-white/15 border border-white/10 focus:border-white/30 rounded-xl px-3 py-1.5 focus:outline-none transition-all"
+                    className="w-full font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.12] bg-white/5 hover:bg-white/10 focus:bg-white/15 border border-white/10 focus:border-white/30 rounded-xl px-3 py-1.5 focus:outline-none transition-all"
                   />
                 </div>
 

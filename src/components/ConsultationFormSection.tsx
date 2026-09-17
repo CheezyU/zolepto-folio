@@ -15,10 +15,10 @@ const INITIAL_FORM: ConsultationFormState = {
 };
 
 const BUDGET_PRESETS = [
+  { label: '$100 – $500', value: '100 - 500' },
+  { label: '$500 – $1.5k', value: '500 - 1500' },
   { label: '$1.5k – $3k', value: '1500 - 3000' },
-  { label: '$3k – $6k', value: '3000 - 6000' },
-  { label: '$6k – $12k', value: '6000 - 12000' },
-  { label: '$12k+', value: '12000+' },
+  { label: '$3k – $5k', value: '3000 - 5000' },
 ];
 
 interface ConsultationFormSectionProps {
@@ -38,6 +38,8 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
   const lastSubmitTimeRef = useRef<number>(0);
   const lastSubmittedSignatureRef = useRef<string>('');
 
+  const [customBudgetInput, setCustomBudgetInput] = useState('');
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -48,7 +50,15 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
 
   const handleSelectBudgetPreset = (presetValue: string) => {
     userInteractedRef.current = true;
+    setCustomBudgetInput('');
     setFormData((prev) => ({ ...prev, estimatedBudget: presetValue }));
+  };
+
+  const handleCustomBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    userInteractedRef.current = true;
+    const val = e.target.value;
+    setCustomBudgetInput(val);
+    setFormData((prev) => ({ ...prev, estimatedBudget: val }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,10 +139,15 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
   return (
     <section
       id="start"
-      className="py-16 sm:py-24 relative bg-white"
+      className="py-16 sm:py-24 relative bg-gradient-to-b from-[#fbf8f3] via-[#fff4eb] to-[#f8f3eb] overflow-hidden"
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Apple-style clean header with motion blur-in */}
+      {/* Luminous warm atmosphere blooms: confident, welcoming, and vibrant */}
+      <div className="absolute top-0 left-1/4 -translate-x-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-amber-400/20 via-orange-300/15 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-20 w-[460px] h-[460px] rounded-full bg-gradient-to-bl from-rose-400/15 via-amber-300/15 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 -left-20 w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-orange-400/15 via-amber-200/10 to-transparent blur-3xl pointer-events-none" />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Inviting, confident header */}
         <motion.div
           initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -140,30 +155,32 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
           transition={{ duration: 0.6 }}
           className="text-center max-w-xl mx-auto mb-12 sm:mb-16"
         >
-          <span className="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold block mb-2">
-            DIRECT COLLABORATION // INTAKE
-          </span>
+          <div className="mb-2 inline-block transform -rotate-2 select-none">
+            <span className="font-handwriting text-2xl sm:text-3xl text-zinc-900 font-bold tracking-wide block drop-shadow-2xs">
+              Are you ready to grow?
+            </span>
+          </div>
 
-          <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950">
+          <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.12]">
             Let's create together.
           </h2>
 
           <p className="mt-3.5 text-zinc-600 text-sm sm:text-base font-normal leading-relaxed">
-            Share a brief overview of your footage and storytelling vision. I review all inquiries personally and reply within 12 business hours.
+            Tell us about your footage and storytelling vision. We craft edits audiences refuse to skip. Direct 1-on-1 collaboration—I reply personally within 12 hours.
           </p>
         </motion.div>
 
-        {/* Form Card */}
+        {/* Elevated Form Card */}
         <motion.div
           initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="bg-white border border-zinc-200/90 rounded-3xl p-6 sm:p-10 shadow-sm relative"
+          className="bg-white/95 backdrop-blur-md border border-amber-900/10 rounded-3xl p-6 sm:p-10 shadow-[0_20px_50px_-15px_rgba(180,100,50,0.12),0_4px_16px_rgba(0,0,0,0.03)] relative"
         >
-          {/* Subtle tape accent on top right corner */}
-          <div className="hidden sm:block absolute -top-3.5 right-8 px-3.5 py-1 bg-zinc-100 border border-zinc-200 text-[10px] font-mono text-zinc-600 rounded-xs rotate-1 shadow-2xs">
-            1-ON-1 DIRECT INTAKE
+          {/* Subtle note badge on top right corner */}
+          <div className="hidden sm:block absolute -top-3.5 right-8 px-3.5 py-1 bg-amber-50 border border-amber-200/80 text-[10px] font-mono text-amber-900 rounded-xs rotate-1 shadow-2xs">
+            DIRECT 1-ON-1
           </div>
 
           {submittedBooking ? (
@@ -205,7 +222,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
 
                 <div className="grid grid-cols-2 gap-4 text-xs font-mono">
                   <div>
-                    <span className="text-zinc-500 block">Focus / Scope:</span>
+                    <span className="text-zinc-500 block">Project Scope:</span>
                     <span className="text-zinc-800 font-medium truncate block">{submittedBooking.projectType}</span>
                   </div>
                   <div>
@@ -240,9 +257,9 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
               </div>
             </div>
           ) : (
-            /* Streamlined, simplified form */
+            /* Streamlined, inviting human-centered form */
             <form id="consultation-form" onSubmit={handleSubmit} className="space-y-6">
-              {/* Web3Forms Built-in Anti-Spam Honeypot: humans never see/check this */}
+              {/* Web3Forms Built-in Anti-Spam Honeypot */}
               <input
                 type="checkbox"
                 name="botcheck"
@@ -277,8 +294,8 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
               {/* Row 1: Name and Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label htmlFor="form-fullname" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Your Name / Brand <span className="text-zinc-400">*</span>
+                  <label htmlFor="form-fullname" className="block text-xs font-semibold text-zinc-700">
+                    Your Name <span className="text-zinc-400">*</span>
                   </label>
                   <input
                     id="form-fullname"
@@ -287,13 +304,13 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder="e.g. Alex Rivera"
+                    placeholder="Alex Rivera"
                     className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 transition-all"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="form-email" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                  <label htmlFor="form-email" className="block text-xs font-semibold text-zinc-700">
                     Your Email <span className="text-zinc-400">*</span>
                   </label>
                   <input
@@ -309,15 +326,11 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                 </div>
               </div>
 
-              {/* Row 2: Project Scope & Budget Presets */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="form-project-type" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                    Focus / Project Scope
-                  </label>
-                  <span className="text-[11px] font-mono text-zinc-400">Select best fit</span>
-                </div>
-
+              {/* Row 2: Project Scope */}
+              <div className="space-y-1.5">
+                <label htmlFor="form-project-type" className="block text-xs font-semibold text-zinc-700">
+                  Project Scope
+                </label>
                 <select
                   id="form-project-type"
                   name="projectType"
@@ -325,41 +338,69 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all cursor-pointer"
                 >
-                  <option value="Commercial / Brand Video">Commercial / Brand Video</option>
-                  <option value="Cinematic Narrative / Short Film">Cinematic Narrative / Short Film</option>
-                  <option value="High-Retention YouTube / Creator Cut">High-Retention YouTube / Creator Cut</option>
-                  <option value="Motion Graphics & 3D Visual Packaging">Motion Graphics & 3D Visual Packaging</option>
-                  <option value="Full Creative Direction & Editing Retainer">Full Creative Direction & Editing Retainer</option>
-                  <option value="Other Custom Project">Other Custom Project</option>
+                  <option value="Commercial & Brand Film">Commercial & Brand Film</option>
+                  <option value="YouTube & Creator Cut">YouTube & Creator Cut</option>
+                  <option value="Cinematic Short & Narrative">Cinematic Short & Narrative</option>
+                  <option value="Motion & 3D Visuals">Motion & 3D Visuals</option>
+                  <option value="Editing Retainer & Direction">Editing Retainer & Direction</option>
+                  <option value="Custom Project">Custom Project</option>
                 </select>
+              </div>
 
-                {/* Estimated Budget Quick Selection */}
-                <div className="pt-2">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
-                    Estimated Budget (USD)
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {BUDGET_PRESETS.map((preset) => (
-                      <button
-                        key={preset.value}
-                        type="button"
-                        onClick={() => handleSelectBudgetPreset(preset.value)}
-                        className={`py-2 px-3 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer text-center ${
-                          formData.estimatedBudget === preset.value
-                            ? 'bg-zinc-900 text-white border-zinc-900 shadow-2xs'
-                            : 'bg-zinc-50/70 hover:bg-zinc-100 text-zinc-700 border-zinc-200'
-                        }`}
-                      >
-                        {preset.label}
-                      </button>
-                    ))}
-                  </div>
+              {/* Row 3: Estimated Budget (Presets + Name Your Own Price Input) */}
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-zinc-700">
+                  Estimated Budget
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {BUDGET_PRESETS.map((preset) => (
+                    <button
+                      key={preset.value}
+                      type="button"
+                      onClick={() => handleSelectBudgetPreset(preset.value)}
+                      className={`py-2 px-3 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer text-center ${
+                        formData.estimatedBudget === preset.value
+                          ? 'bg-zinc-900 text-white border-zinc-900 shadow-2xs'
+                          : 'bg-zinc-50/70 hover:bg-zinc-100 text-zinc-700 border-zinc-200'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Name Your Own Price custom input field */}
+                <div className="pt-1">
+                  <input
+                    id="form-custom-budget"
+                    type="text"
+                    value={customBudgetInput}
+                    onChange={handleCustomBudgetChange}
+                    placeholder="Or name your own price (e.g. $750)"
+                    className="w-full px-4 py-2.5 rounded-xl bg-zinc-50/70 border border-zinc-200 text-xs sm:text-sm font-mono text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all"
+                  />
                 </div>
               </div>
 
-              {/* Row 3: Reference Links / Footage Source (Optional) */}
+              {/* Row 4: Project Vision (Brief) */}
               <div className="space-y-1.5">
-                <label htmlFor="form-links" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
+                <label htmlFor="form-brief" className="block text-xs font-semibold text-zinc-700">
+                  Your Vision
+                </label>
+                <textarea
+                  id="form-brief"
+                  name="brief"
+                  rows={4}
+                  value={formData.brief}
+                  onChange={handleChange}
+                  placeholder="Tell us what you're making, the emotion or pacing you want to evoke, desired timeline, or any specific ideas..."
+                  className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all resize-none"
+                />
+              </div>
+
+              {/* Row 5: Reference Links (Moved UNDER Project Vision) */}
+              <div className="space-y-1.5">
+                <label htmlFor="form-links" className="block text-xs font-semibold text-zinc-700">
                   Reference Links <span className="text-zinc-400 font-normal lowercase">(optional)</span>
                 </label>
                 <input
@@ -368,24 +409,8 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                   type="url"
                   value={formData.links || ''}
                   onChange={handleChange}
-                  placeholder="https://..."
+                  placeholder="Links to footage, Google Drive, Dropbox, or style references..."
                   className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all"
-                />
-              </div>
-
-              {/* Row 4: Project Brief */}
-              <div className="space-y-1.5">
-                <label htmlFor="form-brief" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700">
-                  Project Brief & Vision
-                </label>
-                <textarea
-                  id="form-brief"
-                  name="brief"
-                  rows={4}
-                  value={formData.brief}
-                  onChange={handleChange}
-                  placeholder="Tell us about the project goals, style inspiration, desired timeline, or any specific requests..."
-                  className="w-full px-4 py-3 rounded-xl bg-zinc-50/70 border border-zinc-200 text-sm text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-800 transition-all resize-none"
                 />
               </div>
 
@@ -411,7 +436,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     </span>
                   ) : (
                     <>
-                      <span>Send Project Inquiry</span>
+                      <span>Send Project Brief</span>
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </>
                   )}

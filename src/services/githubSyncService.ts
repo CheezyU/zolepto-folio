@@ -26,8 +26,95 @@ export interface PortfolioContentPayload {
 const GITHUB_CONFIG_KEY = 'zolepto_github_sync_vault';
 const LAST_COMMIT_KEY = 'zolepto_github_last_commit';
 const LAST_PUSHED_PAYLOAD_KEY = 'zolepto_github_live_payload';
+const PUBLISHED_CANONICAL_KEY = 'zolepto_published_canonical_content';
 export const GLOBAL_PORTFOLIO_ENDPOINT = 'https://kvdb.io/NpJTZs8GERZzanmJpGY1FL/published_portfolio_content';
 export const CONTENT_PUBLISHED_EVENT = 'zolepto:portfolio-published';
+
+/**
+ * Deep-normalizes object values, sorting all keys to ensure 100% deterministic JSON comparison.
+ * Ignores transient timestamps like `lastUpdated` so changes are purely functional.
+ */
+function canonicalizeObject(obj: any): any {
+  if (obj === null || obj === undefined) return null;
+  if (typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) {
+    return obj.map(canonicalizeObject);
+  }
+  const sortedKeys = Object.keys(obj).sort();
+  const result: Record<string, any> = {};
+  for (const key of sortedKeys) {
+    if (key === 'lastUpdated' || key === 'version' || key === 'repoSource') continue;
+    result[key] = canonicalizeObject(obj[key]);
+  }
+  return result;
+}
+
+/**
+ * Generates a deterministic, canonical representation of current portfolio data.
+ * Used for smart change detection (A > B > A detection).
+ */
+export function getCanonicalContentString(payload: {
+  siteSettings: SiteSettings;
+  showreels: VideoProject[];
+  graphics: GraphicProject[];
+}): string {
+  const normalized = {
+    siteSettings: canonicalizeObject(payload.siteSettings),
+    showreels: canonicalizeObject(payload.showreels),
+    graphics: canonicalizeObject(payload.graphics),
+  };
+  return JSON.stringify(normalized);
+}
+
+/**
+ * Sets the authoritative baseline against which future changes are compared.
+ */
+export function markCurrentAsPublishedBaseline(payload: {
+  siteSettings: SiteSettings;
+  showreels: VideoProject[];
+  graphics: GraphicProject[];
+}): void {
+  try {
+    const canonical = getCanonicalContentString(payload);
+    localStorage.setItem(PUBLISHED_CANONICAL_KEY, canonical);
+  } catch {}
+}
+
+/**
+ * Smart change detector. Compares current state with the last published baseline.
+ * If user edits A > B > A, detects that current state matches initial values and returns false.
+ */
+export function hasPortfolioChangesToPublish(current: {
+  siteSettings: SiteSettings;
+  showreels: VideoProject[];
+  graphics: GraphicProject[];
+}): boolean {
+  try {
+    const currentCanonical = getCanonicalContentString(current);
+    let savedCanonical = localStorage.getItem(PUBLISHED_CANONICAL_KEY);
+
+    if (!savedCanonical) {
+      const lastPushed = localStorage.getItem(LAST_PUSHED_PAYLOAD_KEY);
+      if (lastPushed) {
+        const parsed = JSON.parse(lastPushed);
+        if (parsed && parsed.siteSettings) {
+          savedCanonical = getCanonicalContentString(parsed);
+          localStorage.setItem(PUBLISHED_CANONICAL_KEY, savedCanonical);
+        }
+      }
+    }
+
+    if (!savedCanonical) {
+      // If no prior publication baseline is recorded, record current as baseline
+      localStorage.setItem(PUBLISHED_CANONICAL_KEY, currentCanonical);
+      return false;
+    }
+
+    return currentCanonical !== savedCanonical;
+  } catch {
+    return false;
+  }
+}
 
 export const DEFAULT_GITHUB_CONFIG: GitHubSyncConfig = {
   owner: '',
@@ -197,8 +284,18 @@ export async function pushPortfolioToGitHub(
     showreels: VideoProject[];
     graphics: GraphicProject[];
   },
-  customConfig?: GitHubSyncConfig
-): Promise<{ success: boolean; message: string; commitUrl?: string; sha?: string; cloudSynced?: boolean }> {
+  customConfig?: GitHubSyncConfig,
+  options?: { force?: boolean }
+): Promise<{ success: boolean; message: string; commitUrl?: string; sha?: string; cloudSynced?: boolean; noChanges?: boolean }> {
+  // Smart Change Detection: Prevent accidental commits when nothing has changed
+  if (!options?.force && !hasPortfolioChangesToPublish(payload)) {
+    return {
+      success: true,
+      noChanges: true,
+      message: 'No changes detected. Your live portfolio is already identical to current settings.',
+    };
+  }
+
   const config = customConfig || getGitHubConfig();
 
   const cleanOwner = config.owner.trim();
@@ -230,6 +327,7 @@ export async function pushPortfolioToGitHub(
 
   // Step 2: Check if GitHub credentials are configured
   if (!config.token.trim() || !cleanOwner || !cleanRepo) {
+    markCurrentAsPublishedBaseline(fullData);
     return {
       success: true,
       cloudSynced,
@@ -408,6 +506,7 @@ export async function pushPortfolioToGitHub(
 
     try {
       localStorage.setItem(LAST_PUSHED_PAYLOAD_KEY, JSON.stringify(fullData));
+      markCurrentAsPublishedBaseline(fullData);
       localStorage.setItem(
         LAST_COMMIT_KEY,
         JSON.stringify({

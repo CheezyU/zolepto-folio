@@ -9,7 +9,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { WorkSection } from './components/WorkSection';
-import { AboutSection } from './components/AboutSection';
+import { ProcessSection } from './components/ProcessSection';
+import { StudioSection } from './components/StudioSection';
 import { ConsultationFormSection } from './components/ConsultationFormSection';
 import { FooterBar } from './components/FooterBar';
 import { VideoModal } from './components/VideoModal';
@@ -264,8 +265,7 @@ function MainApp() {
             id="work-folder-card"
             zIndex={20}
             folderNumber="01"
-            folderLabel="PORTFOLIO // SELECTED WORK"
-            watermark="DIRECTORIAL ARCHIVE"
+            folderLabel="PORTFOLIO"
           >
             <WorkSection
               showreels={showreels}
@@ -277,28 +277,39 @@ function MainApp() {
             />
           </FolderSection>
 
-          {/* Stacking Card 02: Workshop Blueprint & Narrative Process */}
+          {/* Stacking Card 02: Process & How the Story Unfolds */}
           <FolderSection
-            id="about-folder-card"
+            id="process-folder-card"
             zIndex={30}
             folderNumber="02"
-            folderLabel="METHODOLOGY // HOW THE STORY UNFOLDS"
-            watermark="THE BLUEPRINT"
+            folderLabel="METHODOLOGY"
           >
-            <AboutSection
+            <ProcessSection
               onStartBooking={() => scrollToSection('start')}
               settings={siteSettings}
             />
           </FolderSection>
 
-          {/* Stacking Card 03: Project Request & Direct Commission */}
+          {/* Stacking Card 03: About Me */}
           <FolderSection
-            id="contact-folder-card"
+            id="about-folder-card"
             zIndex={40}
             folderNumber="03"
-            folderLabel="COMMISSION // START A PROJECT"
-            watermark="DIRECT BOOKING"
-            cardBg="bg-white"
+            folderLabel="ABOUT ME"
+          >
+            <StudioSection
+              onStartBooking={() => scrollToSection('start')}
+              settings={siteSettings}
+            />
+          </FolderSection>
+
+          {/* Stacking Card 04: Direct Commission & Consultation (Reordered to 04 as requested) */}
+          <FolderSection
+            id="contact-folder-card"
+            zIndex={50}
+            folderNumber="04"
+            folderLabel="COMMISSION"
+            cardBg="bg-[#fbf8f3]"
           >
             <ConsultationFormSection settings={siteSettings} />
           </FolderSection>

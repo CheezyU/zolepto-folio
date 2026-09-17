@@ -61,7 +61,11 @@ import {
 import { GitHubSyncTab } from './admin/GitHubSyncTab';
 import { SecurityTab } from './admin/SecurityTab';
 import { VisualCopyEditor } from './admin/VisualCopyEditor';
-import { pushPortfolioToGitHub, getGitHubConfig } from '../services/githubSyncService';
+import {
+  pushPortfolioToGitHub,
+  getGitHubConfig,
+  hasPortfolioChangesToPublish,
+} from '../services/githubSyncService';
 
 interface AdminPanelProps {
   onBackToPortfolio: () => void;
@@ -105,17 +109,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     'showreels' | 'graphics' | 'site-copy' | 'inquiries' | 'github-sync' | 'security'
   >('showreels');
 
+  // Site Copy State
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [settingsStatus, setSettingsStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   // Top Bar Quick Push to GitHub State
   const [isPushingTop, setIsPushingTop] = useState(false);
   const [topPushStatus, setTopPushStatus] = useState<string | null>(null);
 
+  const hasPendingChanges = hasPortfolioChangesToPublish({ siteSettings, showreels, graphics });
+
   const handleTopPushLive = async () => {
+    if (!hasPendingChanges) {
+      setTopPushStatus('Up to Date');
+      setTimeout(() => setTopPushStatus(null), 3000);
+      return;
+    }
+
     const cfg = getGitHubConfig();
     setIsPushingTop(true);
     setTopPushStatus('Publishing Live...');
     try {
       const res = await pushPortfolioToGitHub({ siteSettings, showreels, graphics }, cfg);
-      if (res.success) {
+      if (res.noChanges) {
+        setTopPushStatus('Up to Date');
+      } else if (res.success) {
         setTopPushStatus('Live Worldwide!');
         appendSecurityLog('Published Live Globally', res.commitUrl || 'Success');
       } else {
@@ -134,11 +153,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [inquiries, setInquiries] = useState<SubmittedBooking[]>([]);
   const [inquiryFilter, setInquiryFilter] = useState<'all' | 'new' | 'reviewed' | 'contacted'>('all');
   const [copiedInquiryId, setCopiedInquiryId] = useState<string | null>(null);
-
-  // Site Copy State
-  const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
-  const [isSavingSettings, setIsSavingSettings] = useState(false);
-  const [settingsStatus, setSettingsStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Audit Logs State
   const [auditLogs, setAuditLogs] = useState<SecurityLogEntry[]>([]);
@@ -571,15 +585,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               type="button"
               onClick={handleTopPushLive}
               disabled={isPushingTop}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
-              title="Push live changes to GitHub & deploy on Vercel"
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-2xs ${
+                hasPendingChanges
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                  : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600 border border-zinc-200'
+              }`}
+              title={
+                hasPendingChanges
+                  ? 'Publish unsaved modifications live globally'
+                  : 'No modifications detected. Current state is already identical to published version.'
+              }
             >
               {isPushingTop ? (
                 <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              ) : (
+              ) : hasPendingChanges ? (
                 <GitBranch className="w-3.5 h-3.5" />
+              ) : (
+                <Check className="w-3.5 h-3.5 text-zinc-500" />
               )}
-              <span>{topPushStatus || (isPushingTop ? 'Pushing...' : 'Push to GitHub')}</span>
+              <span>
+                {topPushStatus ||
+                  (isPushingTop
+                    ? 'Publishing...'
+                    : hasPendingChanges
+                    ? 'Publish Changes'
+                    : 'Up to Date')}
+              </span>
             </button>
 
             {/* Session Countdown & Lock button */}

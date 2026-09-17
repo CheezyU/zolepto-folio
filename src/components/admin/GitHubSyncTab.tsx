@@ -21,6 +21,7 @@ import {
   testGitHubConnection,
   pushPortfolioToGitHub,
   getLastCommitInfo,
+  hasPortfolioChangesToPublish,
 } from '../../services/githubSyncService';
 import { SiteSettings, VideoProject, GraphicProject } from '../../types';
 
@@ -71,7 +72,17 @@ export const GitHubSyncTab: React.FC<GitHubSyncTabProps> = ({
     }
   };
 
+  const hasChanges = hasPortfolioChangesToPublish({ siteSettings, showreels, graphics });
+
   const handlePushLive = async () => {
+    if (!hasChanges) {
+      setPushResult({
+        success: true,
+        message: 'No changes detected. Your live portfolio already matches current settings. Edit items to publish.',
+      });
+      return;
+    }
+
     if (!config.token.trim() || !config.owner.trim() || !config.repo.trim()) {
       setPushResult({
         success: false,
@@ -130,17 +141,28 @@ export const GitHubSyncTab: React.FC<GitHubSyncTabProps> = ({
             type="button"
             onClick={handlePushLive}
             disabled={isPushing}
-            className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs font-mono uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer shadow-lg shrink-0"
+            className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-xs font-mono uppercase tracking-wider transition-all cursor-pointer shadow-lg shrink-0 ${
+              isPushing
+                ? 'bg-zinc-800 text-zinc-400 cursor-wait'
+                : hasChanges
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-emerald-900/30'
+                : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700'
+            }`}
           >
             {isPushing ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin text-zinc-950" />
                 <span>Committing to GitHub...</span>
               </>
-            ) : (
+            ) : hasChanges ? (
               <>
                 <Upload className="w-4 h-4 text-zinc-950" />
                 <span>Commit & Push Live</span>
+              </>
+            ) : (
+              <>
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span>Up to Date (No Changes)</span>
               </>
             )}
           </button>

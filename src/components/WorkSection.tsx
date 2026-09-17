@@ -171,13 +171,11 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                 <AnimatePresence>
                   {showCustomPrompt && (
                     <>
-                      {/* Mobile backdrop for outside dismiss */}
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                      {/* Transparent mobile backdrop for outside dismiss - zero darkening, zero hard edges */}
+                      <div
                         onClick={() => setShowCustomPrompt(false)}
-                        className="fixed inset-0 bg-black/40 backdrop-blur-2xs z-[95] sm:hidden"
+                        className="fixed inset-0 z-[95] sm:hidden cursor-default"
+                        aria-hidden="true"
                       />
 
                       <motion.div
@@ -186,13 +184,13 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -4 }}
                         transition={{ type: 'spring', stiffness: 420, damping: 30 }}
-                        className="absolute left-[-170px] xs:left-[-190px] top-full mt-3 sm:top-1/2 sm:-translate-y-1/2 sm:left-full sm:mt-0 sm:ml-4 z-[100] w-[calc(100vw-2.5rem)] max-w-xs sm:w-84 p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-zinc-800"
+                        className="absolute left-[-120px] xs:left-[-100px] sm:left-full top-full mt-3 sm:top-1/2 sm:-translate-y-1/2 sm:mt-0 sm:ml-4 z-[100] w-[calc(100vw-3rem)] max-w-xs sm:w-84 p-4 sm:p-5 rounded-2xl bg-zinc-950 text-white shadow-2xl border border-zinc-800"
                       >
                         {/* Desktop arrow indicator pointing left towards the question mark */}
                         <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-1.5 w-3 h-3 bg-zinc-950 border-b border-l border-zinc-800 rotate-45" />
 
                         {/* Mobile arrow indicator pointing up towards question mark */}
-                        <div className="sm:hidden absolute -top-1.5 right-12 w-3 h-3 bg-zinc-950 border-t border-l border-zinc-800 rotate-45" />
+                        <div className="sm:hidden absolute -top-1.5 left-32 xs:left-28 w-3 h-3 bg-zinc-950 border-t border-l border-zinc-800 rotate-45" />
 
                         {/* Close button */}
                         <button

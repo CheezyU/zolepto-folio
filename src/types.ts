@@ -61,6 +61,7 @@ export interface SiteSettings {
   aboutBio1: string;
   aboutBio2: string;
   contactEmail: string;
+  profilePictureUrl?: string;
   featuredReelYoutubeId?: string;
   featuredReelTitle?: string;
   // Workshop Blueprint customizable steps

@@ -128,7 +128,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
   return (
     <section
       id="start"
-      className="py-24 sm:py-32 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-8 sm:-mt-10 z-40 bg-white border-t border-zinc-200/90 shadow-[0_-24px_50px_rgba(0,0,0,0.06)]"
+      className="py-24 sm:py-32 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-8 sm:-mt-10 z-40 bg-white border-t border-zinc-300/80 shadow-[0_-32px_64px_rgba(0,0,0,0.22),0_-8px_24px_rgba(0,0,0,0.12)]"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Apple-style clean header with motion blur-in */}

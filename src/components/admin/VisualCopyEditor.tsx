@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Globe,
   Sparkles,
@@ -15,6 +15,9 @@ import {
   Eye,
   RefreshCw,
   Share2,
+  Upload,
+  Image as ImageIcon,
+  Trash2,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
 import { DEFAULT_SITE_SETTINGS } from '../../services/siteSettingsService';
@@ -34,13 +37,34 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
   isPublishing,
   status,
 }) => {
-  const [form, setForm] = useState<SiteSettings>({ ...initialSettings });
+  const [form, setForm] = useState<SiteSettings>(() => {
+    try {
+      const draft = localStorage.getItem('zolepto_site_settings_draft');
+      if (draft) {
+        return { ...initialSettings, ...JSON.parse(draft) };
+      }
+    } catch {}
+    return { ...initialSettings };
+  });
   const [activeSection, setActiveSection] = useState<EditorSection>('hero');
-  const [hasChanges, setHasChanges] = useState(false);
+  const [hasChanges, setHasChanges] = useState(() => {
+    return Boolean(localStorage.getItem('zolepto_site_settings_draft'));
+  });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setForm({ ...initialSettings });
-  }, [initialSettings]);
+    localStorage.setItem('zolepto_admin_editing_active', 'true');
+    return () => {
+      localStorage.removeItem('zolepto_admin_editing_active');
+    };
+  }, []);
+
+  useEffect(() => {
+    // Only update from external initialSettings if user has not made active unsaved changes
+    if (!hasChanges) {
+      setForm({ ...initialSettings });
+    }
+  }, [initialSettings, hasChanges]);
 
   // Safety length limits configuration
   const LIMITS = {
@@ -65,19 +89,50 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     if (maxLength && typeof value === 'string' && value.length > maxLength) {
       finalVal = value.slice(0, maxLength);
     }
-    setForm((prev) => ({ ...prev, [field]: finalVal }));
+    setForm((prev) => {
+      const updated = { ...prev, [field]: finalVal };
+      try {
+        localStorage.setItem('zolepto_site_settings_draft', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
     setHasChanges(true);
+  };
+
+  const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate size (max 4MB)
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Image file size should be less than 4MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        handleChange('profilePictureUrl', reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleResetDefaults = () => {
     if (window.confirm('Reset all copy to default editorial studio text?')) {
       setForm({ ...DEFAULT_SITE_SETTINGS });
+      try {
+        localStorage.removeItem('zolepto_site_settings_draft');
+      } catch {}
       setHasChanges(true);
     }
   };
 
   const handlePublish = async () => {
     await onPublishToGitHub(form);
+    try {
+      localStorage.removeItem('zolepto_site_settings_draft');
+    } catch {}
     setHasChanges(false);
   };
 
@@ -221,6 +276,90 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
               <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                 Direct Inline Editing Enabled
               </span>
+            </div>
+
+            {/* Profile Picture Upload & Custom Embed */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-zinc-200/90 shadow-2xs mb-8 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-display font-semibold text-sm text-zinc-900 flex items-center gap-1.5">
+                    <ImageIcon className="w-4 h-4 text-zinc-600" />
+                    <span>Creator Profile Picture / Avatar</span>
+                  </h4>
+                  <p className="text-xs text-zinc-500 mt-0.5">
+                    Upload a custom photo or paste an external image link to personalize your homepage header.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-5 pt-2">
+                {/* Avatar Preview */}
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-zinc-300 overflow-hidden bg-zinc-100 flex items-center justify-center shrink-0 shadow-inner">
+                  {form.profilePictureUrl ? (
+                    <img
+                      src={form.profilePictureUrl}
+                      alt="Profile preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <svg
+                      className="w-full h-full text-zinc-400 translate-y-1"
+                      viewBox="0 0 200 200"
+                      fill="currentColor"
+                    >
+                      <circle cx="100" cy="74" r="34" />
+                      <path d="M92 104H108V120H92z" />
+                      <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
+                    </svg>
+                  )}
+                </div>
+
+                {/* Upload & URL Controls */}
+                <div className="flex-1 w-full space-y-3">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleProfileImageUpload}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-xs"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload Photo</span>
+                    </button>
+
+                    {form.profilePictureUrl && (
+                      <button
+                        type="button"
+                        onClick={() => handleChange('profilePictureUrl', '')}
+                        className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-zinc-100 hover:bg-rose-50 text-zinc-600 hover:text-rose-600 border border-zinc-200 text-xs font-medium transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Remove / Use Silhouette</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Or image URL input */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-zinc-500 block">
+                      Or Direct Image URL (Unsplash, Cloudinary, Imgur):
+                    </label>
+                    <input
+                      type="url"
+                      value={form.profilePictureUrl || ''}
+                      onChange={(e) => handleChange('profilePictureUrl', e.target.value)}
+                      placeholder="https://..."
+                      className="w-full text-xs font-mono text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:border-zinc-900"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Live Availability Status Pill Control */}

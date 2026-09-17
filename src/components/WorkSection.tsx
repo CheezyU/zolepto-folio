@@ -8,6 +8,8 @@ import {
   Volume2,
   Film,
   ArrowDownRight,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MAIN_SHOWREEL } from '../data/portfolioData';
@@ -123,12 +125,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
 
   const fallbackThumbnail =
     'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80';
+  const fallbackGraphic =
+    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
 
   return (
     <section
       ref={sectionRef}
       id="work-section"
-      className="py-20 sm:py-28 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-10 sm:-mt-16 z-20 border-t border-zinc-200/90 bg-[#fafafa] shadow-[0_-24px_50px_rgba(0,0,0,0.12)]"
+      className="py-20 sm:py-28 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-10 sm:-mt-16 z-20 border-t border-zinc-300/80 bg-[#fafafa] shadow-[0_-32px_64px_rgba(0,0,0,0.22),0_-8px_24px_rgba(0,0,0,0.12)]"
     >
       {/* Anchor targets */}
       <div id="showreels" className="absolute -top-24 pointer-events-none" />
@@ -376,19 +380,15 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
           </motion.div>
         )}
 
-        {/* Showcase Cards Container with Subtle Fade-off & Mobile Inset */}
+        {/* Showcase Cards Container */}
         <div className="relative">
-          {/* Subtle Mobile Edge Fade-Off Masks */}
-          <div className="pointer-events-none absolute top-0 bottom-4 left-0 w-6 sm:w-10 bg-gradient-to-r from-[#fafafa] to-transparent z-10 md:hidden" />
-          <div className="pointer-events-none absolute top-0 bottom-4 right-0 w-8 sm:w-14 bg-gradient-to-l from-[#fafafa] to-transparent z-10 md:hidden" />
-
           <motion.div
             key={currentTab}
             initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             ref={sliderRef}
-            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-none -mx-4 sm:-mx-6 md:mx-0 px-5 sm:px-8 md:px-0 scroll-pl-5 sm:scroll-pl-8"
+            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-4 md:pb-0 scrollbar-none -mx-4 sm:-mx-6 md:mx-0 px-4 sm:px-6 md:px-0 scroll-pl-4 sm:scroll-pl-6"
           >
             {unifiedItems.map((item) => {
               if (item.type === 'video') {
@@ -398,7 +398,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     key={`vid-${video.id}`}
                     id={`video-card-${video.id}`}
                     onClick={() => onOpenVideoModal(video)}
-                    className="group shrink-0 w-[78vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="group shrink-0 w-[82vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     {/* Video Thumbnail */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
@@ -466,24 +466,28 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                 );
               } else {
                 const graphic = item.data;
+                const graphicSrc = graphic.imageUrl || fallbackGraphic;
+                const toolList = Array.isArray(graphic.tools)
+                  ? graphic.tools.join(' • ')
+                  : (typeof graphic.tools === 'string' ? graphic.tools : 'Design');
+
                 return (
                   <div
                     key={`graph-${graphic.id}`}
                     id={`graphic-card-${graphic.id}`}
                     onClick={() => setSelectedGraphic(graphic)}
-                    className="group shrink-0 w-[78vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="group shrink-0 w-[82vw] sm:w-[340px] md:w-auto snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/90 hover:border-zinc-300 hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     {/* Graphic Preview */}
                     <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
                       <img
-                        src={graphic.imageUrl}
+                        src={graphicSrc}
                         alt={graphic.title}
                         loading="lazy"
                         decoding="async"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80';
+                          (e.target as HTMLImageElement).src = fallbackGraphic;
                         }}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
@@ -518,7 +522,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
 
                       <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
                         <span className="font-mono text-[11px] text-zinc-500 truncate max-w-[180px]">
-                          {graphic.tools.join(' • ')}
+                          {toolList}
                         </span>
                         <span className="font-medium text-zinc-900 group-hover:underline">
                           View Still →
@@ -530,12 +534,44 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
               }
             })}
             {/* End spacer for smooth mobile snap padding */}
-            <div className="w-2 sm:w-4 shrink-0 md:hidden pointer-events-none" aria-hidden="true" />
+            <div className="w-4 shrink-0 md:hidden pointer-events-none" aria-hidden="true" />
           </motion.div>
 
-          {/* Mobile slide indicator */}
-          <div className="flex md:hidden items-center justify-center gap-2 mt-4 text-[11px] font-mono text-zinc-400">
-            <span>← Swipe horizontally to explore archive →</span>
+          {/* Simple left/right navigation buttons for mobile carousel (replaces swipe text) */}
+          <div className="flex md:hidden items-center justify-between mt-5 px-1">
+            <button
+              id="work-carousel-prev-btn"
+              type="button"
+              onClick={() => {
+                if (sliderRef.current) {
+                  sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+                }
+              }}
+              className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-white border border-zinc-200 text-zinc-800 text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Prev</span>
+            </button>
+
+            <span className="text-[11px] font-mono text-zinc-400">
+              {unifiedItems.length} curated works
+            </span>
+
+            <button
+              id="work-carousel-next-btn"
+              type="button"
+              onClick={() => {
+                if (sliderRef.current) {
+                  sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+                }
+              }}
+              className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-white border border-zinc-200 text-zinc-800 text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
+              aria-label="Scroll right"
+            >
+              <span>Next</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -543,7 +579,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       {/* Graphic Design Lightbox Modal */}
       {selectedGraphic && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8 transition-opacity"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-8 transition-opacity"
           onClick={() => setSelectedGraphic(null)}
         >
           <button
@@ -558,11 +594,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
             className="relative max-w-4xl w-full max-h-[90vh] flex flex-col bg-zinc-950 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden min-h-[320px] max-h-[65vh]">
+            <div className="relative flex-1 bg-black/90 flex items-center justify-center overflow-hidden min-h-[320px] max-h-[65vh]">
               <img
-                src={selectedGraphic.imageUrl}
+                src={selectedGraphic.imageUrl || fallbackGraphic}
                 alt={selectedGraphic.title}
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = fallbackGraphic;
+                }}
                 className="max-h-full max-w-full object-contain"
               />
             </div>
@@ -588,7 +627,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
 
               <div className="flex items-center gap-2 shrink-0">
                 <a
-                  href={selectedGraphic.imageUrl}
+                  href={selectedGraphic.imageUrl || fallbackGraphic}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 rounded-full bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white flex items-center gap-1.5 transition-colors"

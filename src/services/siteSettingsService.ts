@@ -20,6 +20,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   aboutBio2:
     'I partner directly with creators, founders, and ambitious brands. No junior handoffs, no agency bloat. You work directly with me from raw footage ingest to final sound mix and cinematic color grade.',
   contactEmail: 'zolepto@gmail.com',
+  profilePictureUrl: '',
   featuredReelYoutubeId: 'aqz-KE-bpKQ',
   featuredReelTitle: 'ZOLEPTO — 2026 Director & Editing Master Showreel',
   // Workshop Blueprint customizable steps
@@ -136,6 +137,14 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
   let isCleanedUp = false;
 
   const fetchGlobalSettings = () => {
+    // If user is actively in the Admin panel, do NOT overwrite their live form state with old deployed content
+    if (typeof window !== 'undefined') {
+      const isCurrentlyAdmin = window.location.hash.toLowerCase().includes('admin') || 
+                               window.location.pathname.toLowerCase().includes('admin') ||
+                               Boolean(localStorage.getItem('zolepto_admin_editing_active'));
+      if (isCurrentlyAdmin) return;
+    }
+
     loadLivePortfolioContent()
       .then((deployed) => {
         if (isCleanedUp || !deployed || !deployed.siteSettings) return;

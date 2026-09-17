@@ -181,11 +181,10 @@ function dispatchWeb3FormsNativeForm(accessKey: string, inquiry: SubmittedBookin
       replyto: sanitizeInput(inquiry.email),
       project_scope: sanitizeInput(inquiry.projectType),
       budget: sanitizeInput(inquiry.estimatedBudget || 'Flexible / Open'),
-      brief: sanitizeInput(inquiry.brief || 'None provided', true),
       links: sanitizeInput(inquiry.links || 'None provided', true),
       inquiry_id: sanitizeInput(inquiry.id),
       submitted_at: sanitizeInput(inquiry.submittedAt),
-      message: `NEW CLIENT INQUIRY DETAILS:\n\nClient Name: ${sanitizeInput(inquiry.fullName)}\nClient Email: ${sanitizeInput(inquiry.email)}\nScope of Work: ${sanitizeInput(inquiry.projectType)}\nTarget Budget: ${sanitizeInput(inquiry.estimatedBudget || 'Flexible / Open')}\nFootage / Reference Links: ${sanitizeInput(inquiry.links || 'None provided')}\n\nProject Brief & Vision:\n${sanitizeInput(inquiry.brief || 'None provided', true)}\n\nInquiry Reference ID: ${sanitizeInput(inquiry.id)}\nTimestamp: ${sanitizeInput(inquiry.submittedAt)}`,
+      message: sanitizeInput(inquiry.brief || 'None provided', true),
       botcheck: '', // Web3Forms built-in anti-spam honeypot: humans leave empty, bots fill it
     };
 
@@ -306,11 +305,10 @@ export async function saveInquiry(
       replyto: cleanInquiry.email,
       project_scope: cleanInquiry.projectType,
       budget: cleanInquiry.estimatedBudget || 'Flexible / Open',
-      brief: cleanInquiry.brief || 'None provided',
       links: cleanInquiry.links || 'None provided',
       inquiry_id: cleanInquiry.id,
       submitted_at: cleanInquiry.submittedAt,
-      message: `NEW CLIENT INQUIRY DETAILS:\n\nClient Name: ${cleanInquiry.fullName}\nClient Email: ${cleanInquiry.email}\nScope of Work: ${cleanInquiry.projectType}\nTarget Budget: ${cleanInquiry.estimatedBudget || 'Flexible / Open'}\nFootage / Reference Links: ${cleanInquiry.links || 'None provided'}\n\nProject Brief & Vision:\n${cleanInquiry.brief || 'None provided'}\n\nInquiry Reference ID: ${cleanInquiry.id}\nTimestamp: ${cleanInquiry.submittedAt}`,
+      message: cleanInquiry.brief || 'None provided',
       botcheck: '', // Web3Forms built-in anti-spam honeypot: clean for real humans
     };
 
@@ -333,10 +331,13 @@ export async function saveInquiry(
     console.warn('Web3Forms fetch dispatch failed, triggering native fallback:', err);
   }
 
-  // Native background fallback for strict CORS or browser shields
-  try {
-    dispatchWeb3FormsNativeForm(accessKey, cleanInquiry);
-  } catch {}
+  // Native background fallback ONLY if direct fetch failed (e.g. adblocker or CORS restriction)
+  if (!emailSent) {
+    try {
+      dispatchWeb3FormsNativeForm(accessKey, cleanInquiry);
+      emailSent = true;
+    } catch {}
+  }
 
   return { id: cleanInquiry.id, emailSent, cloudSynced, webhookSent };
 }

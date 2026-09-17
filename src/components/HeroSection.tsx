@@ -21,6 +21,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     'I craft high-retention commercial cuts, cinematic narratives, and digital formats where every single frame earns its place. Direct 1-on-1 collaboration that makes your work impossible to ignore.';
   const availability = settings?.availabilityStatus || 'Available for incoming projects!';
   const showDot = settings?.showAvailabilityDot ?? true;
+  const profilePic = settings?.profilePictureUrl;
+  const [imgError, setImgError] = useState(false);
+
+  // Reset img error if profilePic url changes
+  useEffect(() => {
+    setImgError(false);
+  }, [profilePic]);
 
   return (
     <section
@@ -63,48 +70,75 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="order-first lg:order-last lg:col-span-5 flex flex-col items-center justify-center lg:justify-end"
+            className="order-first lg:order-last lg:col-span-5 flex flex-col items-center justify-center lg:justify-end mb-4 lg:mb-0"
           >
             <div className="relative group flex flex-col items-center">
-              {/* Circular profile container */}
+              {/* Circular profile container - enlarged on mobile for prominent face representation */}
               <div
                 id="hero-profile-avatar-slot"
-                className="relative w-28 h-28 sm:w-44 sm:h-44 lg:w-72 lg:h-72 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/5"
+                className="relative w-36 h-36 sm:w-52 sm:h-52 lg:w-72 lg:h-72 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/10"
               >
-                {/* Mock torso half-body headshot silhouette */}
-                <svg
-                  className="w-full h-full text-zinc-400/50 hover:text-zinc-300/70 transition-colors transform translate-y-2 sm:translate-y-3"
-                  viewBox="0 0 200 200"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-label="Profile photo placeholder"
-                >
-                  {/* Head */}
-                  <circle cx="100" cy="74" r="34" />
-                  {/* Neck */}
-                  <path d="M92 104H108V120H92z" />
-                  {/* Shoulders / Torso half-body */}
-                  <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
-                </svg>
+                {/* Custom uploaded/embedded profile picture or fallback silhouette */}
+                {profilePic && !imgError ? (
+                  <img
+                    src={profilePic}
+                    alt="Zolepto Hiraya — Director"
+                    onError={() => setImgError(true)}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <svg
+                    className="w-full h-full text-zinc-400/50 hover:text-zinc-300/70 transition-colors transform translate-y-3 sm:translate-y-4"
+                    viewBox="0 0 200 200"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-label="Profile photo placeholder"
+                  >
+                    {/* Head */}
+                    <circle cx="100" cy="74" r="34" />
+                    {/* Neck */}
+                    <path d="M92 104H108V120H92z" />
+                    {/* Shoulders / Torso half-body */}
+                    <path d="M40 186 C40 142, 68 126, 100 126 C132 126, 160 142, 160 186 C160 192, 156 196, 150 196 H50 C44 196, 40 192, 40 186 Z" />
+                  </svg>
+                )}
 
                 {/* Active status dot on avatar */}
                 <div
-                  className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs"
+                  className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-emerald-500 border-2 border-zinc-950 shadow-xs"
                   title="Online / Direct Direction"
                 />
               </div>
 
-              {/* Status Pill on mobile right below avatar, or inline */}
-              <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
-                {showDot && (
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              {/* Handdrawn Freeform Lopsided Availability Status (Floating naturally near profile picture, NO uniform pill) */}
+              <div className="mt-3.5 sm:mt-4 flex items-center justify-center -rotate-2 sm:-rotate-3 hover:rotate-0 transition-transform duration-300 cursor-default select-none">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 relative">
+                  {showDot && (
+                    <span className="relative flex h-2.5 w-2.5 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                    </span>
+                  )}
+                  
+                  {/* Freeform handwritten editorial script */}
+                  <span className="font-handwriting text-lg sm:text-xl text-emerald-300 font-medium tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                    {availability}
                   </span>
-                )}
-                <span className="text-[11px] sm:text-xs font-medium text-zinc-200 tracking-tight">
-                  {availability}
-                </span>
+
+                  {/* Subtle hand-drawn sketchy arrow pointing toward profile */}
+                  <svg
+                    className="w-5 h-5 text-emerald-400/90 -rotate-12 shrink-0 ml-0.5 opacity-80"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M4 14c4-3 8-4 14-2" />
+                    <path d="M14 8l4 4-4 4" />
+                  </svg>
+                </div>
               </div>
             </div>
           </motion.div>

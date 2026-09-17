@@ -104,7 +104,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
   return (
     <section
       id="blueprint-about"
-      className="py-24 sm:py-32 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-8 sm:-mt-12 z-30 border-t border-zinc-200/90 bg-[#fafafa] shadow-[0_-24px_50px_rgba(0,0,0,0.06)] overflow-hidden"
+      className="py-24 sm:py-32 relative rounded-t-[36px] sm:rounded-t-[48px] -mt-8 sm:-mt-12 z-30 border-t border-zinc-300/80 bg-[#fafafa] shadow-[0_-32px_64px_rgba(0,0,0,0.22),0_-8px_24px_rgba(0,0,0,0.12)] overflow-hidden"
     >
       {/* Anchor targets */}
       <div id="process" className="absolute -top-24 pointer-events-none" />
@@ -193,19 +193,22 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                   transition={{ duration: 0.7, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
                   onMouseEnter={() => setActiveStepHover(step.id)}
                   onMouseLeave={() => setActiveStepHover(null)}
-                  className="relative group transition-all duration-300"
+                  onClick={() => setActiveStepHover((prev) => (prev === step.id ? null : step.id))}
+                  className="relative group transition-all duration-300 cursor-pointer touch-manipulation"
                 >
                   {/* Organic layout: NO hard card border, purely breathable typography & hand-drawn annotations */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start relative">
                     
-                    {/* Left Step Marker with Hand-Drawn Circle with Simple Hover */}
+                    {/* Left Step Marker with Hand-Drawn Circle with Hover & Mobile Tap Active */}
                     <div className="lg:col-span-4 flex items-start gap-4 relative">
-                      {/* Hand-Drawn Sketch Circle around number */}
+                      {/* Hand-Drawn Sketch Circle around number - responsive to hover and tap */}
                       <div className="relative flex-shrink-0 w-16 h-16 flex items-center justify-center">
                         <svg
                           viewBox="0 0 100 100"
                           className={`absolute inset-0 w-full h-full transition-transform duration-300 ${
-                            isHovered ? 'scale-110 rotate-12 text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-700'
+                            isHovered
+                              ? 'scale-110 rotate-12 text-zinc-950 stroke-[4]'
+                              : 'text-zinc-400 group-hover:text-zinc-700 group-active:scale-110 group-active:rotate-12 group-active:text-zinc-950'
                           }`}
                         >
                           <path
@@ -216,7 +219,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                             strokeLinecap="round"
                           />
                         </svg>
-                        <span className="font-display font-bold text-xl text-zinc-900 relative z-10">
+                        <span className={`font-display font-bold text-xl relative z-10 transition-colors ${
+                          isHovered ? 'text-zinc-950' : 'text-zinc-900 group-hover:text-zinc-950'
+                        }`}>
                           {step.number}
                         </span>
                       </div>
@@ -284,17 +289,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onStartBooking, sett
                     </div>
                   </div>
 
-                  {/* Free-flowing subtle hand-drawn separator */}
+                  {/* Clean breathable spacing between steps without artificial separator lines or CONTINUE text */}
                   {idx < PROCESS_STEPS.length - 1 && (
-                    <div className="mt-12 sm:mt-16 pt-2 flex items-center gap-4 text-zinc-300">
-                      <div className="w-2 h-2 rounded-full bg-zinc-300" />
-                      <div className="flex-1 border-t border-dashed border-zinc-200" />
-                      <span className="font-mono text-[10px] text-zinc-400">
-                        CONTINUE BREAKDOWN &darr;
-                      </span>
-                      <div className="flex-1 border-t border-dashed border-zinc-200" />
-                      <div className="w-2 h-2 rounded-full bg-zinc-300" />
-                    </div>
+                    <div className="h-4 sm:h-8" />
                   )}
                 </motion.div>
               );

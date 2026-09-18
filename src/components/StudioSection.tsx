@@ -11,19 +11,25 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
   settings,
 }) => {
   const heading =
-    settings?.aboutHeading || 'Crafting edits that audiences refuse to skip.';
+    settings?.aboutHeading &&
+    settings.aboutHeading !== 'About' &&
+    settings.aboutHeading !== 'Crafting edits that audiences refuse to skip.' &&
+    settings.aboutHeading !== 'Who I am. My background.'
+      ? settings.aboutHeading
+      : 'Background & Approach';
 
   const bio1 =
-    settings?.aboutBio1 ||
-    'I’m a director and lead editor dedicated to visual storytelling that grips people from the first second. Over the last four years, I’ve shaped commercial edits, narrative shorts, and high-retention creator cuts totaling over 14 million organic views.';
+    settings?.aboutBio1 && !settings.aboutBio1.includes('Over the last four years')
+      ? settings.aboutBio1
+      : "I'm Zolepto. Six years ago, I started a channel with zero knowledge and grew it from the ground up. Every mistake became a building block, and along the way I picked up video editing, motion design, thumbnails, and branding.";
 
   const bio2 =
-    settings?.aboutBio2 ||
-    'My philosophy is simple: cut the safety filler. If a second doesn’t push emotional velocity or drive the narrative forward, it dies on the cutting room floor. The result is pure, high-density momentum.';
+    settings?.aboutBio2 && !settings.aboutBio2.includes('My philosophy is simple')
+      ? settings.aboutBio2
+      : "Because I've built a channel myself, I don't see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.";
 
-  const directorNote =
-    settings?.aboutDirectorNote ||
-    '“When people watch a great video, they don\'t notice the cuts—they feel the momentum.”';
+  const bio3 =
+    "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.";
 
   const tools = settings?.aboutTools && settings.aboutTools.length > 0
     ? settings.aboutTools
@@ -32,7 +38,7 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
   return (
     <section
       id="about"
-      className="pt-10 sm:pt-14 pb-28 sm:pb-36 relative bg-[#fafafa] overflow-hidden"
+      className="pt-10 sm:pt-14 pb-20 sm:pb-28 relative bg-[#fafafa] overflow-hidden"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
@@ -65,6 +71,10 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
               {bio2}
             </p>
 
+            <p>
+              {bio3}
+            </p>
+
             {/* Core Tools Bar - Minimalist, floating without box containers, cleanly aligned */}
             <div className="pt-6 border-t border-zinc-200/80">
               <span className="block text-zinc-400 font-mono text-[10px] uppercase tracking-widest font-semibold mb-3">
@@ -81,24 +91,6 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
             </div>
           </motion.div>
         </div>
-
-        {/* Director's Note placed at the last part of the About Me section */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-14 pt-8 border-t border-zinc-200/80"
-        >
-          <div className="p-5 sm:p-6 rounded-2xl bg-amber-50/80 border border-amber-200/70 text-amber-950 max-w-xl rotate-[-0.5deg] shadow-2xs relative">
-            <div className="absolute -top-3 left-6 px-3 py-0.5 bg-amber-100/95 border border-amber-300/60 text-[10px] font-mono text-amber-800 rounded-xs uppercase tracking-wider font-semibold -rotate-1">
-              DIRECTOR'S NOTE
-            </div>
-            <p className="font-handwriting text-xl sm:text-2xl leading-relaxed text-zinc-800 pt-1">
-              {directorNote}
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

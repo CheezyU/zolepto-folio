@@ -147,7 +147,7 @@ export const Header: React.FC<HeaderProps> = ({
             Contact & Info
           </button>
 
-          {/* Work With Us CTA button */}
+          {/* Start a Project CTA button */}
           <button
             id="nav-work-with-us-btn"
             onClick={() => handleLinkClick('start')}
@@ -157,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'bg-white text-zinc-950 hover:bg-zinc-100'
             }`}
           >
-            <span>Work With Us</span>
+            <span>Start a Project</span>
             <ArrowDownRight className="w-3.5 h-3.5 transition-transform group-hover:rotate-45" />
           </button>
         </nav>
@@ -236,7 +236,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Work With Us</span>
+                <span>Start a Project</span>
               </div>
               <ArrowDownRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
             </button>

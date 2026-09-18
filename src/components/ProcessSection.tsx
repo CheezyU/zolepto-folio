@@ -1,11 +1,5 @@
 import React, { useRef } from 'react';
-import {
-  ArrowUpRight,
-  Sparkles,
-  Scissors,
-  Volume2,
-  CheckCircle,
-} from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { motion, useInView, useScroll } from 'motion/react';
 import { SiteSettings } from '../types';
 
@@ -18,13 +12,118 @@ interface ProcessStepItem {
   id: number;
   number: string;
   title: string;
-  subtitle: string;
-  icon: string;
   description: string;
-  handwrittenNote: string;
 }
 
-// Authentic hand-drawn organic circular paths for each phase step (individually styled for human irregularity)
+// Simple, large floating background shapes (clean architectural line art, zero color splash)
+const ClientSilhouetteShape = () => (
+  <svg
+    viewBox="0 0 100 100"
+    fill="none"
+    className="w-full h-full text-zinc-900/[0.08]"
+  >
+    <circle
+      cx="50"
+      cy="32"
+      r="16"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M22 84 C 22 62, 34 54, 50 54 C 66 54, 78 62, 78 84"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const LightbulbShape = () => (
+  <svg
+    viewBox="0 0 100 100"
+    fill="none"
+    className="w-full h-full text-zinc-900/[0.08]"
+  >
+    <path
+      d="M50 18 C 36 18, 28 28, 28 40 C 28 49, 34 56, 38 62 L 38 68 C 38 70, 40 72, 42 72 L 58 72 C 60 72, 62 70, 62 68 L 62 62 C 66 56, 72 49, 72 40 C 72 28, 64 18, 50 18 Z"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line
+      x1="42"
+      y1="78"
+      x2="58"
+      y2="78"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+    />
+    <line
+      x1="46"
+      y1="84"
+      x2="54"
+      y2="84"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M44 46 L 50 36 L 56 46"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const EyeShape = () => (
+  <svg
+    viewBox="0 0 100 100"
+    fill="none"
+    className="w-full h-full text-zinc-900/[0.08]"
+  >
+    <path
+      d="M14 50 C 26 28, 74 28, 86 50 C 74 72, 26 72, 14 50 Z"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="50" cy="50" r="12" stroke="currentColor" strokeWidth="2.2" />
+    <circle cx="50" cy="50" r="4.5" fill="currentColor" />
+  </svg>
+);
+
+const PaperPlaneShape = () => (
+  <svg
+    viewBox="0 0 100 100"
+    fill="none"
+    className="w-full h-full text-zinc-900/[0.08]"
+  >
+    <path
+      d="M16 52 L 86 18 L 52 84 L 42 56 Z"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line
+      x1="86"
+      y1="18"
+      x2="42"
+      y2="56"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+// Authentic hand-drawn organic circular paths for each phase step
 const HANDDRAWN_STEP_PATHS: Record<number, string> = {
   1: 'M 49,10 C 74,8 92,23 91,48 C 90,74 74,91 49,90 C 23,89 9,73 10,48 C 11,23 27,11 49,10 Z',
   2: 'M 52,9 C 77,12 92,28 90,52 C 88,77 71,92 47,91 C 21,90 8,72 10,47 C 12,21 26,8 52,9 Z',
@@ -40,8 +139,8 @@ const SKETCH_OUTLINES: Record<number, string> = {
 };
 
 /**
- * ScrollPhaseItem: Viewport scroll-reactive phase item with fluid, organic gradient background accents,
- * emphasized gradient typography, hand-drawn circular number marker with pop + fill, and natural handwritten notes.
+ * ScrollPhaseItem: Viewport scroll-reactive phase item with large floating background shapes,
+ * organic gradient background accents, clean typography, and hand-drawn circular number markers.
  */
 const ScrollPhaseItem: React.FC<{
   step: ProcessStepItem;
@@ -50,16 +149,16 @@ const ScrollPhaseItem: React.FC<{
 }> = ({ step, isLast }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(itemRef, {
-    amount: 0.35,
-    margin: '-10% 0px -25% 0px',
+    amount: 'some',
+    margin: '-20% 0px -46% 0px',
   });
 
   const renderTitle = () => {
     if (step.id === 1) {
       return (
-        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+        <h4 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
           <span>Identifying</span>
-          <span className="font-handwriting font-bold tracking-wider text-2xl sm:text-3xl bg-gradient-to-r from-violet-600 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent transform -rotate-2 inline-block px-1 drop-shadow-xs">
+          <span className="font-handwriting font-bold tracking-wider text-3xl sm:text-4xl bg-gradient-to-r from-violet-600 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent transform -rotate-2 inline-block px-1 drop-shadow-xs">
             YOU
           </span>
         </h4>
@@ -68,8 +167,8 @@ const ScrollPhaseItem: React.FC<{
 
     if (step.id === 2) {
       return (
-        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
-          <span>Deconstructing the</span>
+        <h4 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+          <span>Dissecting the</span>
           <span className="bg-gradient-to-r from-amber-600 via-orange-500 to-rose-500 bg-clip-text text-transparent font-bold">
             Narrative
           </span>
@@ -79,20 +178,20 @@ const ScrollPhaseItem: React.FC<{
 
     if (step.id === 3) {
       return (
-        <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
-          <span>Emotional Rhythm &amp;</span>
+        <h4 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+          <span>Look Beyond the</span>
           <span className="bg-gradient-to-r from-sky-600 via-blue-500 to-indigo-500 bg-clip-text text-transparent font-bold">
-            Subconscious Sound
+            Process
           </span>
         </h4>
       );
     }
 
     return (
-      <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
-        <span>Visual Prestige &amp;</span>
+      <h4 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+        <span>Official</span>
         <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 bg-clip-text text-transparent font-bold">
-          Delivery
+          Drop
         </span>
       </h4>
     );
@@ -107,7 +206,7 @@ const ScrollPhaseItem: React.FC<{
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="w-13 h-13 sm:w-16 sm:h-16 flex items-center justify-center relative select-none"
       >
-        {/* Hand-drawn authentic ink shape: zero residue because stroke and fill belong to the same path */}
+        {/* Hand-drawn authentic ink shape without small badge overlay */}
         <svg
           className="absolute inset-0 w-full h-full overflow-visible drop-shadow-2xs pointer-events-none"
           viewBox="0 0 100 100"
@@ -142,20 +241,6 @@ const ScrollPhaseItem: React.FC<{
           {step.number}
         </span>
       </motion.div>
-
-      {/* Floating Action Glyph */}
-      <div
-        className={`absolute -bottom-1 -right-1 w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs shadow-xs border transition-colors z-20 ${
-          isInView
-            ? 'bg-white text-zinc-950 border-zinc-300'
-            : 'bg-zinc-100 text-zinc-500 border-zinc-200'
-        }`}
-      >
-        {step.id === 1 && <Sparkles className="w-3 h-3" />}
-        {step.id === 2 && <Scissors className="w-3 h-3" />}
-        {step.id === 3 && <Volume2 className="w-3 h-3" />}
-        {step.id === 4 && <CheckCircle className="w-3 h-3" />}
-      </div>
     </div>
   );
 
@@ -164,42 +249,38 @@ const ScrollPhaseItem: React.FC<{
       ref={itemRef}
       className={`relative ${!isLast ? 'pb-16 sm:pb-24' : ''}`}
     >
-      {/* Col B: Main Narrative Content with Fluid Organic Shapes */}
+      {/* Col B: Main Narrative Content with Large Static Background Shapes */}
       <div className="relative z-10">
-        {/* Fluid Organic Accent Blobs - subtle, luminous aura framing each phase across all displays */}
+        {/* Large static background shapes (clean architectural line art, zero harsh colors) */}
         {step.id === 1 && (
-          <div
-            className="absolute -top-6 -right-8 sm:-right-12 w-48 sm:w-72 h-48 sm:h-64 bg-violet-400/14 blur-3xl pointer-events-none -z-10"
-            style={{ borderRadius: '63% 37% 54% 46% / 44% 59% 41% 56%' }}
-          />
-        )}
-        {step.id === 2 && (
-          <div
-            className="absolute -top-6 -left-8 sm:-left-12 w-48 sm:w-72 h-48 sm:h-64 bg-amber-400/14 blur-3xl pointer-events-none -z-10"
-            style={{ borderRadius: '48% 52% 64% 36% / 58% 38% 62% 42%' }}
-          />
-        )}
-        {step.id === 3 && (
-          <div
-            className="absolute -top-6 -right-8 sm:-right-12 w-48 sm:w-72 h-48 sm:h-64 bg-sky-400/14 blur-3xl pointer-events-none -z-10"
-            style={{ borderRadius: '39% 61% 56% 44% / 63% 47% 53% 37%' }}
-          />
-        )}
-        {step.id === 4 && (
-          <div
-            className="absolute -top-6 -left-8 sm:-left-12 w-48 sm:w-72 h-48 sm:h-64 bg-emerald-400/14 blur-3xl pointer-events-none -z-10"
-            style={{ borderRadius: '57% 43% 36% 64% / 45% 61% 39% 55%' }}
-          />
+          <div className="absolute -top-10 -right-4 sm:right-6 w-44 sm:w-64 h-44 sm:h-64 pointer-events-none -z-10 select-none opacity-80 transform -rotate-6">
+            <ClientSilhouetteShape />
+          </div>
         )}
 
-        {/* Mobile View: Phase number sits directly beside the phase title & subtitle */}
+        {step.id === 2 && (
+          <div className="absolute -top-12 -left-4 sm:left-8 w-44 sm:w-60 h-44 sm:h-60 pointer-events-none -z-10 select-none opacity-80 transform rotate-12">
+            <LightbulbShape />
+          </div>
+        )}
+
+        {step.id === 3 && (
+          <div className="absolute -top-8 -right-6 sm:right-8 w-48 sm:w-68 h-48 sm:h-68 pointer-events-none -z-10 select-none opacity-80 transform -rotate-8">
+            <EyeShape />
+          </div>
+        )}
+
+        {step.id === 4 && (
+          <div className="absolute -top-10 -left-4 sm:left-12 w-44 sm:w-64 h-44 sm:h-64 pointer-events-none -z-10 select-none opacity-80 transform rotate-16">
+            <PaperPlaneShape />
+          </div>
+        )}
+
+        {/* Mobile View: Phase number sits directly beside the phase title (subheadings removed) */}
         <div className="lg:hidden flex items-center gap-3.5 sm:gap-4 mb-3.5">
           {renderMarker()}
           <div className="min-w-0">
             {renderTitle()}
-            <p className="text-xs sm:text-sm font-mono text-zinc-500 mt-0.5 uppercase tracking-wider">
-              {step.subtitle}
-            </p>
           </div>
         </div>
 
@@ -210,27 +291,15 @@ const ScrollPhaseItem: React.FC<{
             {renderMarker()}
           </div>
 
-          {/* Col B: Desktop Title, Subtitle, Description & Handwritten Note */}
+          {/* Col B: Desktop Title & Clean Description (subheadings removed) */}
           <div className="lg:col-span-10 space-y-3 relative z-10">
             <div className="hidden lg:block">
               {renderTitle()}
-              <p className="text-xs sm:text-sm font-mono text-zinc-500 mt-1 uppercase tracking-wider">
-                {step.subtitle}
-              </p>
             </div>
 
-            <p className="text-zinc-600 text-sm sm:text-base font-normal leading-relaxed max-w-3xl">
+            <p className="text-zinc-700 text-sm sm:text-base font-normal leading-relaxed max-w-3xl">
               {step.description}
             </p>
-
-            {/* Natural Handwritten Note */}
-            {step.handwrittenNote && (
-              <div className="pt-2">
-                <p className="font-handwriting text-lg sm:text-xl text-zinc-600 italic">
-                  {step.handwrittenNote}
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -252,54 +321,38 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
     {
       id: 1,
       number: '01',
-      title: settings?.step1Title || 'Identifying You',
-      subtitle: settings?.step1Subtitle || 'The Core Signal & Creative DNA',
-      icon: '✦',
+      title: settings?.step1Title || 'Identifying YOU',
       description:
-        settings?.step1Description ||
-        'Before a single clip is dragged to the timeline or a cut is made, we identify you. Who you are, what your voice stands for, who your real audience is, and the psychological hook that makes your content undeniably yours. We don’t copy trends or use cookie-cutter templates—we locate your authentic edge and reverse-engineer the entire narrative around it.',
-      handwrittenNote:
-        settings?.step1Note ||
-        '“Who you are > fancy transitions. This is where real retention is born.”',
+        settings?.step1Description && !settings.step1Description.includes('We have to identify your authentic side')
+          ? settings.step1Description
+          : "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage.",
     },
     {
       id: 2,
       number: '02',
-      title: settings?.step2Title || 'Deconstructing the Narrative',
-      subtitle: settings?.step2Subtitle || 'Ruthless Dissection & Trimming the Fat',
-      icon: '✂',
+      title: settings?.step2Title || 'Dissecting the Narrative',
       description:
-        settings?.step2Description ||
-        'Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.',
-      handwrittenNote:
-        settings?.step2Note ||
-        'Cut the safety filler. If it doesn’t push the story forward, it dies here.',
+        settings?.step2Description && !settings.step2Description.includes('We prioritize the value of the content')
+          ? settings.step2Description
+          : "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video.",
     },
     {
       id: 3,
       number: '03',
-      title: settings?.step3Title || 'Emotional Rhythm & Subconscious Sound',
-      subtitle: settings?.step3Subtitle || 'The Kinetic Pulse & Visceral Foley',
-      icon: '♫',
+      title: settings?.step3Title || 'Look Beyond the Process',
       description:
-        settings?.step3Description ||
-        'Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.',
-      handwrittenNote:
-        settings?.step3Note ||
-        'Subconscious audio cues [40Hz - 12kHz] — spatial depth & tactile rhythm',
+        settings?.step3Description && !settings.step3Description.includes('Actually step out of the editing state')
+          ? settings.step3Description
+          : "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified.",
     },
     {
       id: 4,
       number: '04',
-      title: settings?.step4Title || 'Visual Prestige & Delivery',
-      subtitle: settings?.step4Subtitle || 'Color Science, Key-Art & Cultural Authority',
-      icon: '✓',
+      title: settings?.step4Title || 'Official Drop',
       description:
-        settings?.step4Description ||
-        'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.',
-      handwrittenNote:
-        settings?.step4Note ||
-        'Ready for export. Approved for master release across all formats.',
+        settings?.step4Description && !settings.step4Description.includes('After a meticulous process of multiple passes')
+          ? settings.step4Description
+          : "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration.",
     },
   ];
 
@@ -308,26 +361,28 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
       id="process"
       className="py-16 sm:py-24 relative bg-[#fafafa] overflow-hidden"
     >
-      {/* Fluid Organic Gradient Shapes - balanced, clearly visible atmospheric glow hugging the perimeter on all displays */}
+      {/* Subtle Studio Lighting - Calm, architectural, zero harshness or rainbow colors */}
       <div
-        className="absolute top-[2%] -left-16 sm:-left-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-tr from-violet-500/22 via-fuchsia-400/16 to-rose-400/10 blur-3xl pointer-events-none -z-0"
-        style={{ borderRadius: '68% 32% 48% 52% / 38% 65% 35% 62%' }}
+        className="absolute top-[8%] left-1/3 w-[450px] sm:w-[700px] h-[350px] sm:h-[500px] pointer-events-none -z-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(24, 24, 27, 0.035) 0%, rgba(217, 119, 6, 0.025) 45%, transparent 70%)',
+          filter: 'blur(50px)',
+          transform: 'translateZ(0)',
+        }}
       />
       <div
-        className="absolute top-[26%] -right-16 sm:-right-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-bl from-amber-500/20 via-orange-400/15 to-rose-400/10 blur-3xl pointer-events-none -z-0"
-        style={{ borderRadius: '41% 59% 68% 32% / 64% 34% 66% 36%' }}
-      />
-      <div
-        className="absolute top-[52%] -left-16 sm:-left-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-r from-sky-400/20 via-blue-500/15 to-indigo-500/10 blur-3xl pointer-events-none -z-0"
-        style={{ borderRadius: '55% 45% 33% 67% / 47% 62% 38% 53%' }}
-      />
-      <div
-        className="absolute top-[76%] -right-16 sm:-right-36 w-[340px] sm:w-[640px] h-[340px] sm:h-[540px] bg-gradient-to-tl from-emerald-400/20 via-teal-400/15 to-amber-400/10 blur-3xl pointer-events-none -z-0"
-        style={{ borderRadius: '46% 54% 60% 40% / 58% 42% 58% 42%' }}
+        className="absolute top-[60%] right-1/4 w-[450px] sm:w-[700px] h-[350px] sm:h-[500px] pointer-events-none -z-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(24, 24, 27, 0.03) 0%, rgba(14, 165, 233, 0.02) 45%, transparent 70%)',
+          filter: 'blur(50px)',
+          transform: 'translateZ(0)',
+        }}
       />
 
       {/* Blueprint Ambient Grid Watermark */}
-      <div className="absolute inset-0 pointer-events-none blueprint-sheet opacity-60" />
+      <div className="absolute inset-0 pointer-events-none blueprint-sheet opacity-50" />
 
       {/* Technical Registration Crosshairs */}
       <div className="absolute top-8 left-8 text-zinc-300 font-mono text-[11px] select-none pointer-events-none hidden sm:block">
@@ -348,71 +403,53 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
         <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-24 relative">
           <div className="inline-flex items-center justify-center gap-2 mb-4 px-3.5 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-800 font-mono text-[11px] uppercase tracking-widest font-semibold shadow-2xs">
             <span className="w-1.5 h-1.5 rounded-full bg-zinc-900 animate-pulse" />
-            WORKFLOW
+            <span>HOW IT WORKS</span>
           </div>
 
-          <h3 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-zinc-950 leading-[1.1] mb-2">
-            {settings?.workshopHeading || 'How the story unfolds.'}
+          <h3 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.15]">
+            {settings?.workshopHeading &&
+            settings.workshopHeading !== 'How the story unfolds.' &&
+            settings.workshopHeading !== 'From first call to after you hit post.'
+              ? settings.workshopHeading
+              : 'Four steps from your idea to your audience.'}
           </h3>
 
-          {/* Hand-drawn subtle scribble underline */}
-          <div className="w-44 sm:w-60 h-2.5 mx-auto mb-4 text-zinc-300">
-            <svg viewBox="0 0 240 12" fill="none" className="w-full h-full">
-              <path
-                d="M4 8.5C60 3.5 130 4 236 7C175 10 90 10.5 4 9"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-
-          <p className="mt-3 text-base sm:text-lg text-zinc-600 font-body max-w-2xl mx-auto leading-relaxed">
-            {settings?.workshopSubtitle ||
-              'No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.'}
+          <p className="mt-4 text-zinc-600 text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed">
+            Every video starts with understanding you and ends with checking how it landed. Here's how I get there.
           </p>
-
-          {/* Ruler simulation */}
-          <div className="mt-6 flex items-center justify-center gap-1 overflow-hidden opacity-30 select-none pointer-events-none text-[9px] font-mono text-zinc-400 max-w-md mx-auto">
-            <span>0IN</span>
-            <span className="flex-1 border-b border-dashed border-zinc-400" />
-            <span>|···|···|···|···|</span>
-            <span className="flex-1 border-b border-dashed border-zinc-400" />
-            <span>12IN</span>
-            <span className="flex-1 border-b border-dashed border-zinc-400" />
-            <span>24IN</span>
-          </div>
         </div>
 
-        {/* Free-flow progression track */}
-        <div ref={stepsContainerRef} className="relative space-y-16 sm:space-y-24">
-          {/* Continuous dashed progression track with gentle curve behind the step markers */}
-          <div className="hidden lg:block absolute left-[32px] -translate-x-1/2 top-8 bottom-16 w-12 pointer-events-none z-0">
-            <svg
-              className="w-full h-full overflow-visible"
-              viewBox="0 0 48 1000"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M 24 0 C 24 90, 20 150, 24 210 C 28 245, 36 275, 24 310 C 14 340, 16 365, 24 390 C 32 435, 18 500, 24 560 C 28 600, 34 635, 24 680 C 14 720, 18 750, 24 785 C 30 835, 20 890, 24 1000"
-                fill="none"
-                stroke="#e4e4e7"
-                strokeWidth="2"
-                strokeDasharray="6 8"
-                strokeLinecap="round"
-              />
+        {/* Process Steps Timeline */}
+        <div ref={stepsContainerRef} className="relative">
+          {/* Continuous vertical handdrawn squiggly dashed timeline path (desktop) */}
+          <svg
+            className="hidden lg:block absolute left-[12px] top-6 bottom-10 w-[40px] h-[calc(100%-48px)] pointer-events-none z-0 overflow-visible"
+            viewBox="0 0 40 800"
+            preserveAspectRatio="none"
+          >
+            {/* Background dashed squiggly track - handdrawn, organic, flowy */}
+            <path
+              d="M 20,0 C 13,50 27,100 20,150 C 13,200 27,250 20,300 C 13,350 27,400 20,450 C 13,500 27,550 20,600 C 13,650 27,700 20,750 C 15,775 23,800 20,800"
+              fill="none"
+              stroke="#d4d4d8"
+              strokeWidth="2.2"
+              strokeDasharray="6 6"
+              strokeLinecap="round"
+            />
 
-              <motion.path
-                d="M 24 0 C 24 90, 20 150, 24 210 C 28 245, 36 275, 24 310 C 14 340, 16 365, 24 390 C 32 435, 18 500, 24 560 C 28 600, 34 635, 24 680 C 14 720, 18 750, 24 785 C 30 835, 20 890, 24 1000"
-                fill="none"
-                stroke="#27272a"
-                strokeWidth="2.5"
-                strokeDasharray="6 8"
-                strokeLinecap="round"
-                style={{ pathLength: stepsScrollProgress }}
-              />
-            </svg>
-          </div>
+            {/* Active scroll revealed squiggly dashed line */}
+            <motion.path
+              d="M 20,0 C 13,50 27,100 20,150 C 13,200 27,250 20,300 C 13,350 27,400 20,450 C 13,500 27,550 20,600 C 13,650 27,700 20,750 C 15,775 23,800 20,800"
+              fill="none"
+              stroke="#18181b"
+              strokeWidth="2.5"
+              strokeDasharray="6 6"
+              strokeLinecap="round"
+              style={{
+                pathLength: stepsScrollProgress,
+              }}
+            />
+          </svg>
 
           {PROCESS_STEPS.map((step, idx) => (
             <ScrollPhaseItem
@@ -424,32 +461,23 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
           ))}
         </div>
 
-        {/* Studio Transition Stamp: Connecting directly to Commission */}
+        {/* Studio Transition: Connecting directly to Commission */}
         <div className="mt-20 pt-12 border-t border-zinc-200/80 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4 text-center sm:text-left">
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-zinc-900 flex items-center justify-center p-1 rotate-[-4deg] shrink-0">
-              <span className="font-mono text-[9px] font-bold text-zinc-900 leading-tight uppercase text-center">
-                READY FOR
-                <br />
-                IMPACT
-              </span>
-            </div>
-            <div>
-              <p className="font-display font-bold text-base sm:text-lg text-zinc-950">
-                Every cut is made with intention.
-              </p>
-              <p className="text-xs sm:text-sm text-zinc-500 font-normal">
-                No cookie-cutter presets. Ready to see what your footage can do?
-              </p>
-            </div>
+          <div className="text-center sm:text-left space-y-1">
+            <h4 className="font-display font-bold text-xl sm:text-2xl text-zinc-950">
+              Let's cut your workload in half.
+            </h4>
+            <p className="text-sm sm:text-base text-zinc-600 font-normal">
+              Stop chasing deadlines—partner with me to scale your reach and get recognized.
+            </p>
           </div>
 
           <button
             id="blueprint-start-btn"
             onClick={onStartBooking}
-            className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold uppercase tracking-wider transition-all duration-200 shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-200 shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98] shrink-0"
           >
-            <span>Start Your Project</span>
+            <span>Let's Go</span>
             <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </button>
         </div>

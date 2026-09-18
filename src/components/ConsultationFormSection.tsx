@@ -139,15 +139,14 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
   return (
     <section
       id="start"
-      className="py-16 sm:py-24 relative bg-gradient-to-b from-[#fbf8f3] via-[#fff4eb] to-[#f8f3eb] overflow-hidden"
+      className="py-16 sm:py-24 relative bg-[#fafafa] overflow-hidden"
     >
-      {/* Luminous warm atmosphere blooms: confident, welcoming, and vibrant */}
-      <div className="absolute top-0 left-1/4 -translate-x-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-amber-400/20 via-orange-300/15 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 -right-20 w-[460px] h-[460px] rounded-full bg-gradient-to-bl from-rose-400/15 via-amber-300/15 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 -left-20 w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-orange-400/15 via-amber-200/10 to-transparent blur-3xl pointer-events-none" />
+      {/* Calm, quiet background - clean subtle atmospheric aura without saturated clashing blobs */}
+      <div className="absolute inset-0 pointer-events-none blueprint-sheet opacity-35" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-zinc-200/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Inviting, confident header */}
+        {/* Inviting, confident header with consistent typography */}
         <motion.div
           initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -155,9 +154,9 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
           transition={{ duration: 0.6 }}
           className="text-center max-w-xl mx-auto mb-12 sm:mb-16"
         >
-          <div className="mb-2 inline-block transform -rotate-2 select-none">
-            <span className="font-handwriting text-2xl sm:text-3xl text-zinc-900 font-bold tracking-wide block drop-shadow-2xs">
-              Are you ready to grow?
+          <div className="mb-2.5 inline-block transform -rotate-1 select-none">
+            <span className="font-handwriting text-2xl sm:text-3xl text-zinc-900 font-bold tracking-wide block">
+              Tell me about your project
             </span>
           </div>
 
@@ -169,22 +168,23 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
             together.
           </h2>
 
-          <p className="mt-3.5 text-zinc-600 text-sm sm:text-base font-normal leading-relaxed">
-            Tell us about your footage and storytelling vision. We craft edits audiences refuse to skip. Direct 1-on-1 collaboration—I reply personally within 12 hours.
+          <p className="mt-3.5 text-zinc-600 text-sm sm:text-base font-body font-normal leading-relaxed">
+            Tell me about your footage and storytelling vision. Direct 1-on-1 partnership from the first cut to after you hit post.
           </p>
         </motion.div>
 
-        {/* Elevated Form Card */}
+        {/* Elevated Form Card - Quiet, crisp, highly legible */}
         <motion.div
           initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="bg-white/95 backdrop-blur-md border border-amber-900/10 rounded-3xl p-6 sm:p-10 shadow-[0_20px_50px_-15px_rgba(180,100,50,0.12),0_4px_16px_rgba(0,0,0,0.03)] relative"
+          className="bg-white border border-zinc-200/90 rounded-3xl p-6 sm:p-10 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.02)] relative"
         >
-          {/* Subtle note badge on top right corner */}
-          <div className="hidden sm:block absolute -top-3.5 right-8 px-3.5 py-1 bg-amber-50 border border-amber-200/80 text-[10px] font-mono text-amber-900 rounded-xs rotate-1 shadow-2xs">
-            DIRECT 1-ON-1
+          {/* Personal response badge - high contrast dark pill with glowing emerald beacon, impossible to blend */}
+          <div className="inline-flex sm:absolute sm:-top-4 sm:right-8 items-center gap-2 px-4 py-1.5 bg-zinc-950 border border-zinc-800 text-[11px] font-mono text-zinc-100 rounded-full shadow-md mb-6 sm:mb-0 select-none">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="font-semibold tracking-wide">I reply personally within 12 hours.</span>
           </div>
 
           {submittedBooking ? (
@@ -393,20 +393,13 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                 />
               </div>
 
-              {/* Submit Button & Reassurance */}
-              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <p className="text-xs text-zinc-500 font-mono">
-                    Direct personal reply from Zolepto within 12h
-                  </p>
-                </div>
-
+              {/* Submit Button - Clear, high-contrast, action-focused */}
+              <div className="pt-2 flex justify-end">
                 <button
                   id="submit-consultation-btn"
                   type="submit"
                   disabled={isSubmitting}
-                  className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 cursor-pointer shadow-sm"
+                  className="w-full sm:w-auto group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-body font-semibold text-sm tracking-normal transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer shadow-md hover:shadow-lg"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">
@@ -415,7 +408,7 @@ export const ConsultationFormSection: React.FC<ConsultationFormSectionProps> = (
                     </span>
                   ) : (
                     <>
-                      <span>Send Project Brief</span>
+                      <span>Send Project</span>
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </>
                   )}

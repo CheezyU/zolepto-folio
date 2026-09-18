@@ -10,6 +10,7 @@ interface FolderSectionProps {
   children: React.ReactNode;
   className?: string;
   cardBg?: string;
+  noOverlap?: boolean;
 }
 
 /**
@@ -27,11 +28,12 @@ export const FolderSection: React.FC<FolderSectionProps> = ({
   children,
   className = '',
   cardBg = 'bg-[#fafafa]',
+  noOverlap = false,
 }) => {
   return (
     <div
       id={id}
-      className={`relative -mt-10 sm:-mt-16 transform-gpu will-change-transform ${className}`}
+      className={`relative ${noOverlap ? 'mt-0' : '-mt-10 sm:-mt-16'} transform-gpu will-change-transform ${className}`}
       style={{ zIndex }}
     >
       <div className={`rounded-t-[32px] sm:rounded-t-[44px] ${cardBg} border-t border-zinc-200/90 shadow-[0_-18px_40px_-10px_rgba(0,0,0,0.22),0_-6px_16px_-6px_rgba(0,0,0,0.1),0_-1px_0_0_rgba(255,255,255,0.95)_inset] relative`}>
@@ -73,38 +75,16 @@ export const FolderSection: React.FC<FolderSectionProps> = ({
 };
 
 /**
- * HeroStickyFolder: The stationary first upper page that stays perfectly still
- * at the top of the viewport when scrolling begins while Card 01 slides over it.
- *
- * PERFORMANCE FIX:
- * Eliminates heavy continuous scale matrix recalculations and blur redraws that caused noticeable lag.
- * Uses GPU-accelerated CSS sticky and hardware culling once scrolled past, guaranteeing 120 FPS
- * fluid scroll speed and zero text burn-in.
+ * HeroStickyFolder: Clean wrapper for the hero section that allows natural
+ * viewport flow so hero content, headline, and credibility metrics are never
+ * crushed, collapsed, or covered under.
  */
 export const HeroStickyFolder: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
-
-  // Once Card 01 fully covers the hero (past 700px), hide it completely so the GPU drops the layer
-  const isHidden = useTransform(scrollY, (v) => (v > 720 ? 'hidden' : 'visible'));
-  const pointerEvents = useTransform(scrollY, (v) => (v > 650 ? 'none' : 'auto'));
-
   return (
-    <div
-      ref={containerRef}
-      className="sticky top-0 z-10 w-full overflow-hidden bg-[#0d0e13] transform-gpu will-change-transform"
-    >
-      <motion.div
-        style={{
-          visibility: isHidden,
-          pointerEvents,
-        }}
-        className="w-full h-full relative"
-      >
-        {children}
-      </motion.div>
+    <div className="relative z-10 w-full bg-[#0d0e13]">
+      {children}
     </div>
   );
 };

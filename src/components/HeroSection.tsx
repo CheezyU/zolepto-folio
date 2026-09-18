@@ -16,11 +16,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onPlayFeatured,
   settings,
 }) => {
-  const line1 = settings?.heroTitleLine1 || 'Your visual storyteller';
-  const line2 = settings?.heroTitleLine2 || '& content creation director.';
+  const line1 =
+    settings?.heroTitleLine1 && settings.heroTitleLine1 !== 'Your visual storyteller'
+      ? settings.heroTitleLine1
+      : 'Editing is just the start.';
+  const line2 =
+    settings?.heroTitleLine2 && settings.heroTitleLine2 !== '& content creation director.'
+      ? settings.heroTitleLine2
+      : 'I care what happens after you hit post.';
+  const defaultSubtitle =
+    'I team up with creators and brands to build videos worth staying for, and an audience that actually comes back, not just views.';
   const subtitle =
-    settings?.heroSubtitle ||
-    'I craft high-retention commercial cuts, cinematic narratives, and digital formats where every single frame earns its place. Direct 1-on-1 collaboration that makes your work impossible to ignore.';
+    settings?.heroSubtitle &&
+    !settings.heroSubtitle.includes('I craft high-retention commercial cuts') &&
+    !settings.heroSubtitle.includes('Most editors chase retention with flashy edits') &&
+    !settings.heroSubtitle.includes('Most editors chase high-retention metrics') &&
+    !settings.heroSubtitle.includes('Most editors chase retention, but nobody asks') &&
+    !settings.heroSubtitle.includes('I make videos worth staying for, so creators and brands')
+      ? settings.heroSubtitle
+      : defaultSubtitle;
   const availability = settings?.availabilityStatus || 'Available for incoming projects!';
   const showDot = settings?.showAvailabilityDot ?? true;
   const profilePic = settings?.profilePictureUrl;
@@ -70,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="hero"
-      className="relative pt-24 sm:pt-40 pb-20 sm:pb-40 overflow-hidden bg-[#0d0e13] text-zinc-100 z-10"
+      className="relative pt-24 sm:pt-32 lg:pt-36 pb-28 sm:pb-36 lg:pb-40 overflow-hidden bg-[#0d0e13] text-zinc-100 z-10"
     >
       {/* Upper Page Studio Atmosphere & Creator Backdrop */}
       <div className="absolute inset-0 pointer-events-none">
@@ -94,8 +108,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Blueprint fine grid overlay */}
         <div className="absolute inset-0 blueprint-dots opacity-20" />
 
-        {/* Downward gradient and depth shadow into the overlapping lower page */}
-        <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-b from-transparent via-[#0d0e13]/80 to-black pointer-events-none" />
+        {/* Downward gradient and depth shadow into the lower page - subtle and clear */}
+        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-b from-transparent to-[#0d0e13]/70 pointer-events-none" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
@@ -103,16 +117,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-center">
           
           {/* Left Column: Bold Display Typography, Narrative, CTAs & Metrics */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left order-last lg:order-first">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-5 text-center lg:text-left order-last lg:order-first">
             <div>
-              <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.12]">
-                {line1} <br />
-                <span>{line2}</span>
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold tracking-tight text-white leading-[1.12]">
+                {line1}
               </h1>
+              <span className="block mt-2.5 sm:mt-3.5 font-display text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-medium text-zinc-300 tracking-tight leading-snug">
+                {line2}
+              </span>
             </div>
 
             {/* Breathable narrative description */}
-            <p className="text-xs sm:text-base md:text-lg text-zinc-300 max-w-xl mx-auto lg:mx-0 font-body leading-relaxed font-normal">
+            <p className="text-sm sm:text-base text-zinc-400 max-w-lg mx-auto lg:mx-0 font-body leading-relaxed font-normal">
               {subtitle}
             </p>
 
@@ -139,43 +155,43 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </button>
             </div>
 
-            {/* Credibility Metrics */}
-            <div className="pt-4 sm:pt-5 border-t border-white/10 grid grid-cols-3 divide-x divide-white/10 text-center sm:text-left">
-              <div className="px-1.5 sm:px-0 space-y-0.5">
-                <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight">
+            {/* Credibility Metrics - Un-crushable, spacious, beautifully responsive */}
+            <div className="pt-5 sm:pt-7 border-t border-white/10 grid grid-cols-3 gap-2 sm:gap-6 text-center sm:text-left">
+              <div className="space-y-1">
+                <span className="block font-bold text-white font-display text-base sm:text-2xl tracking-tight">
                   {settings?.heroStat1Value || '14M+'}
                 </span>
-                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">
+                <span className="block text-[10.5px] sm:text-xs font-mono text-zinc-400 leading-snug">
                   {settings?.heroStat1Label || 'Organic Views'}
                 </span>
               </div>
-              <div className="px-1.5 sm:pl-6 space-y-0.5">
-                <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight whitespace-nowrap">
+              <div className="border-l border-white/10 pl-2 sm:pl-6 space-y-1">
+                <span className="block font-bold text-white font-display text-base sm:text-2xl tracking-tight whitespace-nowrap">
                   {settings?.heroStat2Value || '4+ Years'}
                 </span>
-                <span className="block text-[9px] sm:text-xs font-mono text-zinc-400 leading-tight">
+                <span className="block text-[10.5px] sm:text-xs font-mono text-zinc-400 leading-snug">
                   {settings?.heroStat2Label || 'Multimedia & Content Creation'}
                 </span>
               </div>
-              <div className="px-1.5 sm:pl-6 space-y-0.5">
-                <span className="block font-bold text-white font-display text-sm sm:text-lg tracking-tight">
+              <div className="border-l border-white/10 pl-2 sm:pl-6 space-y-1">
+                <span className="block font-bold text-white font-display text-base sm:text-2xl tracking-tight">
                   {settings?.heroStat3Value || '1-on-1'}
                 </span>
-                <span className="block text-[10px] sm:text-xs font-mono text-zinc-400 leading-tight">
+                <span className="block text-[10.5px] sm:text-xs font-mono text-zinc-400 leading-snug">
                   {settings?.heroStat3Label || 'Direct Direction'}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Creator Profile Avatar Column */}
-          <div className="order-first lg:order-last lg:col-span-5 flex flex-col items-center justify-center lg:justify-end mb-4 lg:mb-0">
+          {/* Creator Profile Avatar Column - Generous mobile sizing, zero squeeze */}
+          <div className="order-first lg:order-last lg:col-span-5 flex flex-col items-center justify-center lg:justify-end mb-6 sm:mb-8 lg:mb-0 pt-2 sm:pt-0">
             <div className="relative group flex flex-col items-center">
               {/* Avatar Frame with Arched Rotating Roles Component */}
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center pt-2 sm:pt-4">
                 {/* Arched Rotating Role Indicator wrapping the top curve of avatar */}
                 <div
-                  className="absolute -inset-5 sm:-inset-7 lg:-inset-9 pointer-events-none select-none z-20 overflow-visible flex items-center justify-center"
+                  className="absolute -inset-6 sm:-inset-7 lg:-inset-9 pointer-events-none select-none z-20 overflow-visible flex items-center justify-center"
                   aria-label="Current role"
                 >
                   <svg
@@ -225,10 +241,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </svg>
                 </div>
 
-                {/* Circular profile container */}
+                {/* Circular profile container - spacious, never squeezed on mobile */}
                 <div
                   id="hero-profile-avatar-slot"
-                  className="relative w-36 h-36 sm:w-52 sm:h-52 lg:w-72 lg:h-72 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/10"
+                  className="relative w-44 h-44 sm:w-56 sm:h-56 lg:w-72 lg:h-72 aspect-square flex-shrink-0 rounded-full border-2 border-white/25 hover:border-white/50 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden ring-4 ring-white/10"
                 >
                   {/* Custom uploaded/embedded profile picture with ImgBB support & media protection */}
                   {resolvedPic && !imgError ? (

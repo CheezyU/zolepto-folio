@@ -102,7 +102,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     availabilityStatus: 45,
     heroStatValue: 16,
     heroStatLabel: 36,
-    workshopHeading: 50,
+    workshopHeading: 80,
     workshopSubtitle: 220,
     stepTitle: 50,
     stepSubtitle: 60,
@@ -845,6 +845,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     onChange={(e) =>
                       handleChange('heroSubtitle', e.target.value, LIMITS.heroSubtitle)
                     }
+                    placeholder="I team up with creators and brands to build videos worth staying for, and an audience that actually comes back, not just views."
                     className="w-full text-xs sm:text-sm text-zinc-300 font-body leading-relaxed bg-white/5 hover:bg-white/10 focus:bg-white/15 border border-white/10 focus:border-white/30 rounded-xl p-3 focus:outline-none transition-all resize-y"
                   />
                 </div>
@@ -1007,7 +1008,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 </div>
                 <input
                   type="text"
-                  value={form.workshopHeading || 'How the story unfolds.'}
+                  value={form.workshopHeading || 'Four steps from your idea to your audience.'}
                   maxLength={LIMITS.workshopHeading}
                   onChange={(e) =>
                     handleChange('workshopHeading', e.target.value, LIMITS.workshopHeading)
@@ -1386,11 +1387,11 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 </div>
                 <textarea
                   rows={3}
-                  value={form.aboutHeading || 'Crafting edits that audiences refuse to skip.'}
+                  value={form.aboutHeading || 'Background & Approach'}
                   maxLength={LIMITS.aboutHeading}
                   onChange={(e) => handleChange('aboutHeading', e.target.value, LIMITS.aboutHeading)}
                   className="w-full font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-950 leading-[1.12] bg-white border border-zinc-200 hover:border-zinc-300 focus:border-zinc-900 rounded-2xl p-4 focus:outline-none transition-all resize-y"
-                  placeholder="Crafting edits that audiences refuse to skip."
+                  placeholder="Background & Approach"
                 />
                 <p className="text-[11px] text-zinc-400 font-mono">
                   The sole governing title anchor for the About Me section.
@@ -1448,36 +1449,6 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 </div>
               </div>
 
-            </div>
-
-            {/* Director's Note placed at the last part of About Me */}
-            <div className="mt-8 pt-6 border-t border-zinc-200/80">
-              <div className="p-5 sm:p-6 rounded-2xl bg-amber-50/80 border border-amber-200/70 text-amber-950 max-w-xl rotate-[-0.5deg] shadow-2xs relative">
-                <div className="absolute -top-3 left-6 px-3 py-0.5 bg-amber-100/95 border border-amber-300/60 text-[10px] font-mono text-amber-800 rounded-xs uppercase tracking-wider font-semibold -rotate-1">
-                  DIRECTOR'S NOTE
-                </div>
-                <div className="pt-2">
-                  <div className="flex justify-between items-center text-[10px] font-mono text-amber-800/70 mb-1">
-                    <span>DIRECTOR'S NOTE CONTENT</span>
-                    {renderMeter(
-                      (form.aboutDirectorNote || "“When people watch a great video, they don't notice the cuts—they feel the momentum.”").length,
-                      LIMITS.aboutDirectorNote
-                    )}
-                  </div>
-                  <textarea
-                    rows={2}
-                    value={
-                      form.aboutDirectorNote ||
-                      "“When people watch a great video, they don't notice the cuts—they feel the momentum.”"
-                    }
-                    maxLength={LIMITS.aboutDirectorNote}
-                    onChange={(e) =>
-                      handleChange('aboutDirectorNote', e.target.value, LIMITS.aboutDirectorNote)
-                    }
-                    className="w-full font-handwriting text-xl sm:text-2xl leading-relaxed text-zinc-800 bg-transparent border-b border-dashed border-amber-300/80 hover:border-amber-400 focus:border-amber-700 focus:outline-none resize-none pt-1"
-                  />
-                </div>
-              </div>
             </div>
 
           </div>

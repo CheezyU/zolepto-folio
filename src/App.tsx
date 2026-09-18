@@ -366,7 +366,7 @@ function MainApp() {
             zIndex={50}
             folderNumber="04"
             folderLabel="COMMISSION"
-            cardBg="bg-[#fbf8f3]"
+            cardBg="bg-[#fafafa]"
           >
             <ConsultationFormSection settings={siteSettings} />
           </FolderSection>

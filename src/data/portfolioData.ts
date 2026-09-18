@@ -241,23 +241,23 @@ export const GRAPHIC_PROJECTS: GraphicProject[] = [
 export const WORKFLOW_STEPS = [
   {
     number: '01',
-    title: 'The Narrative Core',
-    description: 'We unpack your raw footage, establish the emotional arc, and lock down the primary rhythm before touching transitions.',
+    title: 'Identifying YOU',
+    description: "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage.",
   },
   {
     number: '02',
-    title: 'Pacing & Structural Cut',
-    description: 'Building tension and micro-hooks. Trimming every surplus frame so the story maintains magnetic viewer momentum.',
+    title: 'Dissecting the Narrative',
+    description: "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video.",
   },
   {
     number: '03',
-    title: 'Sound Architecture & Foley',
-    description: 'Audio carries 70% of cinematic perception. We craft bespoke riser sweeps, sub-drops, foley layers, and master volume dynamics.',
+    title: 'Look Beyond the Process',
+    description: "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified.",
   },
   {
     number: '04',
-    title: 'Color Science & Delivery',
-    description: 'Custom film emulation, skin-tone preservation, and multi-format exports optimized for YouTube 4K, cinemas, or vertical platforms.',
+    title: 'Official Drop',
+    description: "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration.",
   },
 ];
 

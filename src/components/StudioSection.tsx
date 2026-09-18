@@ -29,7 +29,9 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
       : "Because I've built a channel myself, I don't see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.";
 
   const bio3 =
-    "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.";
+    settings?.aboutBio3 && settings.aboutBio3.trim() !== ''
+      ? settings.aboutBio3
+      : "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.";
 
   const tools = settings?.aboutTools && settings.aboutTools.length > 0
     ? settings.aboutTools

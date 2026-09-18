@@ -64,6 +64,7 @@ export interface SiteSettings {
   aboutQuote?: string;
   aboutBio1: string;
   aboutBio2: string;
+  aboutBio3?: string;
   aboutDirectorNote?: string;
   aboutTools?: string[];
   contactEmail: string;

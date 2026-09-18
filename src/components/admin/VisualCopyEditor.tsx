@@ -20,7 +20,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { SiteSettings } from '../../types';
-import { DEFAULT_SITE_SETTINGS } from '../../services/siteSettingsService';
+import { DEFAULT_SITE_SETTINGS, sanitizeSiteSettings } from '../../services/siteSettingsService';
 import { cleanImageUrl, isImgbbViewerUrl, resolveImgbbViewerUrl } from '../../lib/imageUtils';
 import { ROTATING_ROLES } from '../../data/portfolioData';
 
@@ -32,6 +32,37 @@ interface VisualCopyEditorProps {
 }
 
 type EditorSection = 'hero' | 'workshop' | 'about' | 'socials' | 'consultation';
+
+// Minimalist architectural shapes matching live ProcessSection
+const ClientSilhouetteShape = () => (
+  <svg viewBox="0 0 100 100" fill="none" className="w-full h-full text-zinc-900/[0.08]">
+    <circle cx="50" cy="32" r="16" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    <path d="M22 84 C 22 62, 34 54, 50 54 C 66 54, 78 62, 78 84" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+  </svg>
+);
+
+const LightbulbShape = () => (
+  <svg viewBox="0 0 100 100" fill="none" className="w-full h-full text-zinc-900/[0.08]">
+    <path d="M50 18 C 36 18, 28 28, 28 40 C 28 49, 34 56, 38 62 L 38 68 C 38 70, 40 72, 42 72 L 58 72 C 60 72, 62 70, 62 68 L 62 62 C 66 56, 72 49, 72 40 C 72 28, 64 18, 50 18 Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="42" y1="78" x2="58" y2="78" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    <line x1="46" y1="84" x2="54" y2="84" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+  </svg>
+);
+
+const EyeShape = () => (
+  <svg viewBox="0 0 100 100" fill="none" className="w-full h-full text-zinc-900/[0.08]">
+    <path d="M14 50 C 26 28, 74 28, 86 50 C 74 72, 26 72, 14 50 Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="50" cy="50" r="12" stroke="currentColor" strokeWidth="2.2" />
+    <circle cx="50" cy="50" r="4.5" fill="currentColor" />
+  </svg>
+);
+
+const PaperPlaneShape = () => (
+  <svg viewBox="0 0 100 100" fill="none" className="w-full h-full text-zinc-900/[0.08]">
+    <path d="M16 52 L 86 18 L 52 84 L 42 56 Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="86" y1="18" x2="42" y2="56" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
 
 // Authentic hand-drawn organic circular paths matching ProcessSection
 const HANDDRAWN_STEP_PATHS: Record<number, string> = {
@@ -58,10 +89,10 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     try {
       const draft = localStorage.getItem('zolepto_site_settings_draft');
       if (draft) {
-        return { ...DEFAULT_SITE_SETTINGS, ...initialSettings, ...JSON.parse(draft) };
+        return sanitizeSiteSettings({ ...DEFAULT_SITE_SETTINGS, ...initialSettings, ...JSON.parse(draft) });
       }
     } catch {}
-    return { ...DEFAULT_SITE_SETTINGS, ...initialSettings };
+    return sanitizeSiteSettings({ ...DEFAULT_SITE_SETTINGS, ...initialSettings });
   });
 
   const [activeSection, setActiveSection] = useState<EditorSection>('hero');
@@ -90,7 +121,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
 
   useEffect(() => {
     if (!hasChanges) {
-      setForm({ ...DEFAULT_SITE_SETTINGS, ...initialSettings });
+      setForm(sanitizeSiteSettings({ ...DEFAULT_SITE_SETTINGS, ...initialSettings }));
     }
   }, [initialSettings, hasChanges]);
 
@@ -105,12 +136,11 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     workshopHeading: 80,
     workshopSubtitle: 220,
     stepTitle: 50,
-    stepSubtitle: 60,
     stepDescription: 320,
-    stepNote: 120,
     aboutHeading: 60,
     aboutBio1: 320,
     aboutBio2: 320,
+    aboutBio3: 320,
     aboutDirectorNote: 160,
     contactEmail: 60,
   };
@@ -245,12 +275,13 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
   };
 
   const handleResetDefaults = () => {
-    if (window.confirm('Reset all copy to default editorial studio text?')) {
-      setForm({ ...DEFAULT_SITE_SETTINGS });
+    if (window.confirm('Reset all copy to default editorial studio text? This will discard all draft changes.')) {
       try {
         localStorage.removeItem('zolepto_site_settings_draft');
+        localStorage.removeItem('zolepto_site_settings');
       } catch {}
-      setHasChanges(true);
+      setForm({ ...DEFAULT_SITE_SETTINGS });
+      setHasChanges(false);
     }
   };
 
@@ -365,7 +396,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       <div className="flex items-center gap-2 border-b border-zinc-200 pb-3 overflow-x-auto no-scrollbar">
         {[
           { id: 'hero', label: '01. Header & Hero', icon: Globe },
-          { id: 'workshop', label: '02. How the Story Unfolds', icon: Layers },
+          { id: 'workshop', label: '02. Process & Workflow', icon: Layers },
           { id: 'about', label: '03. About Me', icon: Scissors },
           { id: 'socials', label: '04. Social Profiles', icon: Share2 },
           { id: 'consultation', label: "05. Let's Create", icon: Lock },
@@ -818,7 +849,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                 {/* Headline Line 2 */}
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400 px-1">
-                    <span>HEADLINE LINE 2</span>
+                    <span>HEADLINE LINE 2 (SUB-HEADER)</span>
                     {renderMeter((form.heroTitleLine2 || '').length, LIMITS.heroTitleLine2)}
                   </div>
                   <input
@@ -828,7 +859,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     onChange={(e) =>
                       handleChange('heroTitleLine2', e.target.value, LIMITS.heroTitleLine2)
                     }
-                    className="w-full font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.12] bg-white/5 hover:bg-white/10 focus:bg-white/15 border border-white/10 focus:border-white/30 rounded-xl px-3 py-1.5 focus:outline-none transition-all"
+                    className="w-full font-display text-lg sm:text-2xl lg:text-3xl font-medium tracking-tight text-zinc-300 leading-snug bg-white/5 hover:bg-white/10 focus:bg-white/15 border border-white/10 focus:border-white/30 rounded-xl px-3 py-1.5 focus:outline-none transition-all"
                   />
                 </div>
 
@@ -860,7 +891,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                   </div>
 
                   <div className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold">
-                    <span>Start a Project</span>
+                    <span>Send Project</span>
                     <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400" />
                   </div>
                 </div>
@@ -954,40 +985,36 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
       )}
 
       {/* ================================================================ */}
-      {/* SECTION 2: HOW THE STORY UNFOLDS (VISUAL REPLICA)               */}
+      {/* SECTION 2: FOUR STEPS (PROCESS & WORKFLOW)                       */}
       {/* ================================================================ */}
       {activeSection === 'workshop' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between px-1 text-xs font-mono text-zinc-500">
-            <span>VISUAL REPLICA // PROCESS &amp; WORKSHOP SHEET</span>
+            <span>VISUAL REPLICA // FOUR STEPS (PROCESS &amp; WORKFLOW)</span>
             <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
               Direct Visual Preview
             </span>
           </div>
 
-          {/* Authentic Blueprint Container */}
+          {/* Authentic Process Container */}
           <div className="relative rounded-3xl bg-[#fafafa] text-zinc-900 p-6 sm:p-10 border border-zinc-200 shadow-sm overflow-hidden space-y-10">
-            {/* Ambient Fluid Gradient Blooms on Perimeter */}
+            {/* Subtle Studio Lighting matching live site */}
             <div
-              className="absolute top-[2%] -left-20 w-72 h-72 bg-gradient-to-tr from-violet-500/20 via-fuchsia-400/15 to-rose-400/10 blur-2xl pointer-events-none"
-              style={{ borderRadius: '68% 32% 48% 52% / 38% 65% 35% 62%' }}
+              className="absolute -top-24 -left-24 w-96 h-96 pointer-events-none rounded-full blur-3xl opacity-50"
+              style={{
+                background: 'radial-gradient(circle, rgba(24, 24, 27, 0.035) 0%, rgba(24, 24, 27, 0) 70%)',
+              }}
             />
             <div
-              className="absolute top-[30%] -right-20 w-72 h-72 bg-gradient-to-bl from-amber-500/20 via-orange-400/15 to-rose-400/10 blur-2xl pointer-events-none"
-              style={{ borderRadius: '41% 59% 68% 32% / 64% 34% 66% 36%' }}
-            />
-            <div
-              className="absolute top-[60%] -left-20 w-72 h-72 bg-gradient-to-r from-sky-400/20 via-blue-500/15 to-indigo-500/10 blur-2xl pointer-events-none"
-              style={{ borderRadius: '55% 45% 33% 67% / 47% 62% 38% 53%' }}
-            />
-            <div
-              className="absolute top-[85%] -right-20 w-72 h-72 bg-gradient-to-tl from-emerald-400/20 via-teal-400/15 to-amber-400/10 blur-2xl pointer-events-none"
-              style={{ borderRadius: '46% 54% 60% 40% / 58% 42% 58% 42%' }}
+              className="absolute -bottom-24 -right-24 w-96 h-96 pointer-events-none rounded-full blur-3xl opacity-50"
+              style={{
+                background: 'radial-gradient(circle, rgba(24, 24, 27, 0.03) 0%, rgba(24, 24, 27, 0) 70%)',
+              }}
             />
 
             {/* Technical Registration Crosshairs */}
             <div className="absolute top-6 left-6 text-zinc-300 font-mono text-[10px] select-none pointer-events-none hidden sm:block">
-              + [ WORKSHOP SHEET // REF-2026 ]
+              + [ PROCESS BLUEPRINT // REF-2026 ]
             </div>
             <div className="absolute top-6 right-6 text-zinc-300 font-mono text-[10px] select-none pointer-events-none hidden sm:block">
               SCALE 1:1 // 24.00 FPS +
@@ -1013,7 +1040,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                   onChange={(e) =>
                     handleChange('workshopHeading', e.target.value, LIMITS.workshopHeading)
                   }
-                  className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 text-center bg-transparent border-b border-zinc-300 hover:border-zinc-400 focus:border-zinc-900 focus:outline-none w-full pb-1"
+                  className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-950 text-center bg-transparent border-b border-zinc-300 hover:border-zinc-400 focus:border-zinc-900 focus:outline-none w-full pb-1"
                 />
               </div>
 
@@ -1048,311 +1075,206 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                   className="w-full text-xs sm:text-sm text-zinc-600 font-body text-center bg-white/70 border border-zinc-200 focus:border-zinc-900 rounded-xl p-3 focus:outline-none resize-y"
                 />
               </div>
-
-              {/* Ruler simulation */}
-              <div className="pt-2 flex items-center justify-center gap-1 overflow-hidden opacity-30 select-none pointer-events-none text-[8px] font-mono text-zinc-400 max-w-xs mx-auto">
-                <span>0IN</span>
-                <span className="flex-1 border-b border-dashed border-zinc-400" />
-                <span>|···|···|</span>
-                <span className="flex-1 border-b border-dashed border-zinc-400" />
-                <span>12IN</span>
-              </div>
             </div>
 
-            {/* The 4 Phases: Authentic Visual Containers */}
+            {/* The 4 Steps: Direct Editable Cards with live styling & shapes */}
             <div className="space-y-6 relative z-10">
               
-              {/* Phase 01: Identifying You */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start p-6 rounded-3xl bg-white/80 backdrop-blur-xs border border-zinc-200/90 shadow-2xs">
-                {/* Hand-drawn Circle Marker */}
-                <div className="lg:col-span-2 flex items-center lg:items-start justify-center lg:justify-start">
-                  <div className="w-14 h-14 flex items-center justify-center relative select-none">
-                    <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
-                      <path d={SKETCH_OUTLINES[1]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
-                      <path d={HANDDRAWN_STEP_PATHS[1]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">01</span>
-                  </div>
+              {/* Step 01: Identifying YOU */}
+              <div className="relative p-6 sm:p-7 rounded-3xl bg-white border border-zinc-200 shadow-2xs overflow-hidden">
+                <div className="absolute right-4 bottom-4 w-28 h-28 pointer-events-none opacity-40">
+                  <ClientSilhouetteShape />
                 </div>
-
-                {/* Narrative Fields */}
-                <div className="lg:col-span-10 space-y-3">
-                  <div>
-                    <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
-                      <span>Identifying</span>
-                      <span className="font-handwriting font-bold tracking-wider text-2xl sm:text-3xl bg-gradient-to-r from-violet-600 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent transform -rotate-2 inline-block px-1 drop-shadow-xs">
-                        YOU
-                      </span>
-                    </h4>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE SUBTITLE</span>
-                      {renderMeter((form.step1Subtitle || '').length, LIMITS.stepSubtitle)}
+                <div className="relative z-10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 flex items-center justify-center relative select-none shrink-0">
+                      <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
+                        <path d={SKETCH_OUTLINES[1]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
+                        <path d={HANDDRAWN_STEP_PATHS[1]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">01</span>
                     </div>
-                    <input
-                      type="text"
-                      value={form.step1Subtitle || 'The Core Signal & Creative DNA'}
-                      maxLength={LIMITS.stepSubtitle}
-                      onChange={(e) => handleChange('step1Subtitle', e.target.value, LIMITS.stepSubtitle)}
-                      className="w-full text-xs font-mono uppercase tracking-wider text-zinc-700 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                        <span>STEP 1 TITLE</span>
+                        {renderMeter((form.step1Title || '').length, LIMITS.stepTitle)}
+                      </div>
+                      <input
+                        type="text"
+                        value={form.step1Title || 'Identifying YOU'}
+                        maxLength={LIMITS.stepTitle}
+                        onChange={(e) => handleChange('step1Title', e.target.value, LIMITS.stepTitle)}
+                        placeholder="Identifying YOU"
+                        className="w-full font-display text-lg sm:text-xl font-bold tracking-tight text-zinc-950 bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE DESCRIPTION</span>
+                  <div className="space-y-1 pt-1">
+                    <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                      <span>STEP 1 DESCRIPTION</span>
                       {renderMeter((form.step1Description || '').length, LIMITS.stepDescription)}
                     </div>
                     <textarea
                       rows={3}
                       value={
                         form.step1Description ||
-                        'Before a single clip is dragged to the timeline or a cut is made, we identify you. Who you are, what your voice stands for, who your real audience is, and the psychological hook that makes your content undeniably yours. We don’t copy trends or use cookie-cutter templates—we locate your authentic edge and reverse-engineer the entire narrative around it.'
+                        "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage."
                       }
                       maxLength={LIMITS.stepDescription}
                       onChange={(e) => handleChange('step1Description', e.target.value, LIMITS.stepDescription)}
+                      placeholder="I start with you: your authentic side..."
                       className="w-full text-xs sm:text-sm text-zinc-700 font-normal leading-relaxed bg-zinc-50 border border-zinc-200 rounded-xl p-3 focus:bg-white focus:outline-none focus:border-zinc-900 resize-y"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>HANDWRITTEN NOTE</span>
-                      {renderMeter((form.step1Note || '').length, LIMITS.stepNote)}
-                    </div>
-                    <input
-                      type="text"
-                      value={
-                        form.step1Note ||
-                        '“Who you are > fancy transitions. This is where real retention is born.”'
-                      }
-                      maxLength={LIMITS.stepNote}
-                      onChange={(e) => handleChange('step1Note', e.target.value, LIMITS.stepNote)}
-                      className="w-full font-handwriting text-lg sm:text-xl text-zinc-700 italic bg-violet-50/40 border border-violet-200/60 rounded-xl px-3.5 py-2 focus:bg-white focus:outline-none focus:border-violet-400"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Phase 02: Deconstructing the Narrative */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start p-6 rounded-3xl bg-white/80 backdrop-blur-xs border border-zinc-200/90 shadow-2xs">
-                {/* Hand-drawn Circle Marker */}
-                <div className="lg:col-span-2 flex items-center lg:items-start justify-center lg:justify-start">
-                  <div className="w-14 h-14 flex items-center justify-center relative select-none">
-                    <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
-                      <path d={SKETCH_OUTLINES[2]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
-                      <path d={HANDDRAWN_STEP_PATHS[2]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">02</span>
-                  </div>
+              {/* Step 02: Dissecting the Narrative */}
+              <div className="relative p-6 sm:p-7 rounded-3xl bg-white border border-zinc-200 shadow-2xs overflow-hidden">
+                <div className="absolute right-4 bottom-4 w-28 h-28 pointer-events-none opacity-40">
+                  <LightbulbShape />
                 </div>
-
-                {/* Narrative Fields */}
-                <div className="lg:col-span-10 space-y-3">
-                  <div>
-                    <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
-                      <span>Deconstructing the</span>
-                      <span className="bg-gradient-to-r from-amber-600 via-orange-500 to-rose-500 bg-clip-text text-transparent font-bold">
-                        Narrative
-                      </span>
-                    </h4>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE SUBTITLE</span>
-                      {renderMeter((form.step2Subtitle || '').length, LIMITS.stepSubtitle)}
+                <div className="relative z-10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 flex items-center justify-center relative select-none shrink-0">
+                      <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
+                        <path d={SKETCH_OUTLINES[2]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
+                        <path d={HANDDRAWN_STEP_PATHS[2]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">02</span>
                     </div>
-                    <input
-                      type="text"
-                      value={form.step2Subtitle || 'Ruthless Dissection & Trimming the Fat'}
-                      maxLength={LIMITS.stepSubtitle}
-                      onChange={(e) => handleChange('step2Subtitle', e.target.value, LIMITS.stepSubtitle)}
-                      className="w-full text-xs font-mono uppercase tracking-wider text-zinc-700 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                        <span>STEP 2 TITLE</span>
+                        {renderMeter((form.step2Title || '').length, LIMITS.stepTitle)}
+                      </div>
+                      <input
+                        type="text"
+                        value={form.step2Title || 'Dissecting the Narrative'}
+                        maxLength={LIMITS.stepTitle}
+                        onChange={(e) => handleChange('step2Title', e.target.value, LIMITS.stepTitle)}
+                        placeholder="Dissecting the Narrative"
+                        className="w-full font-display text-lg sm:text-xl font-bold tracking-tight text-zinc-950 bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE DESCRIPTION</span>
+                  <div className="space-y-1 pt-1">
+                    <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                      <span>STEP 2 DESCRIPTION</span>
                       {renderMeter((form.step2Description || '').length, LIMITS.stepDescription)}
                     </div>
                     <textarea
                       rows={3}
                       value={
                         form.step2Description ||
-                        'Every raw timeline is bloated with comfort footage and dead air. We break your narrative down to its absolute bare skeleton. Dissecting the raw rushes, unearthing unexpected gold in second takes, and mapping out the viewer retention curve. Every single second on the timeline must justify its existence or get cut. It’s an intentional, honest breakdown until only pure substance remains.'
+                        "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video."
                       }
                       maxLength={LIMITS.stepDescription}
                       onChange={(e) => handleChange('step2Description', e.target.value, LIMITS.stepDescription)}
+                      placeholder="The value of your content matters more than flashy edits..."
                       className="w-full text-xs sm:text-sm text-zinc-700 font-normal leading-relaxed bg-zinc-50 border border-zinc-200 rounded-xl p-3 focus:bg-white focus:outline-none focus:border-zinc-900 resize-y"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>HANDWRITTEN NOTE</span>
-                      {renderMeter((form.step2Note || '').length, LIMITS.stepNote)}
-                    </div>
-                    <input
-                      type="text"
-                      value={
-                        form.step2Note ||
-                        'Cut the safety filler. If it doesn’t push the story forward, it dies here.'
-                      }
-                      maxLength={LIMITS.stepNote}
-                      onChange={(e) => handleChange('step2Note', e.target.value, LIMITS.stepNote)}
-                      className="w-full font-handwriting text-lg sm:text-xl text-zinc-700 italic bg-amber-50/40 border border-amber-200/60 rounded-xl px-3.5 py-2 focus:bg-white focus:outline-none focus:border-amber-400"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Phase 03: Emotional Rhythm & Subconscious Sound */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start p-6 rounded-3xl bg-white/80 backdrop-blur-xs border border-zinc-200/90 shadow-2xs">
-                {/* Hand-drawn Circle Marker */}
-                <div className="lg:col-span-2 flex items-center lg:items-start justify-center lg:justify-start">
-                  <div className="w-14 h-14 flex items-center justify-center relative select-none">
-                    <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
-                      <path d={SKETCH_OUTLINES[3]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
-                      <path d={HANDDRAWN_STEP_PATHS[3]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">03</span>
-                  </div>
+              {/* Step 03: Look Beyond the Process */}
+              <div className="relative p-6 sm:p-7 rounded-3xl bg-white border border-zinc-200 shadow-2xs overflow-hidden">
+                <div className="absolute right-4 bottom-4 w-28 h-28 pointer-events-none opacity-40">
+                  <EyeShape />
                 </div>
-
-                {/* Narrative Fields */}
-                <div className="lg:col-span-10 space-y-3">
-                  <div>
-                    <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
-                      <span>Emotional Rhythm &amp;</span>
-                      <span className="bg-gradient-to-r from-sky-600 via-blue-500 to-indigo-500 bg-clip-text text-transparent font-bold">
-                        Subconscious Sound
-                      </span>
-                    </h4>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE SUBTITLE</span>
-                      {renderMeter((form.step3Subtitle || '').length, LIMITS.stepSubtitle)}
+                <div className="relative z-10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 flex items-center justify-center relative select-none shrink-0">
+                      <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
+                        <path d={SKETCH_OUTLINES[3]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
+                        <path d={HANDDRAWN_STEP_PATHS[3]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">03</span>
                     </div>
-                    <input
-                      type="text"
-                      value={form.step3Subtitle || 'The Kinetic Pulse & Visceral Foley'}
-                      maxLength={LIMITS.stepSubtitle}
-                      onChange={(e) => handleChange('step3Subtitle', e.target.value, LIMITS.stepSubtitle)}
-                      className="w-full text-xs font-mono uppercase tracking-wider text-zinc-700 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                        <span>STEP 3 TITLE</span>
+                        {renderMeter((form.step3Title || '').length, LIMITS.stepTitle)}
+                      </div>
+                      <input
+                        type="text"
+                        value={form.step3Title || 'Look Beyond the Process'}
+                        maxLength={LIMITS.stepTitle}
+                        onChange={(e) => handleChange('step3Title', e.target.value, LIMITS.stepTitle)}
+                        placeholder="Look Beyond the Process"
+                        className="w-full font-display text-lg sm:text-xl font-bold tracking-tight text-zinc-950 bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE DESCRIPTION</span>
+                  <div className="space-y-1 pt-1">
+                    <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                      <span>STEP 3 DESCRIPTION</span>
                       {renderMeter((form.step3Description || '').length, LIMITS.stepDescription)}
                     </div>
                     <textarea
                       rows={3}
                       value={
                         form.step3Description ||
-                        'Pacing isn’t raw speed—it’s tension, breath, and release. We sculpt the cut to an auditory heartbeat: layering subconscious micro-risers, tactile foley, deep sub-bass drops, and room ambience that viewers feel in their chest before their eyes even register it. Audio carries 70% of cinematic perception; we treat sound as equal to the picture.'
+                        "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified."
                       }
                       maxLength={LIMITS.stepDescription}
                       onChange={(e) => handleChange('step3Description', e.target.value, LIMITS.stepDescription)}
+                      placeholder="I step out of editing mode and actually watch it as your own viewer would..."
                       className="w-full text-xs sm:text-sm text-zinc-700 font-normal leading-relaxed bg-zinc-50 border border-zinc-200 rounded-xl p-3 focus:bg-white focus:outline-none focus:border-zinc-900 resize-y"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>HANDWRITTEN NOTE</span>
-                      {renderMeter((form.step3Note || '').length, LIMITS.stepNote)}
-                    </div>
-                    <input
-                      type="text"
-                      value={
-                        form.step3Note ||
-                        'Subconscious audio cues [40Hz - 12kHz] — spatial depth & tactile rhythm'
-                      }
-                      maxLength={LIMITS.stepNote}
-                      onChange={(e) => handleChange('step3Note', e.target.value, LIMITS.stepNote)}
-                      className="w-full font-handwriting text-lg sm:text-xl text-zinc-700 italic bg-sky-50/40 border border-sky-200/60 rounded-xl px-3.5 py-2 focus:bg-white focus:outline-none focus:border-sky-400"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Phase 04: Visual Prestige & Delivery */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start p-6 rounded-3xl bg-white/80 backdrop-blur-xs border border-zinc-200/90 shadow-2xs">
-                {/* Hand-drawn Circle Marker */}
-                <div className="lg:col-span-2 flex items-center lg:items-start justify-center lg:justify-start">
-                  <div className="w-14 h-14 flex items-center justify-center relative select-none">
-                    <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
-                      <path d={SKETCH_OUTLINES[4]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
-                      <path d={HANDDRAWN_STEP_PATHS[4]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">04</span>
-                  </div>
+              {/* Step 04: Official Drop */}
+              <div className="relative p-6 sm:p-7 rounded-3xl bg-white border border-zinc-200 shadow-2xs overflow-hidden">
+                <div className="absolute right-4 bottom-4 w-28 h-28 pointer-events-none opacity-40">
+                  <PaperPlaneShape />
                 </div>
-
-                {/* Narrative Fields */}
-                <div className="lg:col-span-10 space-y-3">
-                  <div>
-                    <h4 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 flex flex-wrap items-baseline gap-1.5">
-                      <span>Visual Prestige &amp;</span>
-                      <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 bg-clip-text text-transparent font-bold">
-                        Delivery
-                      </span>
-                    </h4>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE SUBTITLE</span>
-                      {renderMeter((form.step4Subtitle || '').length, LIMITS.stepSubtitle)}
+                <div className="relative z-10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 flex items-center justify-center relative select-none shrink-0">
+                      <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 100 100">
+                        <path d={SKETCH_OUTLINES[4]} fill="none" stroke="#d4d4d8" strokeWidth="1.6" strokeLinecap="round" />
+                        <path d={HANDDRAWN_STEP_PATHS[4]} fill="#ffffff" stroke="#27272a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="font-mono text-sm font-bold text-zinc-900 relative z-10">04</span>
                     </div>
-                    <input
-                      type="text"
-                      value={form.step4Subtitle || 'Color Science, Key-Art & Cultural Authority'}
-                      maxLength={LIMITS.stepSubtitle}
-                      onChange={(e) => handleChange('step4Subtitle', e.target.value, LIMITS.stepSubtitle)}
-                      className="w-full text-xs font-mono uppercase tracking-wider text-zinc-700 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
-                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                        <span>STEP 4 TITLE</span>
+                        {renderMeter((form.step4Title || '').length, LIMITS.stepTitle)}
+                      </div>
+                      <input
+                        type="text"
+                        value={form.step4Title || 'Official Drop'}
+                        maxLength={LIMITS.stepTitle}
+                        onChange={(e) => handleChange('step4Title', e.target.value, LIMITS.stepTitle)}
+                        placeholder="Official Drop"
+                        className="w-full font-display text-lg sm:text-xl font-bold tracking-tight text-zinc-950 bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-1.5 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>PHASE DESCRIPTION</span>
+                  <div className="space-y-1 pt-1">
+                    <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                      <span>STEP 4 DESCRIPTION</span>
                       {renderMeter((form.step4Description || '').length, LIMITS.stepDescription)}
                     </div>
                     <textarea
                       rows={3}
                       value={
                         form.step4Description ||
-                        'The final synthesis. Film-grade DaVinci color science with custom highlight rolloff, skin-tone preservation, kinetic typography, and high-CTR thumbnail packaging that stops the infinite scroll. When we export, your project looks and sounds like a studio production that commands immediate respect and builds long-term authority.'
+                        "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration."
                       }
                       maxLength={LIMITS.stepDescription}
                       onChange={(e) => handleChange('step4Description', e.target.value, LIMITS.stepDescription)}
+                      placeholder="Multiple passes, with every cut, layer, and effect double-checked..."
                       className="w-full text-xs sm:text-sm text-zinc-700 font-normal leading-relaxed bg-zinc-50 border border-zinc-200 rounded-xl p-3 focus:bg-white focus:outline-none focus:border-zinc-900 resize-y"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-zinc-400 mb-1">
-                      <span>HANDWRITTEN NOTE</span>
-                      {renderMeter((form.step4Note || '').length, LIMITS.stepNote)}
-                    </div>
-                    <input
-                      type="text"
-                      value={
-                        form.step4Note ||
-                        'Ready for export. Approved for master release across all formats.'
-                      }
-                      maxLength={LIMITS.stepNote}
-                      onChange={(e) => handleChange('step4Note', e.target.value, LIMITS.stepNote)}
-                      className="w-full font-handwriting text-lg sm:text-xl text-zinc-700 italic bg-emerald-50/40 border border-emerald-200/60 rounded-xl px-3.5 py-2 focus:bg-white focus:outline-none focus:border-emerald-400"
                     />
                   </div>
                 </div>
@@ -1426,6 +1348,22 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     value={form.aboutBio2}
                     maxLength={LIMITS.aboutBio2}
                     onChange={(e) => handleChange('aboutBio2', e.target.value, LIMITS.aboutBio2)}
+                    className="w-full text-zinc-600 text-sm sm:text-base leading-relaxed bg-white border border-zinc-200 hover:border-zinc-300 focus:border-zinc-900 rounded-2xl p-4 focus:outline-none transition-all resize-y"
+                  />
+                </div>
+
+                {/* Paragraph 3 */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                    <span>BIO PARAGRAPH 3</span>
+                    {renderMeter((form.aboutBio3 || '').length, LIMITS.aboutBio3)}
+                  </div>
+                  <textarea
+                    rows={4}
+                    value={form.aboutBio3 || ''}
+                    maxLength={LIMITS.aboutBio3}
+                    onChange={(e) => handleChange('aboutBio3', e.target.value, LIMITS.aboutBio3)}
+                    placeholder="Third bio paragraph (optional narrative or philosophy statement)..."
                     className="w-full text-zinc-600 text-sm sm:text-base leading-relaxed bg-white border border-zinc-200 hover:border-zinc-300 focus:border-zinc-900 rounded-2xl p-4 focus:outline-none transition-all resize-y"
                   />
                 </div>

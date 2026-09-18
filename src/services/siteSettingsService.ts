@@ -20,6 +20,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     'I\'m Zolepto. Six years ago, I started a channel with zero knowledge and grew it from the ground up. Every mistake became a building block, and along the way I picked up video editing, motion design, thumbnails, and branding.',
   aboutBio2:
     'Because I\'ve built a channel myself, I don\'t see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.',
+  aboutBio3:
+    'I keep my ego out of the room. I\'m still hungry, still learning, and always adapting, so your brand keeps moving forward.',
   aboutDirectorNote: '',
   aboutTools: ['Premiere Pro', 'After Effects', 'Photoshop', 'YouTube Studio'],
   contactEmail: 'zolepto@gmail.com',
@@ -37,32 +39,172 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   workshopHeading: 'Four steps from your idea to your audience.',
   workshopSubtitle:
     'No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.',
-  step1Title: 'Identifying You',
+  step1Title: 'Identifying YOU',
   step1Subtitle: '',
   step1Description:
-    'We have to identify your authentic side, what your content stands for, and the audience you\'re actually trying to reach. Your content and ideas come first before we actually edit.',
-  step1Note: '“Who you are > fancy transitions. This is where real retention is born.”',
+    "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage.",
+  step1Note: '',
   step2Title: 'Dissecting the Narrative',
   step2Subtitle: '',
   step2Description:
-    'We prioritize the value of the content over unnecessary flashy fancy edits. We lift your story with the editing you envision. Video editing stands out when it\'s actually contributing to your content and the progression of the video.',
-  step2Note: 'Substance over spectacle. Every cut must justify the narrative.',
+    "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video.",
+  step2Note: '',
   step3Title: 'Look Beyond the Process',
   step3Subtitle: '',
   step3Description:
-    'Actually step out of the editing state and view the output as your own viewer and question it: Does the edit elevate your story? Did we find the content valuable? We make sure all seconds are justified and covered.',
-  step3Note: 'Step out of the timeline. View the final cut through the viewer\'s eyes.',
+    "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified.",
+  step3Note: '',
   step4Title: 'Official Drop',
   step4Subtitle: '',
   step4Description:
-    'After a meticulous process of multiple passes, double-checking every cut, layer, and effect, we deliver it at the promised time. Total transparency, zero ghosting, and responsive collaboration.',
-  step4Note: 'Delivered on time with total transparency and zero ghosting.',
+    "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration.",
+  step4Note: '',
   socialInstagram: 'https://www.instagram.com/zoleptos.motion/',
   socialLinkedin: 'https://www.linkedin.com/in/zolepto-haraya-936b622b7/',
   socialX: 'https://x.com/Zolep138657',
   socialGmail: 'zolepto@gmail.com',
   web3formsAccessKey: 'cce7d17a-a640-443a-b066-33c06020b08e',
 };
+
+/**
+ * Normalizes and upgrades any stored settings to purge stale text from older iterations.
+ */
+export function sanitizeSiteSettings(incoming: Partial<SiteSettings> | null | undefined): SiteSettings {
+  const merged: SiteSettings = { ...DEFAULT_SITE_SETTINGS, ...(incoming || {}) };
+
+  // 1. Upgrade stale Hero headlines & subtitle
+  if (
+    !merged.heroTitleLine1 ||
+    merged.heroTitleLine1.includes('Cinematic Video Editing') ||
+    merged.heroTitleLine1.includes('High-Retention Video Direction')
+  ) {
+    merged.heroTitleLine1 = DEFAULT_SITE_SETTINGS.heroTitleLine1;
+  }
+  if (
+    !merged.heroTitleLine2 ||
+    merged.heroTitleLine2.includes('That Commands Culture') ||
+    merged.heroTitleLine2 === 'Editing is just the start.'
+  ) {
+    merged.heroTitleLine2 = DEFAULT_SITE_SETTINGS.heroTitleLine2;
+  }
+  if (
+    !merged.heroSubtitle ||
+    merged.heroSubtitle.includes('I partner with ambitious YouTube creators')
+  ) {
+    merged.heroSubtitle = DEFAULT_SITE_SETTINGS.heroSubtitle;
+  }
+
+  // 2. Upgrade stale Workshop / Process Heading
+  if (
+    !merged.workshopHeading ||
+    merged.workshopHeading === 'How the story unfolds.' ||
+    merged.workshopHeading === 'From first call to after you hit post.' ||
+    merged.workshopHeading.includes('How the Story Unfolds')
+  ) {
+    merged.workshopHeading = DEFAULT_SITE_SETTINGS.workshopHeading;
+  }
+
+  // 3. Upgrade stale Step 1
+  if (
+    !merged.step1Title ||
+    merged.step1Title === 'Phase 01: Identifying You' ||
+    merged.step1Title === 'Identifying You'
+  ) {
+    merged.step1Title = DEFAULT_SITE_SETTINGS.step1Title;
+  }
+  if (
+    !merged.step1Description ||
+    merged.step1Description.includes('Before a single clip') ||
+    merged.step1Description.includes('We have to identify your authentic side')
+  ) {
+    merged.step1Description = DEFAULT_SITE_SETTINGS.step1Description;
+  }
+
+  // 4. Upgrade stale Step 2
+  if (
+    !merged.step2Title ||
+    merged.step2Title === 'Deconstructing the Narrative' ||
+    merged.step2Title.includes('Deconstructing')
+  ) {
+    merged.step2Title = DEFAULT_SITE_SETTINGS.step2Title;
+  }
+  if (
+    !merged.step2Description ||
+    merged.step2Description.includes('Every raw timeline') ||
+    merged.step2Description.includes('We prioritize the value of the content')
+  ) {
+    merged.step2Description = DEFAULT_SITE_SETTINGS.step2Description;
+  }
+
+  // 5. Upgrade stale Step 3
+  if (
+    !merged.step3Title ||
+    merged.step3Title === 'Emotional Rhythm & Subconscious Sound' ||
+    merged.step3Title.includes('Emotional Rhythm')
+  ) {
+    merged.step3Title = DEFAULT_SITE_SETTINGS.step3Title;
+  }
+  if (
+    !merged.step3Description ||
+    merged.step3Description.includes('Pacing isn’t raw speed') ||
+    merged.step3Description.includes("Pacing isn't raw speed") ||
+    merged.step3Description.includes('Actually step out of the editing state')
+  ) {
+    merged.step3Description = DEFAULT_SITE_SETTINGS.step3Description;
+  }
+
+  // 6. Upgrade stale Step 4
+  if (
+    !merged.step4Title ||
+    merged.step4Title === 'Visual Prestige & Delivery' ||
+    merged.step4Title.includes('Visual Prestige')
+  ) {
+    merged.step4Title = DEFAULT_SITE_SETTINGS.step4Title;
+  }
+  if (
+    !merged.step4Description ||
+    merged.step4Description.includes('The final synthesis') ||
+    merged.step4Description.includes('After a meticulous process of multiple passes')
+  ) {
+    merged.step4Description = DEFAULT_SITE_SETTINGS.step4Description;
+  }
+
+  // 7. Upgrade stale About Bio paragraphs
+  if (
+    !merged.aboutBio1 ||
+    merged.aboutBio1.includes('Over the last four years')
+  ) {
+    merged.aboutBio1 = DEFAULT_SITE_SETTINGS.aboutBio1;
+  }
+  if (
+    !merged.aboutBio2 ||
+    merged.aboutBio2.includes('My philosophy is simple')
+  ) {
+    merged.aboutBio2 = DEFAULT_SITE_SETTINGS.aboutBio2;
+  }
+  if (!merged.aboutBio3) {
+    merged.aboutBio3 = DEFAULT_SITE_SETTINGS.aboutBio3;
+  }
+
+  // 8. Upgrade stale Web3Forms key & Social links
+  if (
+    merged.web3formsAccessKey === '64d852a4-5696-414c-a11b-10f845dca889' ||
+    !merged.web3formsAccessKey
+  ) {
+    merged.web3formsAccessKey = DEFAULT_SITE_SETTINGS.web3formsAccessKey;
+  }
+  if (merged.socialInstagram === 'https://instagram.com/zolepto' || !merged.socialInstagram) {
+    merged.socialInstagram = DEFAULT_SITE_SETTINGS.socialInstagram;
+  }
+  if (merged.socialX === 'https://x.com/zolepto' || !merged.socialX) {
+    merged.socialX = DEFAULT_SITE_SETTINGS.socialX;
+  }
+  if (merged.socialLinkedin === 'https://linkedin.com/in/zolepto' || !merged.socialLinkedin) {
+    merged.socialLinkedin = DEFAULT_SITE_SETTINGS.socialLinkedin;
+  }
+
+  return merged;
+}
 
 export function getLocalSettings(): SiteSettings {
   try {
@@ -80,19 +222,7 @@ export function getLocalSettings(): SiteSettings {
     }
     if (!raw) return DEFAULT_SITE_SETTINGS;
     const parsed = JSON.parse(raw);
-    if (parsed.web3formsAccessKey === '64d852a4-5696-414c-a11b-10f845dca889' || !parsed.web3formsAccessKey) {
-      parsed.web3formsAccessKey = 'cce7d17a-a640-443a-b066-33c06020b08e';
-    }
-    if (parsed.socialInstagram === 'https://instagram.com/zolepto' || !parsed.socialInstagram) {
-      parsed.socialInstagram = 'https://www.instagram.com/zoleptos.motion/';
-    }
-    if (parsed.socialX === 'https://x.com/zolepto' || !parsed.socialX) {
-      parsed.socialX = 'https://x.com/Zolep138657';
-    }
-    if (parsed.socialLinkedin === 'https://linkedin.com/in/zolepto' || !parsed.socialLinkedin) {
-      parsed.socialLinkedin = 'https://www.linkedin.com/in/zolepto-haraya-936b622b7/';
-    }
-    return { ...DEFAULT_SITE_SETTINGS, ...parsed };
+    return sanitizeSiteSettings(parsed);
   } catch {
     return DEFAULT_SITE_SETTINGS;
   }
@@ -114,7 +244,7 @@ export function getDraftSettings(): SiteSettings {
   try {
     const raw = localStorage.getItem(DRAFT_SETTINGS_KEY);
     if (raw) {
-      return { ...getLocalSettings(), ...JSON.parse(raw) };
+      return sanitizeSiteSettings({ ...getLocalSettings(), ...JSON.parse(raw) });
     }
   } catch {}
   return getLocalSettings();

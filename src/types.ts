@@ -66,6 +66,8 @@ export interface SiteSettings {
   aboutBio2: string;
   aboutBio3?: string;
   aboutDirectorNote?: string;
+  aboutChannelUrl?: string;
+  aboutChannelTag?: string;
   aboutTools?: string[];
   contactEmail: string;
   profilePictureUrl?: string;

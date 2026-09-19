@@ -16,6 +16,7 @@ import {
   Trash2,
   Play,
   ArrowUpRight,
+  Youtube,
   Film,
   Loader2,
 } from 'lucide-react';
@@ -141,7 +142,9 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
     aboutBio1: 320,
     aboutBio2: 320,
     aboutBio3: 320,
-    aboutDirectorNote: 160,
+    aboutDirectorNote: 320,
+    aboutChannelUrl: 120,
+    aboutChannelTag: 30,
     contactEmail: 60,
   };
 
@@ -1301,23 +1304,100 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
           <div className="relative rounded-3xl bg-[#fafafa] text-zinc-900 p-6 sm:p-10 border border-zinc-200 shadow-sm overflow-hidden space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
               
-              {/* Left Column: Clear Single Ruler Headline */}
-              <div className="lg:col-span-5 space-y-2">
-                <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
-                  <span>COMMANDING HEADLINE</span>
-                  {renderMeter((form.aboutHeading || '').length, LIMITS.aboutHeading)}
+              {/* Left Column: Clear Single Ruler Headline & Director's Note */}
+              <div className="lg:col-span-5 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                    <span>COMMANDING HEADLINE</span>
+                    {renderMeter((form.aboutHeading || '').length, LIMITS.aboutHeading)}
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={form.aboutHeading || 'Background & Approach'}
+                    maxLength={LIMITS.aboutHeading}
+                    onChange={(e) => handleChange('aboutHeading', e.target.value, LIMITS.aboutHeading)}
+                    className="w-full font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-950 leading-[1.12] bg-white border border-zinc-200 hover:border-zinc-300 focus:border-zinc-900 rounded-2xl p-4 focus:outline-none transition-all resize-y"
+                    placeholder="Background & Approach"
+                  />
+                  <p className="text-[11px] text-zinc-400 font-mono">
+                    The sole governing title anchor for the About Me section.
+                  </p>
                 </div>
-                <textarea
-                  rows={3}
-                  value={form.aboutHeading || 'Background & Approach'}
-                  maxLength={LIMITS.aboutHeading}
-                  onChange={(e) => handleChange('aboutHeading', e.target.value, LIMITS.aboutHeading)}
-                  className="w-full font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-950 leading-[1.12] bg-white border border-zinc-200 hover:border-zinc-300 focus:border-zinc-900 rounded-2xl p-4 focus:outline-none transition-all resize-y"
-                  placeholder="Background & Approach"
-                />
-                <p className="text-[11px] text-zinc-400 font-mono">
-                  The sole governing title anchor for the About Me section.
-                </p>
+
+                {/* Director's Note & Channel Link */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-zinc-200 space-y-4 shadow-2xs">
+                  <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-zinc-100">
+                    <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest font-semibold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                      DIRECTOR&apos;S NOTE
+                    </span>
+                    <span className="text-[10px] text-zinc-400 font-mono">
+                      Left column anchor
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                      <span>NOTE COPY</span>
+                      {renderMeter((form.aboutDirectorNote || '').length, LIMITS.aboutDirectorNote)}
+                    </div>
+                    <textarea
+                      rows={4}
+                      value={form.aboutDirectorNote || ''}
+                      maxLength={LIMITS.aboutDirectorNote}
+                      onChange={(e) => handleChange('aboutDirectorNote', e.target.value, LIMITS.aboutDirectorNote)}
+                      placeholder="I grew my own channel from zero, then stepped away from it to help other creators grow further..."
+                      className="w-full text-zinc-700 text-xs sm:text-sm leading-relaxed bg-zinc-50 hover:bg-white focus:bg-white border border-zinc-200 focus:border-zinc-900 rounded-xl p-3 focus:outline-none transition-all resize-y"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                        <span>CHANNEL TAG</span>
+                        {renderMeter((form.aboutChannelTag || '').length, LIMITS.aboutChannelTag)}
+                      </div>
+                      <input
+                        type="text"
+                        value={form.aboutChannelTag || '@HelixGr4nd'}
+                        maxLength={LIMITS.aboutChannelTag}
+                        onChange={(e) => handleChange('aboutChannelTag', e.target.value, LIMITS.aboutChannelTag)}
+                        placeholder="@HelixGr4nd"
+                        className="w-full font-mono text-xs text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                        <span>CHANNEL URL</span>
+                        {renderMeter((form.aboutChannelUrl || '').length, LIMITS.aboutChannelUrl)}
+                      </div>
+                      <input
+                        type="url"
+                        value={form.aboutChannelUrl || 'https://www.youtube.com/@HelixGr4nd'}
+                        maxLength={LIMITS.aboutChannelUrl}
+                        onChange={(e) => handleChange('aboutChannelUrl', e.target.value, LIMITS.aboutChannelUrl)}
+                        placeholder="https://www.youtube.com/@HelixGr4nd"
+                        className="w-full font-mono text-xs text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 focus:bg-white focus:outline-none focus:border-zinc-900"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Visual Preview of Channel Badge */}
+                  <div className="pt-2 border-t border-zinc-100 flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-zinc-400">Live Tag Preview:</span>
+                    <a
+                      href={form.aboutChannelUrl || 'https://www.youtube.com/@HelixGr4nd'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-zinc-200 hover:border-zinc-400 text-zinc-800 text-xs font-mono font-medium shadow-2xs transition-all"
+                    >
+                      <Youtube className="w-3.5 h-3.5 text-red-600" />
+                      <span>{form.aboutChannelTag || '@HelixGr4nd'}</span>
+                      <ArrowUpRight className="w-3 h-3 text-zinc-400" />
+                    </a>
+                  </div>
+                </div>
               </div>
 
               {/* Right Column: Narrative Body & Minimalist Floating Tools */}

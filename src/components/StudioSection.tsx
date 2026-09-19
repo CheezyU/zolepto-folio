@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { ArrowUpRight, Youtube } from 'lucide-react';
 import { SiteSettings } from '../types';
 
 interface StudioSectionProps {
@@ -33,6 +34,21 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
       ? settings.aboutBio3
       : "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.";
 
+  const directorNote =
+    settings?.aboutDirectorNote && settings.aboutDirectorNote.trim() !== ''
+      ? settings.aboutDirectorNote
+      : 'I grew my own channel from zero, then stepped away from it to help other creators grow further from wherever they are now.';
+
+  const channelUrl =
+    settings?.aboutChannelUrl && settings.aboutChannelUrl.trim() !== ''
+      ? settings.aboutChannelUrl
+      : 'https://www.youtube.com/@HelixGr4nd';
+
+  const channelTag =
+    settings?.aboutChannelTag && settings.aboutChannelTag.trim() !== ''
+      ? settings.aboutChannelTag
+      : '@HelixGr4nd';
+
   const tools = settings?.aboutTools && settings.aboutTools.length > 0
     ? settings.aboutTools
     : ['Premiere Pro', 'After Effects', 'Photoshop', 'YouTube Studio'];
@@ -44,17 +60,44 @@ export const StudioSection: React.FC<StudioSectionProps> = ({
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-          {/* Left Column: Clear Single Ruler Headline */}
+          {/* Left Column: Clear Single Ruler Headline + Director's Note */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.5 }}
-            className="lg:col-span-5 space-y-4"
+            className="lg:col-span-5 space-y-6"
           >
             <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-[1.12]">
               {heading}
             </h2>
+
+            {/* Director's Note under Background & Approach */}
+            <div className="pt-5 border-t border-zinc-200/80 space-y-3">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <span className="text-zinc-400 font-mono text-[10px] uppercase tracking-widest font-semibold flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                  DIRECTOR&apos;S NOTE
+                </span>
+
+                {channelUrl && (
+                  <a
+                    href={channelUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-zinc-200 hover:border-zinc-400 text-zinc-800 hover:text-zinc-950 text-xs font-mono font-medium shadow-2xs transition-all group"
+                  >
+                    <Youtube className="w-3.5 h-3.5 text-red-600" />
+                    <span>{channelTag}</span>
+                    <ArrowUpRight className="w-3 h-3 text-zinc-400 group-hover:text-zinc-900 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </a>
+                )}
+              </div>
+
+              <p className="text-zinc-600 text-sm sm:text-[15px] leading-relaxed font-normal">
+                {directorNote}
+              </p>
+            </div>
           </motion.div>
 
           {/* Right Column: Narrative Body and Minimalist Floating Tools */}

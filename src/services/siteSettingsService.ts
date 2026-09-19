@@ -22,7 +22,10 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     'Because I\'ve built a channel myself, I don\'t see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.',
   aboutBio3:
     'I keep my ego out of the room. I\'m still hungry, still learning, and always adapting, so your brand keeps moving forward.',
-  aboutDirectorNote: '',
+  aboutDirectorNote:
+    'I grew my own channel from zero, then stepped away from it to help other creators grow further from wherever they are now.',
+  aboutChannelUrl: 'https://www.youtube.com/@HelixGr4nd',
+  aboutChannelTag: '@HelixGr4nd',
   aboutTools: ['Premiere Pro', 'After Effects', 'Photoshop', 'YouTube Studio'],
   contactEmail: 'zolepto@gmail.com',
   profilePictureUrl: '',
@@ -184,6 +187,15 @@ export function sanitizeSiteSettings(incoming: Partial<SiteSettings> | null | un
   }
   if (!merged.aboutBio3) {
     merged.aboutBio3 = DEFAULT_SITE_SETTINGS.aboutBio3;
+  }
+  if (!merged.aboutDirectorNote || merged.aboutDirectorNote.trim() === '') {
+    merged.aboutDirectorNote = DEFAULT_SITE_SETTINGS.aboutDirectorNote;
+  }
+  if (!merged.aboutChannelUrl || merged.aboutChannelUrl.trim() === '') {
+    merged.aboutChannelUrl = DEFAULT_SITE_SETTINGS.aboutChannelUrl;
+  }
+  if (!merged.aboutChannelTag || merged.aboutChannelTag.trim() === '') {
+    merged.aboutChannelTag = DEFAULT_SITE_SETTINGS.aboutChannelTag;
   }
 
   // 8. Upgrade stale Web3Forms key & Social links

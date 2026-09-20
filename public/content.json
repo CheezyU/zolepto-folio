@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:45:53.026Z",
+  "lastUpdated": "2026-09-20T22:45:59.117Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -88,25 +88,26 @@
       "aspectRatio": "16/9"
     },
     {
-      "id": "vid-1",
-      "title": "Traps for Players",
+      "id": "vid-4",
+      "title": "Penguin Knockouts!",
       "client": "HelixGr4nd",
-      "category": "commercial",
+      "category": "motion",
       "categoryLabel": "Entertainment",
-      "duration": "0:45",
-      "year": "2026",
-      "youtubeId": "5FnQs_sy5iI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/5FnQs_sy5iI/maxresdefault.jpg",
-      "description": "Iconic JudeLow style storytelling pacing that covers the anticipation buildup and payoff.",
+      "duration": "1:15",
+      "year": "2025",
+      "youtubeId": "D0l2p5IzCFg",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/D0l2p5IzCFg?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/D0l2p5IzCFg/maxresdefault.jpg",
+      "description": "",
       "role": "Creator",
       "tags": [
-        "Full Production",
-        "Thumbnail"
+        "Full production",
+        "Thumbnail",
+        "Fast-pace"
       ],
-      "metrics": "94% Client Brand Recall",
-      "views": "1.4M views",
-      "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI",
+      "metrics": "Official Brand Identity",
+      "views": "1.2M views",
+      "youtubeUrl": "https://www.youtube.com/watch?v=D0l2p5IzCFg&t=30s",
       "aspectRatio": "16/9"
     },
     {
@@ -132,26 +133,25 @@
       "aspectRatio": "9/16"
     },
     {
-      "id": "vid-4",
-      "title": "Penguin Knockouts!",
+      "id": "vid-1",
+      "title": "Traps for Players",
       "client": "HelixGr4nd",
-      "category": "motion",
+      "category": "commercial",
       "categoryLabel": "Entertainment",
-      "duration": "1:15",
-      "year": "2025",
-      "youtubeId": "D0l2p5IzCFg",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/D0l2p5IzCFg?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/D0l2p5IzCFg/maxresdefault.jpg",
-      "description": "",
+      "duration": "0:45",
+      "year": "2026",
+      "youtubeId": "5FnQs_sy5iI",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/5FnQs_sy5iI/maxresdefault.jpg",
+      "description": "Iconic JudeLow style storytelling pacing that covers the anticipation buildup and payoff.",
       "role": "Creator",
       "tags": [
-        "Full production",
-        "Thumbnail",
-        "Fast-pace"
+        "Full Production",
+        "Thumbnail"
       ],
-      "metrics": "Official Brand Identity",
-      "views": "1.2M views",
-      "youtubeUrl": "https://www.youtube.com/watch?v=D0l2p5IzCFg&t=30s",
+      "metrics": "94% Client Brand Recall",
+      "views": "1.4M views",
+      "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI",
       "aspectRatio": "16/9"
     },
     {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T03:43:36.877Z",
+  "lastUpdated": "2026-09-20T03:47:04.263Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -109,8 +109,8 @@
     },
     {
       "id": "vid-3",
-      "title": "Video 3",
-      "client": "Client Three",
+      "title": "Game Bug Discovery",
+      "client": "SleekToast",
       "category": "short-form",
       "categoryLabel": "Entertainment",
       "duration": "0:50",
@@ -118,12 +118,11 @@
       "youtubeId": "pgxS2qs_hUI",
       "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
       "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
-      "description": "Zolepto short-form retention edit structured for high viewer engagement and hook pacing.",
-      "role": "Hook & Retention Structure",
+      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
+      "role": "Creator",
       "tags": [
         "Short-Form",
-        "Kinetic Cuts",
-        "Pacing"
+        "Storytelling"
       ],
       "metrics": "8.7M Combined Views",
       "views": "8.7M views",

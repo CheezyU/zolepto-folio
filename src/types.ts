@@ -16,7 +16,7 @@ export interface VideoProject {
   category: VideoCategory;
   categoryLabel: string;
   duration?: string;
-  year: string;
+  year?: string;
   youtubeId: string;
   embedUrl: string;
   thumbnailUrl: string;
@@ -39,7 +39,7 @@ export interface GraphicProject {
   categoryLabel: string;
   imageUrl: string;
   aspect: 'portrait' | 'landscape' | 'square';
-  year: string;
+  year?: string;
   description: string;
   tools: string[];
 }

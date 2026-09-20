@@ -105,26 +105,36 @@ function isLegacyDummyItem(item: { title?: string }): boolean {
 let authoritativeShowreels: VideoProject[] | null = null;
 let authoritativeGraphics: GraphicProject[] | null = null;
 
+function sanitizeAndUpgradeVideo(item: VideoProject): VideoProject {
+  const cleaned: any = { ...item };
+  // Strip views completely
+  delete cleaned.views;
+  // If metrics contains 'view', remove it
+  if (cleaned.metrics && cleaned.metrics.toLowerCase().includes('view')) {
+    cleaned.metrics = '';
+  }
+  // Strip year
+  delete cleaned.year;
+
+  let thumb = cleaned.thumbnailUrl;
+  const yId =
+    cleaned.youtubeId ||
+    extractYouTubeId(cleaned.embedUrl || '') ||
+    extractYouTubeId(cleaned.youtubeUrl || '') ||
+    extractYouTubeId(thumb || '');
+
+  if (yId) {
+    thumb = getYouTubeThumbnailUrl(yId, 'maxres');
+  } else if (thumb) {
+    thumb = upgradeYouTubeThumbnailUrl(thumb);
+  }
+
+  cleaned.thumbnailUrl = thumb;
+  return cleaned as VideoProject;
+}
+
 function upgradeVideoThumbnails(items: VideoProject[]): VideoProject[] {
-  return items.map((item) => {
-    let thumb = item.thumbnailUrl;
-    const yId =
-      item.youtubeId ||
-      extractYouTubeId(item.embedUrl || '') ||
-      extractYouTubeId((item as any).youtubeUrl || '') ||
-      extractYouTubeId(thumb || '');
-
-    if (yId) {
-      thumb = getYouTubeThumbnailUrl(yId, 'maxres');
-    } else if (thumb) {
-      thumb = upgradeYouTubeThumbnailUrl(thumb);
-    }
-
-    if (thumb !== item.thumbnailUrl) {
-      return { ...item, thumbnailUrl: thumb };
-    }
-    return item;
-  });
+  return items.map((item) => sanitizeAndUpgradeVideo(item));
 }
 
 export function getAuthoritativeShowreels(): VideoProject[] {

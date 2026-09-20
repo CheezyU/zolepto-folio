@@ -128,12 +128,9 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
             </div>
 
             {/* Bottom Meta Bar */}
-            {(project.duration || project.role || project.views) && (
+            {(project.duration || project.role) && (
               <div className="pt-4 mt-6 border-t border-zinc-100 flex items-center justify-between text-[11px] font-mono text-zinc-500">
                 <span>{project.role || 'Short-Form Editor'}</span>
-                {project.views && (
-                  <span className="text-emerald-600 font-semibold">{project.views}</span>
-                )}
                 {project.duration && <span>{project.duration}</span>}
               </div>
             )}

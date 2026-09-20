@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ExternalLink, ChevronUp, ChevronDown } from 'lucide-react';
 import { GraphicProject } from '../types';
-import { cleanImageUrl } from '../lib/imageUtils';
+import { cleanImageUrl, isImgbbViewerUrl, resolveImgbbViewerUrl } from '../lib/imageUtils';
 
 interface GraphicModalProps {
   graphic: GraphicProject | null;
@@ -15,14 +15,33 @@ const FALLBACK_GRAPHIC =
 export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-
-  // Full-resolution original artwork: Bypass compression proxies to ensure 100% crisp visual fidelity
-  const rawUrl = graphic?.imageUrl?.trim() ? cleanImageUrl(graphic.imageUrl.trim()) : '';
-  const displaySrc = rawUrl || FALLBACK_GRAPHIC;
+  const [resolvedSrc, setResolvedSrc] = useState<string>('');
 
   useEffect(() => {
     setImageLoaded(false);
     setShowInfo(false);
+
+    if (!graphic?.imageUrl) {
+      setResolvedSrc('');
+      return;
+    }
+
+    const raw = graphic.imageUrl.trim();
+    const cleaned = cleanImageUrl(raw);
+    setResolvedSrc(cleaned || FALLBACK_GRAPHIC);
+
+    // If it's an ImgBB viewer link, resolve to direct high-res image
+    if (isImgbbViewerUrl(raw)) {
+      resolveImgbbViewerUrl(raw)
+        .then((direct) => {
+          if (direct && direct !== cleaned) {
+            setResolvedSrc(direct);
+          }
+        })
+        .catch(() => {
+          // Keep current fallback / cleaned URL
+        });
+    }
   }, [graphic]);
 
   // Lock body scroll and register escape hotkey
@@ -51,6 +70,8 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
 
   if (!graphic) return null;
 
+  const displaySrc = resolvedSrc || FALLBACK_GRAPHIC;
+
   const rawTools = Array.isArray(graphic.tools)
     ? graphic.tools
     : typeof graphic.tools === 'string'
@@ -65,7 +86,7 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
       onClick={onClose}
     >
       <div
-        className="relative w-full h-full sm:h-[92vh] sm:max-w-5xl md:max-w-6xl bg-zinc-950 sm:rounded-3xl border-0 sm:border sm:border-zinc-800 flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+        className="relative w-full h-full sm:h-[94vh] sm:max-w-6xl lg:max-w-7xl bg-zinc-950 sm:rounded-3xl border-0 sm:border sm:border-zinc-800/80 flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Bar: Clean title & close button, zero clutter */}
@@ -91,9 +112,9 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
           </div>
         </div>
 
-        {/* Main Artwork Stage: Centerpiece displaying the full resolution image cleanly with ZERO letterbox black bars */}
+        {/* Main Artwork Stage: Centerpiece displaying the image scaled up to fit the viewport seamlessly */}
         <div
-          className="flex-1 min-h-0 w-full p-3 sm:p-6 md:p-8 flex items-center justify-center overflow-hidden relative cursor-default"
+          className="flex-1 min-h-0 w-full h-full p-2 sm:p-4 md:p-5 flex items-center justify-center overflow-hidden relative cursor-default"
           onClick={() => {
             if (showInfo) setShowInfo(false);
           }}
@@ -122,7 +143,7 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
                 }
                 setImageLoaded(true);
               }}
-              className={`max-h-full max-w-full w-auto h-auto object-contain rounded-lg sm:rounded-xl shadow-2xl ring-1 ring-white/10 transition-all duration-300 select-none ${
+              className={`w-full h-full max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-300 select-none ${
                 imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-98'
               }`}
             />

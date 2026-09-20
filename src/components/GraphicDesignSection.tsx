@@ -196,7 +196,7 @@ export const GraphicDesignSection: React.FC<GraphicDesignSectionProps> = ({
             </div>
 
             {/* Modal Image View: seamless neutral off-white background with subtle inner border, no harsh black borders */}
-            <div className="flex-1 overflow-auto bg-zinc-100/70 p-3 sm:p-6 flex items-center justify-center min-h-[220px] max-h-[55vh]">
+            <div className="flex-1 overflow-auto bg-zinc-100/70 p-2 sm:p-4 md:p-6 flex items-center justify-center min-h-[260px] max-h-[75vh]">
               <img
                 src={selectedImage.imageUrl}
                 alt={selectedImage.title}
@@ -204,7 +204,7 @@ export const GraphicDesignSection: React.FC<GraphicDesignSectionProps> = ({
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
                 }}
-                className="max-h-[50vh] max-w-full object-contain rounded-xl shadow-xs"
+                className="w-full h-full max-h-[70vh] max-w-full object-contain rounded-xl shadow-xs"
               />
             </div>
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:33:51.481Z",
+  "lastUpdated": "2026-09-20T22:36:10.514Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -88,24 +88,26 @@
     },
     {
       "id": "vid-2",
-      "title": "Video 2",
-      "client": "Client Two",
+      "title": "Re-visting a Classic Game",
+      "client": "HelixGr4nd",
       "category": "narrative",
-      "categoryLabel": "Cinematic Narrative",
+      "categoryLabel": "Entertainment",
       "duration": "1:30",
       "year": "2026",
-      "youtubeId": "",
-      "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "description": "Zolepto storytelling edit highlighting cinematic rhythm, dialogue balance, and visual structure.",
-      "role": "Assembly & Rhythm",
+      "youtubeId": "FQQ-f9zA1Ks",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/FQQ-f9zA1Ks?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/FQQ-f9zA1Ks/maxresdefault.jpg",
+      "description": "Funny moments covering the game and the community.",
+      "role": "Creator",
       "tags": [
-        "Narrative",
-        "Pacing",
-        "Sound Foley"
+        "Full Production",
+        "Thumbnail",
+        "Motion Design"
       ],
       "metrics": "Featured Narrative Cut",
-      "views": "820K views"
+      "views": "820K views",
+      "youtubeUrl": "https://www.youtube.com/watch?v=FQQ-f9zA1Ks&t=118s",
+      "aspectRatio": "16/9"
     },
     {
       "id": "vid-3",

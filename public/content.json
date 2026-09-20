@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:25:52.768Z",
+  "lastUpdated": "2026-09-20T22:26:05.111Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -230,7 +230,7 @@
       "id": "graph-3",
       "title": "Koza's Banner",
       "client": "KozaEyes",
-      "category": "styleframe",
+      "category": "styleframes",
       "categoryLabel": "Styleframe Design",
       "imageUrl": "https://i.ibb.co/xt6nCpwr/Kazo-Eyes-banner.png",
       "aspect": "landscape",

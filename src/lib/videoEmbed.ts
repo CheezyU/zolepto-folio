@@ -99,7 +99,7 @@ export function parseVideoUrl(inputUrl: string): ParsedVideoInfo {
         aspectRatio: '9/16',
         videoId: id,
         embedUrl: buildYouTubeEmbedUrl(id),
-        thumbnailUrl: getYouTubeThumbnailUrl(id),
+        thumbnailUrl: getYouTubeThumbnailUrl(id, 'maxres'),
         platformLabel: 'YouTube Short',
       };
     }
@@ -115,7 +115,7 @@ export function parseVideoUrl(inputUrl: string): ParsedVideoInfo {
       aspectRatio: isShort ? '9/16' : '16/9',
       videoId: ytId,
       embedUrl: buildYouTubeEmbedUrl(ytId),
-      thumbnailUrl: getYouTubeThumbnailUrl(ytId),
+      thumbnailUrl: getYouTubeThumbnailUrl(ytId, 'maxres'),
       platformLabel: isShort ? 'YouTube Short' : 'YouTube',
     };
   }

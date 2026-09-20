@@ -295,6 +295,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     const existingUrl = video.youtubeId
       ? `https://www.youtube.com/watch?v=${video.youtubeId}`
       : (video as any).youtubeUrl || video.embedUrl || '';
+    const ytId = video.youtubeId || extractYouTubeId(existingUrl);
+    const autoMaxres = ytId ? getYouTubeThumbnailUrl(ytId, 'maxres') : (video.thumbnailUrl || '');
     setVideoFormData({
       title: video.title || '',
       client: video.client || '',
@@ -307,7 +309,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       description: video.description || '',
       tags: Array.isArray(video.tags) ? video.tags.join(', ') : '',
       metrics: video.metrics || '',
-      thumbnailUrl: video.thumbnailUrl || '',
+      thumbnailUrl: autoMaxres || video.thumbnailUrl || '',
     });
     setVideoFormStatus(null);
   };
@@ -421,18 +423,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     setIsSavingVideo(true);
     setVideoFormStatus(null);
 
+    const inputCatLabel = videoFormData.categoryLabel.trim();
     const isShort = parsed
-      ? (parsed.isShortForm || videoFormData.category === 'short-form')
-      : (editingVideo ? (editingVideo.aspectRatio === '9/16' || videoFormData.category === 'short-form') : videoFormData.category === 'short-form');
+      ? (parsed.isShortForm || inputCatLabel.toLowerCase().includes('short') || videoFormData.category === 'short-form')
+      : (editingVideo ? (editingVideo.aspectRatio === '9/16' || inputCatLabel.toLowerCase().includes('short') || videoFormData.category === 'short-form') : (inputCatLabel.toLowerCase().includes('short') || videoFormData.category === 'short-form'));
 
-    const category: VideoCategory = isShort && (!videoFormData.category || videoFormData.category === 'commercial')
+    const category: VideoCategory = isShort
       ? 'short-form'
-      : videoFormData.category;
+      : (inputCatLabel.toLowerCase().includes('doc')
+        ? 'documentary'
+        : inputCatLabel.toLowerCase().includes('narrative')
+        ? 'narrative'
+        : inputCatLabel.toLowerCase().includes('motion')
+        ? 'motion-graphics'
+        : (videoFormData.category || 'commercial'));
+
+    const resolvedCategoryLabel = inputCatLabel || (isShort ? 'Short-Form' : 'Commercial');
 
     const tagList = videoFormData.tags
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
+
+    const ytId = parsed?.videoId || extractYouTubeId(inputUrl);
+    const autoMaxresThumb = ytId ? getYouTubeThumbnailUrl(ytId, 'maxres') : null;
+    const resolvedThumb =
+      autoMaxresThumb ||
+      (videoFormData.thumbnailUrl.trim() ? upgradeYouTubeThumbnailUrl(videoFormData.thumbnailUrl.trim()) : null) ||
+      (parsed?.thumbnailUrl ? upgradeYouTubeThumbnailUrl(parsed.thumbnailUrl) : undefined);
 
     try {
       if (editingVideo) {
@@ -440,7 +458,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           title,
           client: videoFormData.client.trim() || editingVideo.client || 'Client Project',
           category,
-          categoryLabel: videoFormData.categoryLabel.trim() || (isShort ? 'Short-Form' : undefined),
+          categoryLabel: resolvedCategoryLabel,
           ...(inputUrl ? { youtubeUrl: inputUrl } : {}),
           aspectRatio: isShort ? '9/16' : '16/9',
           duration: videoFormData.duration.trim() || editingVideo.duration || (isShort ? '0:30' : '1:00'),
@@ -449,7 +467,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           description: videoFormData.description.trim(),
           tags: tagList.length > 0 ? tagList : (editingVideo.tags || (isShort ? ['Short-Form', 'Reels'] : ['Editing'])),
           metrics: videoFormData.metrics.trim(),
-          thumbnailUrl: videoFormData.thumbnailUrl.trim() || undefined,
+          thumbnailUrl: resolvedThumb,
         });
         appendSecurityLog(`Updated Video: ${title}`, `ID: ${editingVideo.id}`);
         setVideoFormStatus({ type: 'success', text: 'Video project updated and synchronized globally!' });
@@ -458,13 +476,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           title,
           client: videoFormData.client.trim() || 'Client Project',
           category,
-          categoryLabel: videoFormData.categoryLabel.trim() || (isShort ? 'Short-Form' : undefined),
+          categoryLabel: resolvedCategoryLabel,
           youtubeUrl: inputUrl,
           duration: videoFormData.duration.trim() || (isShort ? '0:30' : '1:00'),
           description: videoFormData.description.trim(),
           role: videoFormData.role.trim() || (isShort ? 'Retention Edit & Hook' : 'Lead Editor'),
           tags: tagList.length > 0 ? tagList : (isShort ? ['Short-Form', 'Reels'] : ['Commercial', 'Editing']),
-          thumbnailUrl: videoFormData.thumbnailUrl.trim() || undefined,
+          thumbnailUrl: resolvedThumb,
         });
         appendSecurityLog(`Created New Video: ${title}`, 'Added to portfolio');
         setVideoFormStatus({ type: 'success', text: 'New video published and saved to portfolio!' });
@@ -496,7 +514,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       title: graphic.title,
       client: graphic.client,
       category: graphic.category,
-      categoryLabel: graphic.categoryLabel || '',
+      categoryLabel: graphic.categoryLabel || (graphic.category === 'thumbnails' ? 'Thumbnail' : graphic.category === 'key-art' ? 'Key-Art' : 'Poster'),
       imageUrl: graphic.imageUrl,
       aspect: graphic.aspect,
       year: graphic.year || '2026',
@@ -516,7 +534,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       title: '',
       client: '',
       category: 'key-art',
-      categoryLabel: '',
+      categoryLabel: 'Key-Art',
       imageUrl: '',
       aspect: 'portrait',
       year: '2026',
@@ -582,12 +600,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       const inputImgUrl = graphicFormData.imageUrl?.trim() || '';
       const sanitizedImageUrl = cleanImageUrl(inputImgUrl) || inputImgUrl || (editingGraphic ? editingGraphic.imageUrl : '');
 
+      const catLabel = graphicFormData.categoryLabel.trim() || 'Key-Art';
+      const derivedCategory: GraphicCategory = catLabel.toLowerCase().includes('thumb')
+        ? 'thumbnails'
+        : catLabel.toLowerCase().includes('poster') || catLabel.toLowerCase().includes('art') || catLabel.toLowerCase().includes('key')
+        ? 'key-art'
+        : 'styleframes';
+
       if (editingGraphic) {
         await updateGraphicDesign(editingGraphic.id, {
           title,
           client: graphicFormData.client.trim() || editingGraphic.client || 'Studio Art',
-          category: graphicFormData.category,
-          categoryLabel: graphicFormData.categoryLabel.trim() || undefined,
+          category: derivedCategory,
+          categoryLabel: catLabel,
           imageUrl: sanitizedImageUrl,
           aspect: graphicFormData.aspect,
           year: graphicFormData.year.trim() || editingGraphic.year || '2026',
@@ -601,8 +626,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         await addGraphicDesign({
           title,
           client: graphicFormData.client.trim() || 'Studio Art',
-          category: graphicFormData.category,
-          categoryLabel: graphicFormData.categoryLabel.trim() || undefined,
+          category: derivedCategory,
+          categoryLabel: catLabel,
           aspect: graphicFormData.aspect,
           description: graphicFormData.description.trim(),
           tools: toolsList.length > 0 ? toolsList : ['Photoshop'],
@@ -1001,13 +1026,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     </div>
 
                     <div className="p-4 space-y-2">
-                      <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                      <div className="text-xs font-mono text-zinc-400">
                         <span>{video.client}</span>
-                        <span>{video.year}</span>
                       </div>
                       <h3 className="font-display font-semibold text-base text-zinc-950 line-clamp-1">
                         {video.title}
                       </h3>
+                      {Array.isArray(video.tags) && video.tags.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1 mt-1">
+                          {video.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-block px-1.5 py-0.5 rounded bg-zinc-100 text-[10px] font-mono text-zinc-600 border border-zinc-200"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       {video.description && (
                         <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
                           {video.description}
@@ -1185,7 +1221,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       <h3 className="font-display font-semibold text-sm text-zinc-950 line-clamp-2">
                         {short.title}
                       </h3>
-                      {short.metrics && (
+                      {Array.isArray(short.tags) && short.tags.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1 mt-1">
+                          {short.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-block px-1.5 py-0.5 rounded bg-zinc-100 text-[10px] font-mono text-zinc-600 border border-zinc-200"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {short.metrics && !short.metrics.toLowerCase().includes('view') && (
                         <div className="text-[11px] font-mono text-emerald-600 font-semibold truncate">
                           {short.metrics}
                         </div>
@@ -1338,13 +1386,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     </div>
 
                     <div className="p-4 space-y-2">
-                      <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                      <div className="text-xs font-mono text-zinc-400">
                         <span>{graphic.client}</span>
-                        <span>{graphic.year}</span>
                       </div>
                       <h3 className="font-display font-semibold text-base text-zinc-950 line-clamp-1">
                         {graphic.title}
                       </h3>
+                      {Array.isArray(graphic.tools) && graphic.tools.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1 mt-1">
+                          {graphic.tools.map((tool, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-block px-1.5 py-0.5 rounded bg-zinc-100 text-[10px] font-mono text-zinc-600 border border-zinc-200"
+                            >
+                              {tool}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       {graphic.description && (
                         <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
                           {graphic.description}
@@ -1712,10 +1771,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   onChange={(e) => {
                     const val = e.target.value;
                     const parsed = parseVideoUrl(val);
+                    const ytId = parsed.videoId || extractYouTubeId(val);
+                    const autoMaxres = ytId ? getYouTubeThumbnailUrl(ytId, 'maxres') : (parsed.thumbnailUrl || '');
                     setVideoFormData((prev) => ({
                       ...prev,
                       youtubeUrl: val,
-                      ...(parsed.isShortForm && (!prev.category || prev.category === 'commercial')
+                      thumbnailUrl: autoMaxres ? upgradeYouTubeThumbnailUrl(autoMaxres) : prev.thumbnailUrl,
+                      ...(parsed.isShortForm && (!prev.categoryLabel || prev.categoryLabel === 'Commercial')
                         ? { category: 'short-form' as VideoCategory, categoryLabel: 'Short-Form' }
                         : {}),
                     }));
@@ -1806,43 +1868,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                    Category
-                  </label>
-                  <select
-                    value={videoFormData.category}
-                    onChange={(e) =>
-                      setVideoFormData((prev) => ({
-                        ...prev,
-                        category: e.target.value as VideoCategory,
-                      }))
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  >
-                    <option value="commercial">Commercial Video</option>
-                    <option value="short-form">Shorts (Vertical Video)</option>
-                    <option value="documentary">Documentary</option>
-                    <option value="narrative">Narrative</option>
-                    <option value="motion-graphics">Motion Graphics</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                    Category Label (Display)
-                  </label>
-                  <input
-                    type="text"
-                    value={videoFormData.categoryLabel}
-                    onChange={(e) =>
-                      setVideoFormData((prev) => ({ ...prev, categoryLabel: e.target.value }))
-                    }
-                    placeholder="e.g. Commercial"
-                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  />
-                </div>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                  Category Label
+                </label>
+                <input
+                  type="text"
+                  value={videoFormData.categoryLabel}
+                  onChange={(e) =>
+                    setVideoFormData((prev) => ({ ...prev, categoryLabel: e.target.value }))
+                  }
+                  placeholder={isFormShort ? 'e.g. Shorts' : 'e.g. Commercial'}
+                  className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2052,24 +2090,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                    Category
+                    Category Label
                   </label>
-                  <select
-                    value={graphicFormData.category}
+                  <input
+                    type="text"
+                    value={graphicFormData.categoryLabel}
                     onChange={(e) =>
                       setGraphicFormData((prev) => ({
                         ...prev,
-                        category: e.target.value as GraphicCategory,
+                        categoryLabel: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
-                  >
-                    <option value="key-art">Key Art</option>
-                    <option value="styleframe">Styleframe</option>
-                    <option value="thumbnail">Thumbnail</option>
-                    <option value="typography">Typography</option>
-                    <option value="poster">Poster</option>
-                  </select>
+                    placeholder="e.g. Key-Art, Thumbnail, Poster"
+                    className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+                  />
                 </div>
 
                 <div>
@@ -2094,7 +2128,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                    Tools Used
+                    Tags / Tools (comma separated)
                   </label>
                   <input
                     type="text"

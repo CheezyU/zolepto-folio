@@ -107,10 +107,21 @@ let authoritativeGraphics: GraphicProject[] | null = null;
 
 function upgradeVideoThumbnails(items: VideoProject[]): VideoProject[] {
   return items.map((item) => {
-    if (!item.thumbnailUrl) return item;
-    const upgraded = upgradeYouTubeThumbnailUrl(item.thumbnailUrl);
-    if (upgraded !== item.thumbnailUrl) {
-      return { ...item, thumbnailUrl: upgraded };
+    let thumb = item.thumbnailUrl;
+    const yId =
+      item.youtubeId ||
+      extractYouTubeId(item.embedUrl || '') ||
+      extractYouTubeId((item as any).youtubeUrl || '') ||
+      extractYouTubeId(thumb || '');
+
+    if (yId) {
+      thumb = getYouTubeThumbnailUrl(yId, 'maxres');
+    } else if (thumb) {
+      thumb = upgradeYouTubeThumbnailUrl(thumb);
+    }
+
+    if (thumb !== item.thumbnailUrl) {
+      return { ...item, thumbnailUrl: thumb };
     }
     return item;
   });
@@ -483,11 +494,9 @@ export async function addShowreel(input: NewShowreelInput): Promise<PortfolioOpe
   const embedUrl = parsed.embedUrl;
   const rawThumb =
     input.thumbnailUrl?.trim() ||
-    parsed.thumbnailUrl ||
+    (youtubeId ? getYouTubeThumbnailUrl(youtubeId, 'maxres') : parsed.thumbnailUrl) ||
     (isShort
       ? createShortsPlaceholderSvg(input.title, parsed.platformLabel)
-      : youtubeId
-      ? getYouTubeThumbnailUrl(youtubeId)
       : '');
   const thumbnailUrl = upgradeYouTubeThumbnailUrl(rawThumb);
 
@@ -576,11 +585,9 @@ export async function updateShowreel(
       }
       if (!updates.thumbnailUrl || !updates.thumbnailUrl.trim()) {
         const rawT =
-          parsed.thumbnailUrl ||
+          (youtubeId ? getYouTubeThumbnailUrl(youtubeId, 'maxres') : parsed.thumbnailUrl) ||
           (isShort
             ? createShortsPlaceholderSvg(updates.title || target.title, parsed.platformLabel)
-            : youtubeId
-            ? getYouTubeThumbnailUrl(youtubeId)
             : target.thumbnailUrl);
         thumbnailUrl = upgradeYouTubeThumbnailUrl(rawT);
       }

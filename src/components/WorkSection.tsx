@@ -286,12 +286,24 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               >
                                 {video.client}
                               </span>
-                              {(video.views || video.duration) && (
-                                <span className="text-[10px] font-mono text-emerald-400 font-semibold shrink-0">
-                                  {video.views || video.duration}
+                              {video.duration && (
+                                <span className="text-[10px] font-mono text-zinc-400 font-medium shrink-0">
+                                  {video.duration}
                                 </span>
                               )}
                             </div>
+                            {Array.isArray(video.tags) && video.tags.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-1 mt-1">
+                                {video.tags.map((tag, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="inline-block px-1.5 py-0.5 rounded bg-white/15 backdrop-blur-xs text-[9px] font-mono text-zinc-200 border border-white/10 leading-none truncate max-w-[90px]"
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
@@ -341,19 +353,33 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                             </div>
                           </div>
 
-                          <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
-                            <h4
-                              title={video.title}
-                              className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
-                            >
-                              {video.title}
-                            </h4>
-                            <span
-                              title={video.client}
-                              className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                            >
-                              {video.client}
-                            </span>
+                          <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2.5 min-w-0">
+                              <h4
+                                title={video.title}
+                                className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
+                              >
+                                {video.title}
+                              </h4>
+                              <span
+                                title={video.client}
+                                className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                              >
+                                {video.client}
+                              </span>
+                            </div>
+                            {Array.isArray(video.tags) && video.tags.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                {video.tags.map((tag, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
@@ -391,19 +417,33 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                           </div>
                         </div>
 
-                        <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
-                          <h4
-                            title={video.title}
-                            className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
-                          >
-                            {video.title}
-                          </h4>
-                          <span
-                            title={video.client}
-                            className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                          >
-                            {video.client}
-                          </span>
+                        <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2.5 min-w-0">
+                            <h4
+                              title={video.title}
+                              className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
+                            >
+                              {video.title}
+                            </h4>
+                            <span
+                              title={video.client}
+                              className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                            >
+                              {video.client}
+                            </span>
+                          </div>
+                          {Array.isArray(video.tags) && video.tags.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                              {video.tags.map((tag, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -411,6 +451,11 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     const graphic = item.data;
                     const graphicSrc =
                       (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
+                    const graphicTags = Array.isArray(graphic.tools) && graphic.tools.length > 0
+                      ? graphic.tools
+                      : Array.isArray((graphic as any).tags) && (graphic as any).tags.length > 0
+                      ? (graphic as any).tags
+                      : [];
 
                     return (
                       <div
@@ -439,19 +484,33 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                           </div>
                         </div>
 
-                        <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
-                          <h4
-                            title={graphic.title}
-                            className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
-                          >
-                            {graphic.title}
-                          </h4>
-                          <span
-                            title={graphic.client}
-                            className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                          >
-                            {graphic.client}
-                          </span>
+                        <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2.5 min-w-0">
+                            <h4
+                              title={graphic.title}
+                              className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
+                            >
+                              {graphic.title}
+                            </h4>
+                            <span
+                              title={graphic.client}
+                              className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                            >
+                              {graphic.client}
+                            </span>
+                          </div>
+                          {graphicTags.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                              {graphicTags.map((tag, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -621,12 +680,24 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                   >
                                     {video.client}
                                   </span>
-                                  {(video.views || video.duration) && (
-                                    <span className="text-[10px] font-mono text-emerald-400 font-semibold shrink-0">
-                                      {video.views || video.duration}
+                                  {video.duration && (
+                                    <span className="text-[10px] font-mono text-zinc-400 font-medium shrink-0">
+                                      {video.duration}
                                     </span>
                                   )}
                                 </div>
+                                {Array.isArray(video.tags) && video.tags.length > 0 && (
+                                  <div className="flex flex-wrap items-center gap-1 mt-1">
+                                    {video.tags.map((tag, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="inline-block px-1.5 py-0.5 rounded bg-white/15 backdrop-blur-xs text-[9px] font-mono text-zinc-200 border border-white/10 leading-none truncate max-w-[100px]"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
@@ -679,19 +750,33 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                 </div>
                               </div>
 
-                              <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
-                                <h4
-                                  title={video.title}
-                                  className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
-                                >
-                                  {video.title}
-                                </h4>
-                                <span
-                                  title={video.client}
-                                  className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                                >
-                                  {video.client}
-                                </span>
+                              <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2.5 min-w-0">
+                                  <h4
+                                    title={video.title}
+                                    className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
+                                  >
+                                    {video.title}
+                                  </h4>
+                                  <span
+                                    title={video.client}
+                                    className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                                  >
+                                    {video.client}
+                                  </span>
+                                </div>
+                                {Array.isArray(video.tags) && video.tags.length > 0 && (
+                                  <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                    {video.tags.map((tag, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
@@ -734,19 +819,33 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               </div>
                             </div>
 
-                            <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
-                              <h4
-                                title={video.title}
-                                className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
-                              >
-                                {video.title}
-                              </h4>
-                              <span
-                                title={video.client}
-                                className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                              >
-                                {video.client}
-                              </span>
+                            <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2.5 min-w-0">
+                                <h4
+                                  title={video.title}
+                                  className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
+                                >
+                                  {video.title}
+                                </h4>
+                                <span
+                                  title={video.client}
+                                  className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                                >
+                                  {video.client}
+                                </span>
+                              </div>
+                              {Array.isArray(video.tags) && video.tags.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                  {video.tags.map((tag, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         );
@@ -755,6 +854,11 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         const graphic = item.data;
                         const graphicSrc =
                           (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
+                        const graphicTags = Array.isArray(graphic.tools) && graphic.tools.length > 0
+                          ? graphic.tools
+                          : Array.isArray((graphic as any).tags) && (graphic as any).tags.length > 0
+                          ? (graphic as any).tags
+                          : [];
 
                         return (
                           <div
@@ -787,19 +891,33 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               </div>
                             </div>
 
-                            <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2.5 min-w-0">
-                              <h4
-                                title={graphic.title}
-                                className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
-                              >
-                                {graphic.title}
-                              </h4>
-                              <span
-                                title={graphic.client}
-                                className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                              >
-                                {graphic.client}
-                              </span>
+                            <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2.5 min-w-0">
+                                <h4
+                                  title={graphic.title}
+                                  className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:text-zinc-600 transition-colors truncate min-w-0 flex-1 leading-snug"
+                                >
+                                  {graphic.title}
+                                </h4>
+                                <span
+                                  title={graphic.client}
+                                  className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                                >
+                                  {graphic.client}
+                                </span>
+                              </div>
+                              {graphicTags.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                  {graphicTags.map((tag, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         );

@@ -266,9 +266,8 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
               {/* Card Content & Details */}
               <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                 <div>
-                  <div className="flex items-center justify-between text-xs font-mono text-zinc-400 mb-1.5 font-medium">
+                  <div className="text-xs font-mono text-zinc-400 mb-1.5 font-medium">
                     <span>{video.client}</span>
-                    <span>{video.year}</span>
                   </div>
 
                   <h4 className="font-display font-bold text-base sm:text-lg text-zinc-900 group-hover:text-zinc-700 transition-colors leading-snug">

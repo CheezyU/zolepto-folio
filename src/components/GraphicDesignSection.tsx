@@ -120,9 +120,8 @@ export const GraphicDesignSection: React.FC<GraphicDesignSectionProps> = ({
               {/* Information */}
               <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-3 bg-white">
                 <div>
-                  <div className="flex items-center justify-between text-xs font-mono text-zinc-400 mb-1 font-medium">
+                  <div className="text-xs font-mono text-zinc-400 mb-1 font-medium">
                     <span>{project.client}</span>
-                    <span>{project.year}</span>
                   </div>
                   <h4 className="font-display font-bold text-base text-zinc-900 group-hover:text-zinc-700 transition-colors">
                     {project.title}
@@ -214,7 +213,7 @@ export const GraphicDesignSection: React.FC<GraphicDesignSectionProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 font-medium">
-                    Client: {selectedImage.client} • {selectedImage.year}
+                    Client: {selectedImage.client}
                   </span>
                   <p className="text-sm font-display font-bold text-zinc-900 mt-0.5">
                     {selectedImage.categoryLabel}

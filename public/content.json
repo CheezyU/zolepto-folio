@@ -1,67 +1,28 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T03:47:04.263Z",
-  "repoSource": {
-    "owner": "CheezyU",
-    "repo": "zolepto-folio",
-    "branch": "main",
-    "filePath": "public/content.json"
-  },
+  "lastUpdated": "2026-09-17T18:00:00.000Z",
   "siteSettings": {
-    "headerLogoUrl": "https://i.ibb.co/F49NG9JT/whitemelogo1million.png",
-    "headerLogoDarkUrl": "https://i.ibb.co/F49NG9JT/whitemelogo1million.png",
-    "headerLogoLightUrl": "https://i.ibb.co/xtZbcgMY/melogo1million.png",
+    "headerLogoUrl": "",
+    "headerLogoDarkUrl": "",
+    "headerLogoLightUrl": "",
     "heroTitleLine1": "Editing is just the start.",
     "heroTitleLine2": "I care what happens after you hit post.",
     "heroSubtitle": "I team up with creators and brands to build videos worth staying for, and an audience that actually comes back, not just views.",
     "availabilityStatus": "Available for incoming projects!",
     "showAvailabilityDot": true,
     "aboutHeading": "Background & Approach",
+    "aboutQuote": "",
     "aboutBio1": "I'm Zolepto. Six years ago, I started a channel with zero knowledge and grew it from the ground up. Every mistake became a building block, and along the way I picked up video editing, motion design, thumbnails, and branding.",
     "aboutBio2": "Because I've built a channel myself, I don't see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.",
-    "aboutBio3": "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.",
-    "aboutDirectorNote": "I grew my own channel from zero, then stepped away from it to help other creators grow further from wherever they are now.",
-    "aboutChannelUrl": "https://www.youtube.com/@HelixGr4nd",
-    "aboutChannelTag": "@HelixGr4nd",
-    "aboutTools": [
-      "Premiere Pro",
-      "After Effects",
-      "Photoshop",
-      "YouTube Studio"
-    ],
+    "aboutDirectorNote": "",
     "contactEmail": "zolepto@gmail.com",
-    "profilePictureUrl": "https://i.ibb.co/99MTLF44/rmbg-result-4.png",
-    "featuredReelYoutubeId": "aqz-KE-bpKQ",
-    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel",
-    "heroStat1Value": "14M+",
-    "heroStat1Label": "Organic Views",
-    "heroStat2Value": "5+ years",
-    "heroStat2Label": "Multimedia & Content Creation",
-    "heroStat3Value": "1-on-1",
-    "heroStat3Label": "Direct Direction",
-    "workshopHeading": "Four steps from your idea to your audience.",
-    "workshopSubtitle": "No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.",
-    "step1Title": "Identifying YOU",
-    "step1Subtitle": "",
-    "step1Description": "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage.",
-    "step1Note": "",
-    "step2Title": "Dissecting the Narrative",
-    "step2Subtitle": "",
-    "step2Description": "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video.",
-    "step2Note": "",
-    "step3Title": "Look Beyond the Process",
-    "step3Subtitle": "",
-    "step3Description": "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified.",
-    "step3Note": "",
-    "step4Title": "Official Drop",
-    "step4Subtitle": "",
-    "step4Description": "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration.",
-    "step4Note": "",
     "socialInstagram": "https://www.instagram.com/zoleptos.motion/",
     "socialLinkedin": "https://www.linkedin.com/in/zolepto-haraya-936b622b7/",
     "socialX": "https://x.com/Zolep138657",
     "socialGmail": "zolepto@gmail.com",
-    "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
+    "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e",
+    "featuredReelYoutubeId": "",
+    "featuredReelTitle": "Showreel 1"
   },
   "showreels": [
     {
@@ -72,19 +33,13 @@
       "categoryLabel": "Commercial / Brand",
       "duration": "0:45",
       "year": "2026",
-      "youtubeId": "5FnQs_sy5iI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/5FnQs_sy5iI/maxresdefault.jpg",
+      "youtubeId": "",
+      "embedUrl": "",
+      "thumbnailUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\" fill=\"none\"><rect width=\"1280\" height=\"720\" fill=\"%2318181b\"/><rect x=\"24\" y=\"24\" width=\"1232\" height=\"672\" rx=\"20\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"10 10\"/><circle cx=\"640\" cy=\"330\" r=\"44\" fill=\"%2327272a\"/><polygon points=\"634,316 654,330 634,344\" fill=\"%23d4d4d8\"/><text x=\"640\" y=\"420\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"24\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\" letter-spacing=\"1\">Video 1</text><text x=\"640\" y=\"454\" font-family=\"monospace\" font-size=\"13\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">ZOLEPTO STUDIO • WORK PLACEHOLDER</text></svg>",
       "description": "Zolepto creative edit demonstrating pacing, sound design, and narrative clarity.",
       "role": "Editorial Pacing & Cut",
-      "tags": [
-        "Video Editing",
-        "Sound Design",
-        "Color"
-      ],
-      "metrics": "94% Client Brand Recall",
-      "views": "1.4M views",
-      "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI&t=44s"
+      "tags": ["Video Editing", "Sound Design", "Color"],
+      "metrics": "94% Client Brand Recall"
     },
     {
       "id": "vid-2",
@@ -96,38 +51,25 @@
       "year": "2026",
       "youtubeId": "",
       "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "thumbnailUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\" fill=\"none\"><rect width=\"1280\" height=\"720\" fill=\"%2318181b\"/><rect x=\"24\" y=\"24\" width=\"1232\" height=\"672\" rx=\"20\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"10 10\"/><circle cx=\"640\" cy=\"330\" r=\"44\" fill=\"%2327272a\"/><polygon points=\"634,316 654,330 634,344\" fill=\"%23d4d4d8\"/><text x=\"640\" y=\"420\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"24\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\" letter-spacing=\"1\">Video 2</text><text x=\"640\" y=\"454\" font-family=\"monospace\" font-size=\"13\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">ZOLEPTO STUDIO • WORK PLACEHOLDER</text></svg>",
       "description": "Zolepto storytelling edit highlighting cinematic rhythm, dialogue balance, and visual structure.",
       "role": "Assembly & Rhythm",
-      "tags": [
-        "Narrative",
-        "Pacing",
-        "Sound Foley"
-      ],
-      "metrics": "Featured Narrative Cut",
-      "views": "820K views"
+      "tags": ["Narrative", "Pacing", "Sound Foley"]
     },
     {
       "id": "vid-3",
-      "title": "Game Bug Discovery",
-      "client": "SleekToast",
+      "title": "Video 3",
+      "client": "Client Three",
       "category": "short-form",
-      "categoryLabel": "Entertainment",
+      "categoryLabel": "High-Retention Short Form",
       "duration": "0:50",
       "year": "2026",
-      "youtubeId": "pgxS2qs_hUI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
-      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
-      "role": "Creator",
-      "tags": [
-        "Short-Form",
-        "Storytelling"
-      ],
-      "metrics": "8.7M Combined Views",
-      "views": "8.7M views",
-      "youtubeUrl": "https://www.youtube.com/watch?v=pgxS2qs_hUI",
-      "aspectRatio": "9/16"
+      "youtubeId": "",
+      "embedUrl": "",
+      "thumbnailUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\" fill=\"none\"><rect width=\"1280\" height=\"720\" fill=\"%2318181b\"/><rect x=\"24\" y=\"24\" width=\"1232\" height=\"672\" rx=\"20\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"10 10\"/><circle cx=\"640\" cy=\"330\" r=\"44\" fill=\"%2327272a\"/><polygon points=\"634,316 654,330 634,344\" fill=\"%23d4d4d8\"/><text x=\"640\" y=\"420\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"24\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\" letter-spacing=\"1\">Video 3</text><text x=\"640\" y=\"454\" font-family=\"monospace\" font-size=\"13\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">ZOLEPTO STUDIO • WORK PLACEHOLDER</text></svg>",
+      "description": "Zolepto short-form retention edit structured for high viewer engagement and hook pacing.",
+      "role": "Hook & Retention Structure",
+      "tags": ["Short-Form", "Kinetic Cuts", "Pacing"]
     },
     {
       "id": "vid-4",
@@ -139,16 +81,10 @@
       "year": "2025",
       "youtubeId": "",
       "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%204%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "thumbnailUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\" fill=\"none\"><rect width=\"1280\" height=\"720\" fill=\"%2318181b\"/><rect x=\"24\" y=\"24\" width=\"1232\" height=\"672\" rx=\"20\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"10 10\"/><circle cx=\"640\" cy=\"330\" r=\"44\" fill=\"%2327272a\"/><polygon points=\"634,316 654,330 634,344\" fill=\"%23d4d4d8\"/><text x=\"640\" y=\"420\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"24\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\" letter-spacing=\"1\">Video 4</text><text x=\"640\" y=\"454\" font-family=\"monospace\" font-size=\"13\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">ZOLEPTO STUDIO • WORK PLACEHOLDER</text></svg>",
       "description": "Zolepto motion project exploring typography animation, kinetic layouts, and rhythm.",
       "role": "Motion Graphics & Animation",
-      "tags": [
-        "Motion Graphics",
-        "Typography",
-        "Visuals"
-      ],
-      "metrics": "Official Brand Identity",
-      "views": "1.2M views"
+      "tags": ["Motion Graphics", "Typography", "Visuals"]
     },
     {
       "id": "vid-5",
@@ -160,16 +96,10 @@
       "year": "2025",
       "youtubeId": "",
       "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%205%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "thumbnailUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\" fill=\"none\"><rect width=\"1280\" height=\"720\" fill=\"%2318181b\"/><rect x=\"24\" y=\"24\" width=\"1232\" height=\"672\" rx=\"20\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"10 10\"/><circle cx=\"640\" cy=\"330\" r=\"44\" fill=\"%2327272a\"/><polygon points=\"634,316 654,330 634,344\" fill=\"%23d4d4d8\"/><text x=\"640\" y=\"420\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"24\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\" letter-spacing=\"1\">Video 5</text><text x=\"640\" y=\"454\" font-family=\"monospace\" font-size=\"13\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">ZOLEPTO STUDIO • WORK PLACEHOLDER</text></svg>",
       "description": "Zolepto commercial project featuring modern framing, sound design, and color finishing.",
       "role": "Commercial Assembly & Grade",
-      "tags": [
-        "Commercial",
-        "Color Grade",
-        "Audio"
-      ],
-      "metrics": "National Campaign Cut",
-      "views": "640K views"
+      "tags": ["Commercial", "Color Grade", "Audio"]
     },
     {
       "id": "vid-6",
@@ -181,93 +111,84 @@
       "year": "2025",
       "youtubeId": "",
       "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%206%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+      "thumbnailUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1280\" height=\"720\" viewBox=\"0 0 1280 720\" fill=\"none\"><rect width=\"1280\" height=\"720\" fill=\"%2318181b\"/><rect x=\"24\" y=\"24\" width=\"1232\" height=\"672\" rx=\"20\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"10 10\"/><circle cx=\"640\" cy=\"330\" r=\"44\" fill=\"%2327272a\"/><polygon points=\"634,316 654,330 634,344\" fill=\"%23d4d4d8\"/><text x=\"640\" y=\"420\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"24\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\" letter-spacing=\"1\">Video 6</text><text x=\"640\" y=\"454\" font-family=\"monospace\" font-size=\"13\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">ZOLEPTO STUDIO • WORK PLACEHOLDER</text></svg>",
       "description": "Zolepto documentary sequence showcasing authentic interviews, environmental sound, and pacing.",
       "role": "Documentary Cut & Pacing",
-      "tags": [
-        "Documentary",
-        "Soundscape",
-        "Timeline"
-      ],
-      "metrics": "Festival Selection Cut",
-      "views": "2.1M views"
+      "tags": ["Documentary", "Soundscape", "Timeline"]
     }
   ],
   "graphics": [
     {
-      "id": "graph-2",
-      "title": "Sleek's banner",
-      "client": "SleekToast",
-      "category": "styleframe",
-      "categoryLabel": "Digital Thumbnail",
-      "imageUrl": "https://i.ibb.co/JWN6yRBd/New-BLue-Banner.png",
-      "aspect": "landscape",
+      "id": "graph-1",
+      "title": "Graphic 1",
+      "client": "Client Brand A",
+      "category": "key-art",
+      "categoryLabel": "Key Art & Poster",
+      "imageUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"1100\" viewBox=\"0 0 800 1100\" fill=\"none\"><rect width=\"800\" height=\"1100\" fill=\"%2318181b\"/><rect x=\"20\" y=\"20\" width=\"760\" height=\"1060\" rx=\"16\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"8 8\"/><circle cx=\"400\" cy=\"526\" r=\"36\" fill=\"%2327272a\"/><rect x=\"386\" y=\"512\" width=\"28\" height=\"28\" rx=\"4\" stroke=\"%23a1a1aa\" stroke-width=\"2\" fill=\"none\"/><text x=\"400\" y=\"586\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"20\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\">Graphic 1</text><text x=\"400\" y=\"614\" font-family=\"monospace\" font-size=\"12\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">DESIGN PLACEHOLDER</text></svg>",
+      "aspect": "portrait",
       "year": "2026",
-      "description": "A classic 3d render ugc for roblox content creators with cinematic lighting",
-      "tools": [
-        "Photoshop",
-        "Blender"
-      ],
-      "file": null
+      "description": "Zolepto graphic design piece focusing on visual hierarchy, typography, and contrast.",
+      "tools": ["Photoshop", "Illustrator"]
     },
     {
-      "id": "graph-4",
-      "title": "MotionGrind Concept",
-      "client": "MotionGrind",
-      "category": "styleframe",
-      "categoryLabel": "Cover Art & Packaging",
-      "imageUrl": "https://i.ibb.co/21FL2QRq/MG-12.png",
-      "aspect": "portrait",
-      "year": "2025",
-      "description": "The concept for personal brands building connections from viewers into high ticket customers.",
-      "tools": [
-        "Photoshop",
-        "Typography"
-      ],
-      "file": null
+      "id": "graph-2",
+      "title": "Graphic 2",
+      "client": "Client Brand B",
+      "category": "thumbnails",
+      "categoryLabel": "Digital Thumbnail",
+      "imageUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"675\" viewBox=\"0 0 1200 675\" fill=\"none\"><rect width=\"1200\" height=\"675\" fill=\"%2318181b\"/><rect x=\"20\" y=\"20\" width=\"1160\" height=\"635\" rx=\"16\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"8 8\"/><circle cx=\"600\" cy=\"313.5\" r=\"36\" fill=\"%2327272a\"/><rect x=\"586\" y=\"299.5\" width=\"28\" height=\"28\" rx=\"4\" stroke=\"%23a1a1aa\" stroke-width=\"2\" fill=\"none\"/><text x=\"600\" y=\"373.5\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"20\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\">Graphic 2</text><text x=\"600\" y=\"401.5\" font-family=\"monospace\" font-size=\"12\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">DESIGN PLACEHOLDER</text></svg>",
+      "aspect": "landscape",
+      "year": "2026",
+      "description": "Zolepto digital thumbnail design built for clarity, focal subject pop, and high visual interest.",
+      "tools": ["Photoshop", "Lighting"]
     },
     {
       "id": "graph-3",
-      "title": "Koza's Banner",
-      "client": "KozaEyes",
-      "category": "styleframe",
+      "title": "Graphic 3",
+      "client": "Client Brand C",
+      "category": "styleframes",
       "categoryLabel": "Styleframe Design",
-      "imageUrl": "https://i.ibb.co/xt6nCpwr/Kazo-Eyes-banner.png",
-      "aspect": "landscape",
+      "imageUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"900\" height=\"900\" viewBox=\"0 0 900 900\" fill=\"none\"><rect width=\"900\" height=\"900\" fill=\"%2318181b\"/><rect x=\"20\" y=\"20\" width=\"860\" height=\"860\" rx=\"16\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"8 8\"/><circle cx=\"450\" cy=\"426\" r=\"36\" fill=\"%2327272a\"/><rect x=\"436\" y=\"412\" width=\"28\" height=\"28\" rx=\"4\" stroke=\"%23a1a1aa\" stroke-width=\"2\" fill=\"none\"/><text x=\"450\" y=\"486\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"20\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\">Graphic 3</text><text x=\"450\" y=\"514\" font-family=\"monospace\" font-size=\"12\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">DESIGN PLACEHOLDER</text></svg>",
+      "aspect": "square",
       "year": "2025",
-      "description": "Modern clean and simple banner for a storytelling clipper.",
-      "tools": [
-        "Photoshop"
-      ],
-      "file": null
+      "description": "Zolepto styleframe exploring modern composition, grid layouts, and minimalist aesthetics.",
+      "tools": ["Figma", "Illustrator"]
     },
     {
-      "id": "graphic-1789874511012",
-      "title": "WestWard's Banner",
-      "client": "Blood Barrel",
+      "id": "graph-4",
+      "title": "Graphic 4",
+      "client": "Client Brand D",
       "category": "key-art",
-      "categoryLabel": "KEY-ART",
-      "imageUrl": "https://i.ibb.co/twszZPcp/loleq3.jpg",
+      "categoryLabel": "Cover Art & Packaging",
+      "imageUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"1100\" viewBox=\"0 0 800 1100\" fill=\"none\"><rect width=\"800\" height=\"1100\" fill=\"%2318181b\"/><rect x=\"20\" y=\"20\" width=\"760\" height=\"1060\" rx=\"16\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"8 8\"/><circle cx=\"400\" cy=\"526\" r=\"36\" fill=\"%2327272a\"/><rect x=\"386\" y=\"512\" width=\"28\" height=\"28\" rx=\"4\" stroke=\"%23a1a1aa\" stroke-width=\"2\" fill=\"none\"/><text x=\"400\" y=\"586\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"20\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\">Graphic 4</text><text x=\"400\" y=\"614\" font-family=\"monospace\" font-size=\"12\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">DESIGN PLACEHOLDER</text></svg>",
       "aspect": "portrait",
-      "year": "2026",
-      "description": "Features heavy graphics and effects with the iconic Mike Tyson shot and a progress bar for engagement",
-      "tools": [
-        "Photoshop"
-      ]
+      "year": "2025",
+      "description": "Zolepto key art exploring typography, texture, and visual balance.",
+      "tools": ["Photoshop", "Typography"]
     },
     {
-      "id": "graphic-1789874407223",
-      "title": "Simple Banner",
-      "client": "Studio Art",
-      "category": "styleframe",
-      "categoryLabel": "STYLEFRAME",
-      "imageUrl": "https://i.ibb.co/JWHppkwY/1-WHO-SAID-I-CNAT.jpg",
-      "aspect": "portrait",
+      "id": "graph-5",
+      "title": "Graphic 5",
+      "client": "Client Brand E",
+      "category": "styleframes",
+      "categoryLabel": "Visual Identity",
+      "imageUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"675\" viewBox=\"0 0 1200 675\" fill=\"none\"><rect width=\"1200\" height=\"675\" fill=\"%2318181b\"/><rect x=\"20\" y=\"20\" width=\"1160\" height=\"635\" rx=\"16\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"8 8\"/><circle cx=\"600\" cy=\"313.5\" r=\"36\" fill=\"%2327272a\"/><rect x=\"586\" y=\"299.5\" width=\"28\" height=\"28\" rx=\"4\" stroke=\"%23a1a1aa\" stroke-width=\"2\" fill=\"none\"/><text x=\"600\" y=\"373.5\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"20\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\">Graphic 5</text><text x=\"600\" y=\"401.5\" font-family=\"monospace\" font-size=\"12\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">DESIGN PLACEHOLDER</text></svg>",
+      "aspect": "landscape",
       "year": "2026",
-      "description": "",
-      "tools": [
-        "Photoshop"
-      ]
+      "description": "Zolepto styleframe sequence designed to set art direction and graphic language.",
+      "tools": ["After Effects", "Photoshop"]
+    },
+    {
+      "id": "graph-6",
+      "title": "Graphic 6",
+      "client": "Client Brand F",
+      "category": "thumbnails",
+      "categoryLabel": "Media Art",
+      "imageUrl": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"675\" viewBox=\"0 0 1200 675\" fill=\"none\"><rect width=\"1200\" height=\"675\" fill=\"%2318181b\"/><rect x=\"20\" y=\"20\" width=\"1160\" height=\"635\" rx=\"16\" stroke=\"%2327272a\" stroke-width=\"2\" stroke-dasharray=\"8 8\"/><circle cx=\"600\" cy=\"313.5\" r=\"36\" fill=\"%2327272a\"/><rect x=\"586\" y=\"299.5\" width=\"28\" height=\"28\" rx=\"4\" stroke=\"%23a1a1aa\" stroke-width=\"2\" fill=\"none\"/><text x=\"600\" y=\"373.5\" font-family=\"system-ui, -apple-system, sans-serif\" font-size=\"20\" font-weight=\"600\" fill=\"%23f4f4f5\" text-anchor=\"middle\">Graphic 6</text><text x=\"600\" y=\"401.5\" font-family=\"monospace\" font-size=\"12\" fill=\"%2371717a\" text-anchor=\"middle\" letter-spacing=\"2\">DESIGN PLACEHOLDER</text></svg>",
+      "aspect": "landscape",
+      "year": "2026",
+      "description": "Zolepto graphic layout balancing bold typography and clean composition.",
+      "tools": ["Photoshop", "Graphic Layout"]
     }
   ]
 }

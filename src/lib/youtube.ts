@@ -42,16 +42,42 @@ export function getYouTubeThumbnailUrl(
 }
 
 /**
- * Upgrades any legacy pixelated hqdefault/mqdefault YouTube thumbnail URLs to pristine maxresdefault HD.
+ * Upgrades any legacy pixelated hqdefault/mqdefault/sddefault/0 YouTube thumbnail URLs to pristine maxresdefault HD.
  */
 export function upgradeYouTubeThumbnailUrl(url?: string): string {
   if (!url) return '';
-  if (url.includes('/hqdefault.jpg') || url.includes('/mqdefault.jpg') || url.includes('/default.jpg')) {
-    return url
-      .replace('img.youtube.com', 'i.ytimg.com')
-      .replace(/\/(hqdefault|mqdefault|default)\.jpg/, '/maxresdefault.jpg');
+  const trimmed = url.trim();
+
+  // If already maxresdefault, ensure fast i.ytimg.com CDN
+  if (trimmed.includes('/maxresdefault.jpg')) {
+    return trimmed.replace('img.youtube.com', 'i.ytimg.com');
   }
-  return url;
+
+  // Extract ID from any YouTube thumbnail URL format: /vi/<id>/...
+  const ytThumbMatch = trimmed.match(/(?:ytimg\.com|youtube\.com)\/vi\/([a-zA-Z0-9_-]{11})\//);
+  if (ytThumbMatch && ytThumbMatch[1]) {
+    return `https://i.ytimg.com/vi/${ytThumbMatch[1]}/maxresdefault.jpg`;
+  }
+
+  // If it's a YouTube watch/embed/short link passed as thumbnail
+  const directId = extractYouTubeId(trimmed);
+  if (directId) {
+    return `https://i.ytimg.com/vi/${directId}/maxresdefault.jpg`;
+  }
+
+  if (
+    trimmed.includes('/hqdefault.jpg') ||
+    trimmed.includes('/mqdefault.jpg') ||
+    trimmed.includes('/default.jpg') ||
+    trimmed.includes('/sddefault.jpg') ||
+    trimmed.includes('/0.jpg')
+  ) {
+    return trimmed
+      .replace('img.youtube.com', 'i.ytimg.com')
+      .replace(/\/(hqdefault|mqdefault|default|sddefault|0)\.jpg/, '/maxresdefault.jpg');
+  }
+
+  return trimmed;
 }
 
 /**

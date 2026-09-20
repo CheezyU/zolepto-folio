@@ -39,7 +39,14 @@ import {
   SiteSettings,
   SecurityLogEntry,
 } from '../types';
-import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '../lib/youtube';
+import {
+  extractYouTubeId,
+  buildYouTubeEmbedUrl,
+  getYouTubeThumbnailUrl,
+  upgradeYouTubeThumbnailUrl,
+  handleThumbnailImageError,
+  handleThumbnailImageLoad,
+} from '../lib/youtube';
 import { parseVideoUrl, isShortFormVideo } from '../lib/videoEmbed';
 import { cleanImageUrl, detectImgbbFormat, resolveImgbbViewerUrl } from '../lib/imageUtils';
 import {
@@ -190,6 +197,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     description: '',
     tags: '',
     metrics: '',
+    thumbnailUrl: '',
   });
   const [videoFormStatus, setVideoFormStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isSavingVideo, setIsSavingVideo] = useState(false);
@@ -299,6 +307,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       description: video.description || '',
       tags: Array.isArray(video.tags) ? video.tags.join(', ') : '',
       metrics: video.metrics || '',
+      thumbnailUrl: video.thumbnailUrl || '',
     });
     setVideoFormStatus(null);
   };
@@ -318,6 +327,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       description: '',
       tags: 'Editing, Pacing, Sound Design',
       metrics: '',
+      thumbnailUrl: '',
     });
     setVideoFormStatus(null);
   };
@@ -337,6 +347,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       description: '',
       tags: 'Short-Form, Reels, TikTok, Viral',
       metrics: '',
+      thumbnailUrl: '',
     });
     setVideoFormStatus(null);
   };
@@ -438,6 +449,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           description: videoFormData.description.trim(),
           tags: tagList.length > 0 ? tagList : (editingVideo.tags || (isShort ? ['Short-Form', 'Reels'] : ['Editing'])),
           metrics: videoFormData.metrics.trim(),
+          thumbnailUrl: videoFormData.thumbnailUrl.trim() || undefined,
         });
         appendSecurityLog(`Updated Video: ${title}`, `ID: ${editingVideo.id}`);
         setVideoFormStatus({ type: 'success', text: 'Video project updated and synchronized globally!' });
@@ -452,6 +464,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           description: videoFormData.description.trim(),
           role: videoFormData.role.trim() || (isShort ? 'Retention Edit & Hook' : 'Lead Editor'),
           tags: tagList.length > 0 ? tagList : (isShort ? ['Short-Form', 'Reels'] : ['Commercial', 'Editing']),
+          thumbnailUrl: videoFormData.thumbnailUrl.trim() || undefined,
         });
         appendSecurityLog(`Created New Video: ${title}`, 'Added to portfolio');
         setVideoFormStatus({ type: 'success', text: 'New video published and saved to portfolio!' });
@@ -661,8 +674,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Video preview in editor
   const parsedVideoInput = parseVideoUrl(videoFormData.youtubeUrl);
   const editVideoId = parsedVideoInput.videoId || extractYouTubeId(videoFormData.youtubeUrl);
-  const editVideoThumb =
-    parsedVideoInput.thumbnailUrl || (editVideoId ? getYouTubeThumbnailUrl(editVideoId) : null);
+  const isFormShort =
+    videoFormData.category === 'short-form' ||
+    parsedVideoInput.isShortForm ||
+    (editingVideo ? editingVideo.aspectRatio === '9/16' : false);
+  const rawEditThumb =
+    videoFormData.thumbnailUrl.trim() ||
+    parsedVideoInput.thumbnailUrl ||
+    (editVideoId ? getYouTubeThumbnailUrl(editVideoId, 'maxres') : null);
+  const editVideoThumb = rawEditThumb ? upgradeYouTubeThumbnailUrl(rawEditThumb) : null;
 
   // Filter lists: separate horizontal videos from vertical shorts
   const horizontalVideos = showreels.filter((v) => !isShortFormVideo(v));
@@ -951,10 +971,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 >
                   <div>
                     {/* Thumbnail */}
-                    <div className="relative aspect-video bg-zinc-100 overflow-hidden">
+                    <div className="relative w-full aspect-video bg-zinc-950 overflow-hidden">
                       <img
                         src={video.thumbnailUrl || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
                         alt={video.title}
+                        loading="lazy"
+                        decoding="async"
+                        referrerPolicy="no-referrer"
+                        onError={(e) =>
+                          handleThumbnailImageError(
+                            e,
+                            'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'
+                          )
+                        }
+                        onLoad={handleThumbnailImageLoad}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
@@ -1110,10 +1140,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 >
                   <div>
                     {/* Vertical 9:16 Aspect Thumbnail Container */}
-                    <div className="relative aspect-[9/16] max-h-[300px] bg-zinc-950 overflow-hidden">
+                    <div className="relative w-full aspect-[9/16] bg-zinc-950 overflow-hidden">
                       <img
-                        src={short.thumbnailUrl || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80'}
+                        src={short.thumbnailUrl || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
                         alt={short.title}
+                        loading="lazy"
+                        decoding="async"
+                        referrerPolicy="no-referrer"
+                        onError={(e) =>
+                          handleThumbnailImageError(
+                            e,
+                            'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'
+                          )
+                        }
+                        onLoad={handleThumbnailImageLoad}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
@@ -1683,29 +1723,83 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   placeholder="https://youtube.com/shorts/... or tiktok.com/@... or instagram.com/reel/..."
                   className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                  Thumbnail Image URL (Auto-Detected in 1080p/720p HD, or Custom)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={videoFormData.thumbnailUrl}
+                    onChange={(e) =>
+                      setVideoFormData((prev) => ({ ...prev, thumbnailUrl: e.target.value }))
+                    }
+                    placeholder={editVideoThumb || 'https://i.ytimg.com/vi/.../maxresdefault.jpg'}
+                    className="flex-1 px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
+                  />
+                  {editVideoId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const maxres = getYouTubeThumbnailUrl(editVideoId, 'maxres');
+                        setVideoFormData((prev) => ({ ...prev, thumbnailUrl: maxres }));
+                      }}
+                      className="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-[11px] font-mono shrink-0 transition-colors"
+                      title="Fetch maximum resolution 1280x720 HD thumbnail"
+                    >
+                      Use Maxres HD
+                    </button>
+                  )}
+                </div>
+
                 {editVideoThumb && (
-                  <div className="mt-2 flex items-center gap-3 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
-                    <img
-                      src={editVideoThumb}
-                      alt="Thumbnail preview"
-                      className={`object-cover rounded-lg ${
-                        parsedVideoInput.isShortForm ? 'w-10 h-16' : 'w-20 h-12'
+                  <div className="mt-2.5 p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3.5 text-white">
+                    {/* Fixed aspect ratio preview container with zero white space */}
+                    <div
+                      className={`relative bg-zinc-950 rounded-lg overflow-hidden shrink-0 border border-zinc-700/80 shadow-inner ${
+                        isFormShort ? 'w-14 aspect-[9/16]' : 'w-28 aspect-video'
                       }`}
-                    />
-                    <div className="text-[11px] font-mono text-zinc-600 flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-zinc-900">
-                          {parsedVideoInput.platformLabel}
+                    >
+                      <img
+                        src={editVideoThumb}
+                        alt="Thumbnail preview"
+                        onError={(e) => handleThumbnailImageError(e)}
+                        onLoad={handleThumbnailImageLoad}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-1 left-1 px-1 py-0.2 rounded bg-black/80 font-mono text-[9px] text-white">
+                        {isFormShort ? '9:16' : '16:9'}
+                      </div>
+                    </div>
+
+                    <div className="text-xs font-mono text-zinc-300 flex-1 min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-semibold text-white">
+                          {parsedVideoInput.platformLabel || (isFormShort ? 'Short-Form' : 'Video')}
                         </span>
-                        {parsedVideoInput.isShortForm && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-semibold">
+                        {isFormShort ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px]">
                             <Smartphone className="w-2.5 h-2.5" />
-                            Vertical Short
+                            Vertical 9:16
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px]">
+                            16:9 Landscape
                           </span>
                         )}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px]">
+                          HD Maxres
+                        </span>
                       </div>
-                      <div className="text-zinc-500 text-[10px] mt-0.5 truncate">
-                        {editVideoId ? `ID: ${editVideoId}` : 'Embed Ready'}
+                      <div className="text-zinc-400 text-[11px] truncate">
+                        {editVideoId ? `YouTube ID: ${editVideoId}` : 'Embed & Thumbnail Synced'}
+                      </div>
+                      <div className="text-[10px] text-zinc-400">
+                        {isFormShort
+                          ? 'Vertical fill enabled: 100% card width coverage without white borders.'
+                          : 'Pristine 1280x720 resolution with zero pixelation.'}
                       </div>
                     </div>
                   </div>

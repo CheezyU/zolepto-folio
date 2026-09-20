@@ -1,6 +1,6 @@
 import { VideoProject, GraphicProject, VideoCategory, GraphicCategory } from '../types';
 import { VIDEO_PROJECTS as DEFAULT_VIDEOS, GRAPHIC_PROJECTS as DEFAULT_GRAPHICS } from '../data/portfolioData';
-import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '../lib/youtube';
+import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl, upgradeYouTubeThumbnailUrl } from '../lib/youtube';
 import { parseVideoUrl, isShortFormVideo, createShortsPlaceholderSvg } from '../lib/videoEmbed';
 import { loadLivePortfolioContent, publishToGlobalCloud } from './githubSyncService';
 import { getLocalSettings } from './siteSettingsService';
@@ -75,6 +75,7 @@ export interface NewShowreelInput {
   description?: string;
   role?: string;
   tags?: string[];
+  thumbnailUrl?: string;
 }
 
 export interface NewGraphicInput {
@@ -104,17 +105,29 @@ function isLegacyDummyItem(item: { title?: string }): boolean {
 let authoritativeShowreels: VideoProject[] | null = null;
 let authoritativeGraphics: GraphicProject[] | null = null;
 
+function upgradeVideoThumbnails(items: VideoProject[]): VideoProject[] {
+  return items.map((item) => {
+    if (!item.thumbnailUrl) return item;
+    const upgraded = upgradeYouTubeThumbnailUrl(item.thumbnailUrl);
+    if (upgraded !== item.thumbnailUrl) {
+      return { ...item, thumbnailUrl: upgraded };
+    }
+    return item;
+  });
+}
+
 export function getAuthoritativeShowreels(): VideoProject[] {
   if (authoritativeShowreels && authoritativeShowreels.length > 0) {
     const clean = authoritativeShowreels.filter((s) => !isLegacyDummyItem(s));
-    if (clean.length > 0) return clean;
+    if (clean.length > 0) return upgradeVideoThumbnails(clean);
   }
 
   // 1. Prioritize custom showreels from user / admin edits
   const local = getLocalShowreels().filter((s) => !isLegacyDummyItem(s));
   if (local && local.length > 0) {
-    authoritativeShowreels = local;
-    return local;
+    const upgraded = upgradeVideoThumbnails(local);
+    authoritativeShowreels = upgraded;
+    return upgraded;
   }
 
   // 2. Published payload from GitHub / Admin publish
@@ -125,15 +138,16 @@ export function getAuthoritativeShowreels(): VideoProject[] {
       if (Array.isArray(parsed.showreels)) {
         const clean = parsed.showreels.filter((s: any) => !isLegacyDummyItem(s));
         if (clean.length > 0) {
-          authoritativeShowreels = clean;
-          return clean;
+          const upgraded = upgradeVideoThumbnails(clean);
+          authoritativeShowreels = upgraded;
+          return upgraded;
         }
       }
     }
   } catch {}
 
   // 3. Fallback only if virgin session with zero edits/pushes
-  return DEFAULT_VIDEOS;
+  return upgradeVideoThumbnails(DEFAULT_VIDEOS);
 }
 
 export function getAuthoritativeGraphics(): GraphicProject[] {
@@ -467,13 +481,15 @@ export async function addShowreel(input: NewShowreelInput): Promise<PortfolioOpe
   const aspectRatio: '16/9' | '9/16' = isShort ? '9/16' : '16/9';
   const youtubeId = parsed.videoId || '';
   const embedUrl = parsed.embedUrl;
-  const thumbnailUrl =
+  const rawThumb =
+    input.thumbnailUrl?.trim() ||
     parsed.thumbnailUrl ||
     (isShort
       ? createShortsPlaceholderSvg(input.title, parsed.platformLabel)
       : youtubeId
       ? getYouTubeThumbnailUrl(youtubeId)
       : '');
+  const thumbnailUrl = upgradeYouTubeThumbnailUrl(rawThumb);
 
   const newId = isShort ? `short-${Date.now()}` : `reel-${Date.now()}`;
   const newDoc: VideoProject = {
@@ -540,9 +556,13 @@ export async function updateShowreel(
 
   let youtubeId = target.youtubeId;
   let embedUrl = target.embedUrl;
-  let thumbnailUrl = target.thumbnailUrl;
+  let thumbnailUrl = upgradeYouTubeThumbnailUrl(target.thumbnailUrl);
   let aspectRatio: '16/9' | '9/16' = target.aspectRatio || '16/9';
   let category: VideoCategory = target.category;
+
+  if (updates.thumbnailUrl && updates.thumbnailUrl.trim()) {
+    thumbnailUrl = upgradeYouTubeThumbnailUrl(updates.thumbnailUrl.trim());
+  }
 
   if (updates.youtubeUrl && updates.youtubeUrl.trim()) {
     const parsed = parseVideoUrl(updates.youtubeUrl.trim());
@@ -554,13 +574,16 @@ export async function updateShowreel(
       if (isShort && (!updates.category || updates.category === 'commercial')) {
         category = 'short-form';
       }
-      thumbnailUrl =
-        parsed.thumbnailUrl ||
-        (isShort
-          ? createShortsPlaceholderSvg(updates.title || target.title, parsed.platformLabel)
-          : youtubeId
-          ? getYouTubeThumbnailUrl(youtubeId)
-          : target.thumbnailUrl);
+      if (!updates.thumbnailUrl || !updates.thumbnailUrl.trim()) {
+        const rawT =
+          parsed.thumbnailUrl ||
+          (isShort
+            ? createShortsPlaceholderSvg(updates.title || target.title, parsed.platformLabel)
+            : youtubeId
+            ? getYouTubeThumbnailUrl(youtubeId)
+            : target.thumbnailUrl);
+        thumbnailUrl = upgradeYouTubeThumbnailUrl(rawT);
+      }
     }
   }
 

@@ -10,8 +10,8 @@ export function extractYouTubeId(url: string): string | null {
     return trimmed;
   }
 
-  // Handle standard watch URLs, short URLs, embed URLs, and shorts
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+  // Handle standard watch URLs, short URLs, embed URLs, live URLs, and shorts
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/;
   const match = trimmed.match(regExp);
 
   return match && match[2].length === 11 ? match[2] : null;
@@ -21,6 +21,63 @@ export function buildYouTubeEmbedUrl(videoId: string): string {
   return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
 }
 
-export function getYouTubeThumbnailUrl(videoId: string): string {
-  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+/**
+ * Returns the highest resolution YouTube thumbnail available.
+ * Defaults to maxresdefault (1280x720 HD, no pillarbox/letterbox bars).
+ * Falls back safely to sddefault (640x480) or hqdefault (480x360).
+ */
+export function getYouTubeThumbnailUrl(
+  videoId: string,
+  quality: 'maxres' | 'sd' | 'hq' = 'maxres'
+): string {
+  if (!videoId) return '';
+  const cleanId = videoId.trim();
+  if (quality === 'maxres') {
+    return `https://i.ytimg.com/vi/${cleanId}/maxresdefault.jpg`;
+  }
+  if (quality === 'sd') {
+    return `https://i.ytimg.com/vi/${cleanId}/sddefault.jpg`;
+  }
+  return `https://i.ytimg.com/vi/${cleanId}/hqdefault.jpg`;
+}
+
+/**
+ * Upgrades any legacy pixelated hqdefault/mqdefault YouTube thumbnail URLs to pristine maxresdefault HD.
+ */
+export function upgradeYouTubeThumbnailUrl(url?: string): string {
+  if (!url) return '';
+  if (url.includes('/hqdefault.jpg') || url.includes('/mqdefault.jpg') || url.includes('/default.jpg')) {
+    return url
+      .replace('img.youtube.com', 'i.ytimg.com')
+      .replace(/\/(hqdefault|mqdefault|default)\.jpg/, '/maxresdefault.jpg');
+  }
+  return url;
+}
+
+/**
+ * Reusable image error handler that automatically cascades from maxresdefault -> sddefault -> hqdefault -> fallback.
+ */
+export function handleThumbnailImageError(
+  e: React.SyntheticEvent<HTMLImageElement, Event>,
+  fallbackUrl?: string
+) {
+  const target = e.currentTarget;
+  const src = target.src || '';
+  if (src.includes('maxresdefault.jpg')) {
+    target.src = src.replace('maxresdefault.jpg', 'sddefault.jpg');
+  } else if (src.includes('sddefault.jpg')) {
+    target.src = src.replace('sddefault.jpg', 'hqdefault.jpg');
+  } else if (fallbackUrl && src !== fallbackUrl) {
+    target.src = fallbackUrl;
+  }
+}
+
+/**
+ * Reusable image load handler that detects YouTube's 120x90 "not available" placeholder and steps down to hqdefault.
+ */
+export function handleThumbnailImageLoad(e: React.SyntheticEvent<HTMLImageElement, Event>) {
+  const target = e.currentTarget;
+  if (target.src.includes('maxresdefault.jpg') && target.naturalWidth === 120) {
+    target.src = target.src.replace('maxresdefault.jpg', 'hqdefault.jpg');
+  }
 }

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { VideoProject, GraphicProject, WorkSectionTab } from '../types';
 import { GraphicModal } from './GraphicModal';
 import { isShortFormVideo } from '../lib/videoEmbed';
+import { handleThumbnailImageError, handleThumbnailImageLoad } from '../lib/youtube';
 
 interface WorkSectionProps {
   showreels: VideoProject[];
@@ -251,9 +252,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                             loading="lazy"
                             decoding="async"
                             referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = fallbackThumbnail;
-                            }}
+                            onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                            onLoad={handleThumbnailImageLoad}
                             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                           />
 
@@ -323,9 +323,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               loading="lazy"
                               decoding="async"
                               referrerPolicy="no-referrer"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = fallbackThumbnail;
-                              }}
+                              onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                              onLoad={handleThumbnailImageLoad}
                               className="h-full aspect-[9/16] object-cover relative rounded shadow-xl border-x border-white/10"
                             />
 
@@ -375,9 +374,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                             loading="lazy"
                             decoding="async"
                             referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = fallbackThumbnail;
-                            }}
+                            onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                            onLoad={handleThumbnailImageLoad}
                             className="w-full h-full object-cover"
                           />
                           <div className="absolute inset-0 bg-black/5" />
@@ -589,9 +587,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                 loading="lazy"
                                 decoding="async"
                                 referrerPolicy="no-referrer"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = fallbackThumbnail;
-                                }}
+                                onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                                onLoad={handleThumbnailImageLoad}
                                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />
 
@@ -664,9 +661,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                   loading="lazy"
                                   decoding="async"
                                   referrerPolicy="no-referrer"
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).src = fallbackThumbnail;
-                                  }}
+                                  onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                                  onLoad={handleThumbnailImageLoad}
                                   className="h-full aspect-[9/16] object-cover relative rounded shadow-xl border-x border-white/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                 />
 
@@ -719,9 +715,8 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                 loading="lazy"
                                 decoding="async"
                                 referrerPolicy="no-referrer"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = fallbackThumbnail;
-                                }}
+                                onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                                onLoad={handleThumbnailImageLoad}
                                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />
                               <div className="absolute inset-0 bg-black/5 group-hover:bg-black/25 transition-colors duration-300" />

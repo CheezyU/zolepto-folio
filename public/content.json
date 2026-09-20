@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:45:59.117Z",
+  "lastUpdated": "2026-09-20T22:47:38.079Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -64,6 +64,25 @@
     "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
   },
   "showreels": [
+    {
+      "id": "reel-1789944458078",
+      "title": "Montage Fast Pace",
+      "client": "HelixGr4nd",
+      "category": "commercial",
+      "categoryLabel": "Entertainment",
+      "duration": "1:00",
+      "year": "2026",
+      "youtubeId": "Jamf1izAZso",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/Jamf1izAZso?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/Jamf1izAZso/maxresdefault.jpg",
+      "aspectRatio": "16/9",
+      "description": "Classic 2020 style editing roblox. Really fast paced. Buur style.",
+      "role": "Creator",
+      "tags": [
+        "Full Production",
+        "Fast Pace"
+      ]
+    },
     {
       "id": "vid-2",
       "title": "Re-visting a Classic Game",

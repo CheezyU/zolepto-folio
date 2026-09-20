@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:25:35.203Z",
+  "lastUpdated": "2026-09-20T22:25:52.768Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -259,7 +259,7 @@
       "id": "graphic-1789874407223",
       "title": "Simple Banner",
       "client": "Studio Art",
-      "category": "styleframe",
+      "category": "styleframes",
       "categoryLabel": "STYLEFRAME",
       "imageUrl": "https://i.ibb.co/JWHppkwY/1-WHO-SAID-I-CNAT.jpg",
       "aspect": "portrait",
@@ -267,7 +267,8 @@
       "description": "",
       "tools": [
         "Photoshop"
-      ]
+      ],
+      "file": null
     }
   ]
 }

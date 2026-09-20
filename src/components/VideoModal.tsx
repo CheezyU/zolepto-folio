@@ -5,7 +5,6 @@ import {
   Play,
   Maximize2,
   Minimize2,
-  Info,
   ChevronUp,
   ChevronDown,
   ExternalLink,
@@ -20,14 +19,14 @@ interface VideoModalProps {
 }
 
 export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
-  const [showInfo, setShowInfo] = useState(false);
+  const [showMobileInfo, setShowMobileInfo] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  // Reset drawer and fullscreen state when project changes
+  // Reset mobile drawer state when project changes
   useEffect(() => {
-    setShowInfo(false);
+    setShowMobileInfo(false);
   }, [project]);
 
   // Handle hardware fullscreen change events
@@ -73,8 +72,8 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (showInfo) {
-          setShowInfo(false);
+        if (showMobileInfo) {
+          setShowMobileInfo(false);
         } else {
           onClose();
         }
@@ -90,7 +89,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
         window.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [project, onClose, showInfo]);
+  }, [project, onClose, showMobileInfo]);
 
   // Resolve guaranteed working embed URL for YouTube and external video embeds
   const ytId = project
@@ -155,57 +154,35 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
     >
       {isVertical ? (
         /* =========================================================================
-           IMMERSIVE VERTICAL (9:16) REEL THEATER:
-           - Fits the device perfectly without black bars
-           - Video fills full vertical viewport
-           - Force full-screen first
-           - Clean toggleable & scrollable project information sheet
+           IMMERSIVE VERTICAL (9:16) THEATER:
+           - On PC / larger screens (md+): Side-by-side layout with Project Info
+             permanently open beside the vertical video. Zero UI overlapping the video.
+           - On mobile (< md): Clean full-height player with top chrome & dedicated bottom
+             bar. ONE button at the bottom named "Project Info". No UI covering YouTube
+             controls (settings, volume, captions, timeline).
            ========================================================================= */
         <div
           ref={containerRef}
-          className="relative w-full h-[100dvh] sm:h-[94vh] sm:max-h-[960px] max-w-[min(100vw,calc(100dvh*9/16))] sm:max-w-[calc(94vh*9/16)] aspect-[9/16] bg-black sm:border sm:border-zinc-800/80 sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center justify-center my-auto transition-all duration-300"
+          className="relative w-full h-[100dvh] sm:h-[94vh] max-h-[960px] md:max-w-4xl lg:max-w-5xl md:h-[86vh] md:max-h-[820px] bg-zinc-950 sm:border sm:border-zinc-800/90 sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 my-auto text-white"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Edge-to-Edge Vertical Video Frame */}
-          <div className="relative w-full h-full bg-black flex items-center justify-center overflow-hidden">
-            {iframeSrc ? (
-              <iframe
-                ref={iframeRef}
-                src={iframeSrc}
-                title={project.title}
-                className="w-full h-full border-0 absolute inset-0 object-cover"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                onLoad={() => forceYouTubeHighestQuality(iframeRef.current)}
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-zinc-950 text-zinc-300 select-none">
-                <div className="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mb-3 shadow-inner">
-                  <Play className="w-6 h-6 ml-0.5 text-zinc-300" />
-                </div>
-                <h4 className="font-display font-semibold text-sm sm:text-base text-zinc-100">
-                  {project.title}
-                </h4>
-                <p className="text-zinc-500 font-mono text-[11px] sm:text-xs mt-1 max-w-xs">
-                  Vertical short-form cut formatted for mobile discovery, reels & feeds.
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Top Chrome Header Bar - Outside of Video Frame */}
+          <div className="shrink-0 h-13 px-4 sm:px-6 flex items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md z-20">
+            <div className="flex items-center gap-2.5 min-w-0 pr-3">
+              <span className="text-[10px] sm:text-[11px] font-mono text-zinc-300 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 font-medium shrink-0">
+                {project.categoryLabel || 'Shorts'}
+              </span>
+              <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider font-semibold truncate">
+                {project.client}
+              </span>
+            </div>
 
-          {/* Top Floating Controls Bar */}
-          <div className="absolute top-0 inset-x-0 p-3 sm:p-4 flex items-center justify-between z-30 pointer-events-auto bg-gradient-to-b from-black/80 via-black/40 to-transparent">
-            {/* Category Pill */}
-            <span className="text-[10px] sm:text-[11px] font-mono text-zinc-200 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 font-medium shadow-md">
-              {project.categoryLabel || 'Shorts'}
-            </span>
-
-            {/* Right Action Icons: Fullscreen Toggle, Info Sheet Toggle, and Close */}
-            <div className="flex items-center gap-2">
+            {/* Top Right Controls: Fullscreen Toggle & Close Button ONLY (No redundant Info button) */}
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={toggleNativeFullscreen}
-                className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-zinc-200 hover:text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer shadow-md"
+                className="p-2 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer shadow-xs"
                 aria-label={isFullscreen ? 'Exit full screen' : 'Enter full screen'}
                 title={isFullscreen ? 'Exit full screen' : 'Full screen'}
               >
@@ -217,25 +194,10 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
               </button>
 
               <button
-                type="button"
-                onClick={() => setShowInfo((prev) => !prev)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium backdrop-blur-md border transition-all cursor-pointer shadow-md ${
-                  showInfo
-                    ? 'bg-white text-zinc-950 border-white font-semibold'
-                    : 'bg-black/60 hover:bg-black/80 text-zinc-200 hover:text-white border-white/15'
-                }`}
-                aria-label="Toggle project details"
-                title="Toggle details sheet"
-              >
-                <Info className="w-3.5 h-3.5" />
-                <span>Info</span>
-              </button>
-
-              <button
                 id="close-video-modal-btn"
                 type="button"
                 onClick={onClose}
-                className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-zinc-200 hover:text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer shadow-md"
+                className="p-2 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer shadow-xs"
                 aria-label="Close video"
                 title="Close (Esc)"
               >
@@ -244,42 +206,126 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
             </div>
           </div>
 
-          {/* Bottom Floating Glance Overlay (When Info sheet is collapsed) */}
-          {!showInfo && (
-            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 pt-16 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-20 pointer-events-auto flex items-end justify-between gap-3">
-              <div
-                className="min-w-0 flex-1 cursor-pointer"
-                onClick={() => setShowInfo(true)}
-              >
-                <p className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold truncate">
-                  {project.client}
-                </p>
-                <h3 className="font-display font-bold text-sm sm:text-base text-white truncate leading-snug drop-shadow-sm mt-0.5">
-                  {project.title}
-                </h3>
+          {/* Main Content Area */}
+          <div className="flex-1 min-h-0 flex flex-col md:flex-row md:items-center md:justify-center p-0 md:p-6 md:gap-6 overflow-hidden relative">
+            {/* 9:16 Vertical Video Frame (Completely unobstructed, zero overlapping buttons) */}
+            <div className="flex-1 md:flex-none h-full md:h-full md:max-h-[720px] aspect-[9/16] bg-black md:rounded-2xl overflow-hidden md:border md:border-zinc-800/90 relative shadow-xl mx-auto flex items-center justify-center">
+              {iframeSrc ? (
+                <iframe
+                  ref={iframeRef}
+                  src={iframeSrc}
+                  title={project.title}
+                  className="w-full h-full border-0 absolute inset-0 object-cover"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  onLoad={() => forceYouTubeHighestQuality(iframeRef.current)}
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-zinc-950 text-zinc-300 select-none">
+                  <div className="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mb-3 shadow-inner">
+                    <Play className="w-6 h-6 ml-0.5 text-zinc-300" />
+                  </div>
+                  <h4 className="font-display font-semibold text-sm sm:text-base text-zinc-100">
+                    {project.title}
+                  </h4>
+                  <p className="text-zinc-500 font-mono text-[11px] sm:text-xs mt-1 max-w-xs">
+                    Vertical short-form cut formatted for mobile discovery, reels & feeds.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop / PC Project Info Panel - Cleanly opened BESIDE the vertical video */}
+            <div className="hidden md:flex flex-1 h-full max-h-[720px] bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex-col justify-between overflow-y-auto">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-1">
+                    {project.client}
+                  </p>
+                  <h3 className="font-display font-bold text-lg lg:text-xl text-white leading-snug">
+                    {project.title}
+                  </h3>
+                </div>
+
+                {project.description && (
+                  <p className="text-xs sm:text-[13px] text-zinc-300 leading-relaxed font-normal">
+                    {project.description}
+                  </p>
+                )}
+
+                {tags.length > 0 && (
+                  <div className="pt-2 border-t border-zinc-800/80 flex flex-wrap items-center gap-1.5">
+                    {tags.map((tag, idx) => (
+                      <span
+                        key={`${tag}-${idx}`}
+                        className="px-2.5 py-0.5 rounded-full bg-zinc-800/80 text-zinc-300 text-[11px] font-mono border border-zinc-700/60"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setShowInfo(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white text-[11px] font-mono font-medium transition-all shrink-0 cursor-pointer shadow-lg active:scale-95"
-              >
-                <span>Project Info</span>
-                <ChevronUp className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+              <div className="space-y-3 pt-4 border-t border-zinc-800/80">
+                <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                  <span>{project.role || 'Short-Form Editor'}</span>
+                  {project.duration && <span>{project.duration}</span>}
+                </div>
 
-          {/* Scrollable Project Info Bottom Sheet / Drawer */}
-          {showInfo && (
+                {directExternalLink && (
+                  <a
+                    href={directExternalLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-zinc-950 font-semibold text-xs transition-colors hover:bg-zinc-200 shadow-md cursor-pointer"
+                  >
+                    <span>Watch on YouTube / Shorts</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Dedicated Bottom Bar (< md only) - Sits BELOW the video frame so YouTube controls are never covered */}
+          <div className="md:hidden shrink-0 h-13 px-4 flex items-center justify-between border-t border-zinc-800/80 bg-zinc-950/95 z-20">
             <div
-              className="absolute inset-x-0 bottom-0 max-h-[72%] bg-zinc-950/95 backdrop-blur-2xl border-t border-white/20 text-white rounded-t-3xl p-5 sm:p-6 z-30 flex flex-col shadow-[0_-10px_35px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-6 duration-200 overflow-hidden"
+              className="min-w-0 pr-3 cursor-pointer"
+              onClick={() => setShowMobileInfo(true)}
+            >
+              <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider font-semibold truncate">
+                {project.client}
+              </p>
+              <h4 className="font-display font-semibold text-xs text-white truncate">
+                {project.title}
+              </h4>
+            </div>
+
+            {/* Single button: "Project Info" */}
+            <button
+              type="button"
+              onClick={() => setShowMobileInfo((prev) => !prev)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white text-[11px] font-mono font-medium transition-colors border border-zinc-700 shrink-0 cursor-pointer shadow-xs active:scale-95"
+            >
+              <span>Project Info</span>
+              {showMobileInfo ? (
+                <ChevronDown className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronUp className="w-3.5 h-3.5" />
+              )}
+            </button>
+          </div>
+
+          {/* Mobile Project Info Bottom Sheet (< md only) - Slides up on demand */}
+          {showMobileInfo && (
+            <div
+              className="md:hidden absolute inset-x-0 bottom-0 max-h-[75%] bg-zinc-950/98 backdrop-blur-2xl border-t border-zinc-800 text-white rounded-t-3xl p-5 z-40 flex flex-col shadow-2xl animate-in slide-in-from-bottom-6 duration-200 overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Drawer Pull Tab / Header */}
-              <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10 shrink-0">
+              <div className="flex items-center justify-between pb-3 mb-2 border-b border-zinc-800/80 shrink-0">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-1 rounded-full bg-white/30 mr-1" />
+                  <div className="w-8 h-1 rounded-full bg-zinc-700 mr-1" />
                   <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider font-semibold">
                     {project.client}
                   </span>
@@ -287,35 +333,31 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
 
                 <button
                   type="button"
-                  onClick={() => setShowInfo(false)}
-                  className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                  onClick={() => setShowMobileInfo(false)}
+                  className="p-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors cursor-pointer border border-zinc-800"
                   aria-label="Minimize details"
                 >
                   <ChevronDown className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Scrollable Content Container */}
               <div className="overflow-y-auto pr-1 space-y-3.5 overscroll-contain">
-                {/* Title */}
-                <h3 className="font-display font-bold text-base sm:text-lg text-white leading-snug">
+                <h3 className="font-display font-bold text-base text-white leading-snug">
                   {project.title}
                 </h3>
 
-                {/* Description */}
                 {project.description && (
-                  <p className="text-xs sm:text-[13px] text-zinc-300 leading-relaxed font-normal">
+                  <p className="text-xs text-zinc-300 leading-relaxed font-normal">
                     {project.description}
                   </p>
                 )}
 
-                {/* Tags */}
                 {tags.length > 0 && (
-                  <div className="pt-2 border-t border-white/10 flex flex-wrap items-center gap-1.5">
+                  <div className="pt-2 border-t border-zinc-800/80 flex flex-wrap items-center gap-1.5">
                     {tags.map((tag, idx) => (
                       <span
                         key={`${tag}-${idx}`}
-                        className="px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300 text-[11px] font-mono border border-white/10"
+                        className="px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 text-[11px] font-mono border border-zinc-700/60"
                       >
                         #{tag}
                       </span>
@@ -323,8 +365,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
                   </div>
                 )}
 
-                {/* Bottom Meta & External Link Bar */}
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px] font-mono text-zinc-400">
                   <span>{project.role || 'Short-Form Editor'}</span>
                   {project.duration && <span>{project.duration}</span>}
                 </div>
@@ -348,29 +389,35 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
         </div>
       ) : (
         /* =========================================================================
-           STANDARD HORIZONTAL (16:9) THEATER:
-           - Clean, distraction-free landscape player
-           - HD quality enforcement
-           - Fullscreen toggle & clean details
+           CINEMATIC HORIZONTAL (16:9) LANDSCAPE THEATER:
+           - Matching dark cinema styling (no outdated white cards).
+           - Clean separation between the video preview and contained project details.
+           - Zero UI elements overlapping the video frame — YouTube controls (settings,
+             volume, captions, timeline, fullscreen) are completely accessible.
+           - On desktop (lg+): Side-by-side widescreen layout with contained details.
+           - On mobile / tablet (< lg): Stacks cleanly with unobstructed player on top.
            ========================================================================= */
         <div
           ref={containerRef}
-          className="relative w-full max-w-4xl bg-white border border-zinc-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-auto flex flex-col transition-all duration-300"
+          className="relative w-full max-w-5xl max-h-[92vh] bg-zinc-950 border border-zinc-800/90 rounded-2xl sm:rounded-3xl shadow-2xl my-auto flex flex-col overflow-hidden transition-all duration-300 text-white"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header bar */}
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-zinc-200/90 bg-white sticky top-0 z-10 shrink-0">
-            <div className="min-w-0 pr-3">
-              <h3 className="font-display font-bold text-xs sm:text-sm text-zinc-900 truncate">
-                {project.title}
-              </h3>
+          {/* Top Chrome Header Bar */}
+          <div className="shrink-0 h-13 px-4 sm:px-6 flex items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md z-20">
+            <div className="flex items-center gap-2.5 min-w-0 pr-3">
+              <span className="text-[10px] sm:text-[11px] font-mono text-zinc-300 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 font-medium shrink-0">
+                {project.categoryLabel || project.category}
+              </span>
+              <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider font-semibold truncate">
+                {project.client}
+              </span>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={toggleNativeFullscreen}
-                className="p-1.5 sm:p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors cursor-pointer"
+                className="p-2 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer shadow-xs"
                 aria-label={isFullscreen ? 'Exit full screen' : 'Enter full screen'}
                 title={isFullscreen ? 'Exit full screen' : 'Full screen'}
               >
@@ -383,32 +430,34 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
 
               <button
                 id="close-video-modal-btn"
+                type="button"
                 onClick={onClose}
-                className="p-1.5 sm:p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors cursor-pointer"
-                aria-label="Close theater"
+                className="p-2 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer shadow-xs"
+                aria-label="Close video"
                 title="Close (Esc)"
               >
-                <X className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Video Embed Frame */}
-          <div className="relative w-full bg-zinc-950 flex items-center justify-center shrink-0 overflow-hidden">
-            <div className="w-full aspect-video max-h-[46vh] sm:max-h-[50vh]">
+          {/* Main Content Area: Responsive split / stack */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 flex flex-col lg:flex-row gap-5 lg:gap-6 items-stretch">
+            {/* 16:9 Video Frame (Completely clean & isolated, zero overlay interference) */}
+            <div className="flex-1 aspect-video bg-black rounded-2xl overflow-hidden border border-zinc-800/90 relative shadow-xl self-start w-full flex items-center justify-center">
               {iframeSrc ? (
                 <iframe
                   ref={iframeRef}
                   src={iframeSrc}
                   title={project.title}
-                  className="w-full h-full border-0"
+                  className="w-full h-full border-0 absolute inset-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   onLoad={() => forceYouTubeHighestQuality(iframeRef.current)}
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-zinc-950 text-zinc-300 select-none">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mb-3 shadow-inner">
+                  <div className="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mb-3 shadow-inner">
                     <Play className="w-6 h-6 ml-0.5 text-zinc-300" />
                   </div>
                   <h4 className="font-display font-semibold text-sm sm:text-base text-zinc-100">
@@ -420,41 +469,57 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Full Details */}
-          <div className="p-4 sm:p-6 bg-white space-y-3 shrink-0">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-[11px] sm:text-xs font-mono uppercase tracking-wider text-zinc-500 font-medium truncate">
-                {project.client}
-              </p>
-              <span className="text-[10px] sm:text-[11px] font-mono text-zinc-700 px-2.5 py-0.5 rounded-full bg-zinc-100 border border-zinc-200 shrink-0 font-medium">
-                {project.categoryLabel || project.category}
-              </span>
-            </div>
+            {/* Contained Project Details Panel (Matching dark cinema aesthetic) */}
+            <div className="w-full lg:w-[340px] xl:w-[380px] bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-5 lg:p-6 flex flex-col justify-between shrink-0 space-y-4">
+              <div className="space-y-3.5">
+                <div>
+                  <p className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-1">
+                    {project.client}
+                  </p>
+                  <h3 className="font-display font-bold text-base sm:text-lg text-white leading-snug">
+                    {project.title}
+                  </h3>
+                </div>
 
-            {project.description && (
-              <p className="text-xs sm:text-[13px] text-zinc-600 leading-relaxed font-normal">
-                {project.description}
-              </p>
-            )}
+                {project.description && (
+                  <p className="text-xs sm:text-[13px] text-zinc-300 leading-relaxed font-normal">
+                    {project.description}
+                  </p>
+                )}
 
-            {tags.length > 0 && (
-              <div className="pt-2 border-t border-zinc-100 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                {tags.map((tag, idx) => (
-                  <span
-                    key={`${tag}-${idx}`}
-                    className="px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 text-[11px] font-mono border border-zinc-200/80"
-                  >
-                    #{tag}
-                  </span>
-                ))}
+                {tags.length > 0 && (
+                  <div className="pt-2 border-t border-zinc-800/80 flex flex-wrap items-center gap-1.5">
+                    {tags.map((tag, idx) => (
+                      <span
+                        key={`${tag}-${idx}`}
+                        className="px-2.5 py-0.5 rounded-full bg-zinc-800/80 text-zinc-300 text-[11px] font-mono border border-zinc-700/60"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
 
-            <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-              <span>{project.role || 'Lead Video Editor'}</span>
-              {project.duration && <span>{project.duration}</span>}
+              <div className="space-y-3 pt-3 border-t border-zinc-800/80">
+                <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                  <span>{project.role || 'Lead Video Editor'}</span>
+                  {project.duration && <span>{project.duration}</span>}
+                </div>
+
+                {directExternalLink && (
+                  <a
+                    href={directExternalLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-zinc-950 font-semibold text-xs transition-colors hover:bg-zinc-200 shadow-md cursor-pointer"
+                  >
+                    <span>Watch on YouTube</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>

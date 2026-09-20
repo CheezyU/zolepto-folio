@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T03:10:26.031Z",
+  "lastUpdated": "2026-09-20T03:15:11.991Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -197,12 +197,12 @@
       "id": "graph-2",
       "title": "Sleek's banner",
       "client": "SleekToast",
-      "category": "poster",
+      "category": "styleframe",
       "categoryLabel": "Digital Thumbnail",
       "imageUrl": "https://i.ibb.co/JWN6yRBd/New-BLue-Banner.png",
       "aspect": "landscape",
       "year": "2026",
-      "description": "A classic 3d render ugc for roblox content creators",
+      "description": "A classic 3d render ugc for roblox content creators with cinematic lighting",
       "tools": [
         "Photoshop",
         "Blender"
@@ -213,7 +213,7 @@
       "id": "graph-3",
       "title": "Koza's Banner",
       "client": "KozaEyes",
-      "category": "thumbnail",
+      "category": "styleframe",
       "categoryLabel": "Styleframe Design",
       "imageUrl": "https://i.ibb.co/xt6nCpwr/Kazo-Eyes-banner.png",
       "aspect": "landscape",
@@ -226,9 +226,9 @@
     },
     {
       "id": "graph-4",
-      "title": "Graphic 4",
-      "client": "Client Brand D",
-      "category": "key-art",
+      "title": "MotionGrind Concept",
+      "client": "MotionGrind",
+      "category": "styleframe",
       "categoryLabel": "Cover Art & Packaging",
       "imageUrl": "https://i.ibb.co/21FL2QRq/MG-12.png",
       "aspect": "portrait",
@@ -239,36 +239,6 @@
         "Typography"
       ],
       "file": null
-    },
-    {
-      "id": "graph-5",
-      "title": "Graphic 5",
-      "client": "Client Brand E",
-      "category": "styleframes",
-      "categoryLabel": "Visual Identity",
-      "imageUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221200%22%20height%3D%22675%22%20viewBox%3D%220%200%201200%20675%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221200%22%20height%3D%22675%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%221160%22%20height%3D%22635%22%20rx%3D%2216%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%228%208%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22600%22%20cy%3D%22313.5%22%20r%3D%2236%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22586%22%20y%3D%22299.5%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%224%22%20stroke%3D%22%23a1a1aa%22%20stroke-width%3D%222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22600%22%20y%3D%22373.5%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%3EGraphic%205%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22600%22%20y%3D%22401.5%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EDESIGN%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "aspect": "landscape",
-      "year": "2026",
-      "description": "Zolepto styleframe sequence designed to set art direction and graphic language.",
-      "tools": [
-        "After Effects",
-        "Photoshop"
-      ]
-    },
-    {
-      "id": "graph-6",
-      "title": "Graphic 6",
-      "client": "Client Brand F",
-      "category": "thumbnails",
-      "categoryLabel": "Media Art",
-      "imageUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221200%22%20height%3D%22675%22%20viewBox%3D%220%200%201200%20675%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221200%22%20height%3D%22675%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%221160%22%20height%3D%22635%22%20rx%3D%2216%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%228%208%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22600%22%20cy%3D%22313.5%22%20r%3D%2236%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22586%22%20y%3D%22299.5%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%224%22%20stroke%3D%22%23a1a1aa%22%20stroke-width%3D%222%22%20fill%3D%22none%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22600%22%20y%3D%22373.5%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%3EGraphic%206%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22600%22%20y%3D%22401.5%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EDESIGN%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "aspect": "landscape",
-      "year": "2026",
-      "description": "Zolepto graphic layout balancing bold typography and clean composition.",
-      "tools": [
-        "Photoshop",
-        "Graphic Layout"
-      ]
     }
   ]
 }

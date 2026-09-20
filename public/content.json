@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:25:16.285Z",
+  "lastUpdated": "2026-09-20T22:25:35.203Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -214,7 +214,7 @@
       "id": "graph-4",
       "title": "MotionGrind Concept",
       "client": "MotionGrind",
-      "category": "styleframe",
+      "category": "key-art",
       "categoryLabel": "Cover Art & Packaging",
       "imageUrl": "https://i.ibb.co/21FL2QRq/MG-12.png",
       "aspect": "portrait",

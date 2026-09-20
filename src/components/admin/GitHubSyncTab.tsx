@@ -130,7 +130,7 @@ export const GitHubSyncTab: React.FC<GitHubSyncTabProps> = ({
               Push Portfolio Live to GitHub & Vercel
             </h2>
             <p className="text-xs text-zinc-400 mt-1 max-w-xl">
-              Commits all current site copy, video showreels, and graphic key-art directly to{' '}
+              Commits all current site copy, video projects, and graphic key-art directly to{' '}
               <code className="text-zinc-300 font-mono">public/content.json</code> on your GitHub repository.
               Vercel deploys changes live in seconds!
             </p>

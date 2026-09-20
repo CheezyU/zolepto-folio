@@ -25,7 +25,7 @@ export interface PortfolioContentPayload {
 
 const GITHUB_CONFIG_KEY = 'zolepto_github_sync_vault';
 const LAST_COMMIT_KEY = 'zolepto_github_last_commit';
-const LAST_PUSHED_PAYLOAD_KEY = 'zolepto_github_live_payload';
+export const LAST_PUSHED_PAYLOAD_KEY = 'zolepto_last_pushed_payload';
 const PUBLISHED_CANONICAL_KEY = 'zolepto_published_canonical_content';
 export const GLOBAL_PORTFOLIO_ENDPOINT = 'https://kvdb.io/NpJTZs8GERZzanmJpGY1FL/published_portfolio_content';
 export const CONTENT_PUBLISHED_EVENT = 'zolepto:portfolio-published';
@@ -629,13 +629,23 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
 
   // Source 4: Local cached payload
   try {
-    const cached = localStorage.getItem(LAST_PUSHED_PAYLOAD_KEY);
+    const cached =
+      localStorage.getItem(LAST_PUSHED_PAYLOAD_KEY) ||
+      localStorage.getItem('zolepto_github_live_payload');
     if (cached) {
       addCandidate(JSON.parse(cached));
     }
   } catch {}
 
   if (candidates.length === 0) return null;
+
+  // Check if user recently saved edits locally
+  let lastLocalEditTime = 0;
+  try {
+    const pTime = parseInt(localStorage.getItem('zolepto_portfolio_last_edit_time') || '0', 10);
+    const sTime = parseInt(localStorage.getItem('zolepto_settings_last_edit_time') || '0', 10);
+    lastLocalEditTime = Math.max(pTime, sTime);
+  } catch {}
 
   // Sort candidates by newest lastUpdated timestamp - authoritative true published source
   candidates.sort((a, b) => {
@@ -645,6 +655,21 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
   });
 
   const newest = candidates[0];
+  const newestTime = newest.lastUpdated ? new Date(newest.lastUpdated).getTime() : 0;
+
+  // If admin is actively editing or local edit is newer or equal to newest remote, do not overwrite local cache with older data
+  const isAdminEditing = typeof window !== 'undefined' && (
+    localStorage.getItem('zolepto_admin_editing_active') === 'true' ||
+    window.location.hash.toLowerCase().includes('admin') ||
+    window.location.pathname.toLowerCase().includes('admin')
+  );
+  if (isAdminEditing || (lastLocalEditTime > 0 && newestTime <= lastLocalEditTime)) {
+    try {
+      const cached = localStorage.getItem(LAST_PUSHED_PAYLOAD_KEY);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  }
 
   // Persist freshest payload to local storage
   try {

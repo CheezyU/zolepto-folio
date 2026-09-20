@@ -142,7 +142,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-zinc-950 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current ml-0.5" />
                 </div>
-                <span>Watch Showreel</span>
+                <span>Watch Video</span>
               </button>
 
               <button

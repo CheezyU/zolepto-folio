@@ -890,7 +890,7 @@ export const VisualCopyEditor: React.FC<VisualCopyEditorProps> = ({
                     <div className="w-5 h-5 rounded-full bg-zinc-950 flex items-center justify-center text-white">
                       <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
                     </div>
-                    <span>Watch Showreel</span>
+                    <span>Watch Video</span>
                   </div>
 
                   <div className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold">

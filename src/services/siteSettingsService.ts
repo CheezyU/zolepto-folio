@@ -34,7 +34,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   // Hero Credibility Metrics
   heroStat1Value: '14M+',
   heroStat1Label: 'Organic Views',
-  heroStat2Value: '4+ Years',
+  heroStat2Value: '5+ years',
   heroStat2Label: 'Multimedia & Content Creation',
   heroStat3Value: '1-on-1',
   heroStat3Label: 'Direct Direction',
@@ -215,6 +215,11 @@ export function sanitizeSiteSettings(incoming: Partial<SiteSettings> | null | un
     merged.socialLinkedin = DEFAULT_SITE_SETTINGS.socialLinkedin;
   }
 
+  // 9. Upgrade stale 4+ Years stat to 5+ years by default
+  if (!merged.heroStat2Value || merged.heroStat2Value === '4+ Years' || merged.heroStat2Value === '4+ years') {
+    merged.heroStat2Value = '5+ years';
+  }
+
   return merged;
 }
 
@@ -242,10 +247,27 @@ export function getLocalSettings(): SiteSettings {
 
 export function saveLocalSettings(settings: SiteSettings, dispatch = true) {
   try {
-    localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(settings));
+    const sanitized = sanitizeSiteSettings(settings);
+    localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(sanitized));
+    localStorage.setItem('zolepto_settings_last_edit_time', Date.now().toString());
+
+    // Update merged payload cache so local edits are always preserved
+    try {
+      const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+      const existing = existingRaw ? JSON.parse(existingRaw) : {};
+      localStorage.setItem(
+        'zolepto_last_pushed_payload',
+        JSON.stringify({
+          ...existing,
+          siteSettings: sanitized,
+          lastUpdated: new Date().toISOString(),
+        })
+      );
+    } catch {}
+
     if (dispatch) {
       window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent(SETTINGS_EVENT, { detail: settings }));
+      window.dispatchEvent(new CustomEvent(SETTINGS_EVENT, { detail: sanitized }));
     }
   } catch (err) {
     console.warn('Failed to save settings locally:', err);
@@ -289,11 +311,12 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
   let isCleanedUp = false;
 
   const fetchGlobalSettings = () => {
-    // If user is actively in the Admin panel, do NOT overwrite their live form state with old deployed content
+    // If user is actively in the Admin panel, do NOT overwrite their live form state
     if (typeof window !== 'undefined') {
-      const isCurrentlyAdmin = window.location.hash.toLowerCase().includes('admin') || 
-                               window.location.pathname.toLowerCase().includes('admin') ||
-                               Boolean(localStorage.getItem('zolepto_admin_editing_active'));
+      const isCurrentlyAdmin =
+        window.location.hash.toLowerCase().includes('admin') ||
+        window.location.pathname.toLowerCase().includes('admin') ||
+        Boolean(localStorage.getItem('zolepto_admin_editing_active'));
       if (isCurrentlyAdmin) return;
     }
 
@@ -301,11 +324,23 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
       .then((deployed) => {
         if (isCleanedUp || !deployed || !deployed.siteSettings) return;
 
+        // Check if user has made newer local changes that should not be clobbered
+        try {
+          const lastLocalEdit = parseInt(
+            localStorage.getItem('zolepto_settings_last_edit_time') || '0',
+            10
+          );
+          const remoteTime = deployed.lastUpdated ? new Date(deployed.lastUpdated).getTime() : 0;
+          if (lastLocalEdit > 0 && remoteTime <= lastLocalEdit) {
+            return;
+          }
+        } catch {}
+
         // Authoritative source of truth: Deployed/published settings
-        const finalSettings: SiteSettings = {
+        const finalSettings: SiteSettings = sanitizeSiteSettings({
           ...DEFAULT_SITE_SETTINGS,
           ...deployed.siteSettings,
-        };
+        });
 
         // Cache so reloads and offline stay fully updated
         saveLocalSettings(finalSettings, false);
@@ -325,9 +360,6 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
     if (document.visibilityState === 'visible') fetchGlobalSettings();
   };
 
-  // Periodic real-time poll every 8 seconds for immediate client updates
-  const interval = setInterval(fetchGlobalSettings, 8000);
-
   const handleLocalUpdate = () => {
     if (isCleanedUp) return;
     callback(getLocalSettings());
@@ -336,7 +368,7 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
   const handleGlobalPublished = (e: any) => {
     if (isCleanedUp) return;
     if (e.detail?.siteSettings) {
-      const merged = { ...DEFAULT_SITE_SETTINGS, ...e.detail.siteSettings };
+      const merged = sanitizeSiteSettings({ ...DEFAULT_SITE_SETTINGS, ...e.detail.siteSettings });
       saveLocalSettings(merged, false);
       callback(merged);
     } else {
@@ -352,7 +384,6 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
 
   return () => {
     isCleanedUp = true;
-    clearInterval(interval);
     window.removeEventListener('storage', handleLocalUpdate);
     window.removeEventListener(SETTINGS_EVENT, handleLocalUpdate);
     window.removeEventListener(CONTENT_PUBLISHED_EVENT, handleGlobalPublished);
@@ -368,9 +399,22 @@ export async function updateSiteSettings(
   updates: Partial<SiteSettings>
 ): Promise<{ success: boolean; cloudSynced: boolean; error?: string }> {
   const current = getLocalSettings();
-  const updated: SiteSettings = { ...current, ...updates };
+  const updated: SiteSettings = sanitizeSiteSettings({ ...current, ...updates });
 
   saveLocalSettings(updated, true);
   clearDraftSettings();
+
+  // Also publish to global cloud in the background if possible
+  try {
+    const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+    const existing = existingRaw ? JSON.parse(existingRaw) : {};
+    const fullPayload = {
+      ...existing,
+      siteSettings: updated,
+      lastUpdated: new Date().toISOString(),
+    };
+    localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
+  } catch {}
+
   return { success: true, cloudSynced: true };
 }

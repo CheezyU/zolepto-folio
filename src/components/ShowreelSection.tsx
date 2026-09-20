@@ -31,13 +31,14 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
   const fallbackThumbnail = 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80';
 
   return (
-    <section id="showreels" className="py-20 sm:py-28 relative border-t border-zinc-200/80 bg-white">
+    <section id="videos" className="py-20 sm:py-28 relative border-t border-zinc-200/80 bg-white">
+      <div id="showreels" className="absolute -top-24 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header: Clean, direct 1-word heading with no dramatic eyebrows */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
           <div>
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
-              Showreels
+              Videos
             </h2>
           </div>
 

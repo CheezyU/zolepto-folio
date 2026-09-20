@@ -18,9 +18,9 @@ import { FolderSection, HeroStickyFolder } from './components/FolderSection';
 import { CustomInquiryBadge } from './components/CustomInquiryBadge';
 import { AdminLogin } from './components/AdminLogin';
 import { AdminPanel } from './components/AdminPanel';
-import { VideoProject, GraphicProject, SiteSettings } from './types';
+import { VideoProject, GraphicProject, SiteSettings, WorkSectionTab } from './types';
 import { MAIN_SHOWREEL, VIDEO_PROJECTS, GRAPHIC_PROJECTS } from './data/portfolioData';
-import { subscribeToShowreels, subscribeToGraphics } from './services/portfolioService';
+import { subscribeToShowreels, subscribeToGraphics, getAuthoritativeShowreels, getAuthoritativeGraphics } from './services/portfolioService';
 import { subscribeToSiteSettings, DEFAULT_SITE_SETTINGS } from './services/siteSettingsService';
 import { startSmartUpdateMonitor } from './services/smartUpdateMonitor';
 import { SmartUpdateBanner } from './components/SmartUpdateBanner';
@@ -37,8 +37,8 @@ function MainApp() {
   const [currentView, setCurrentView] = useState<'portfolio' | 'admin'>(() => {
     return checkIsAdminRoute() ? 'admin' : 'portfolio';
   });
-  const [showreels, setShowreels] = useState<VideoProject[]>(VIDEO_PROJECTS);
-  const [graphics, setGraphics] = useState<GraphicProject[]>(GRAPHIC_PROJECTS);
+  const [showreels, setShowreels] = useState<VideoProject[]>(() => getAuthoritativeShowreels());
+  const [graphics, setGraphics] = useState<GraphicProject[]>(() => getAuthoritativeGraphics());
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [activeTheaterProject, setActiveTheaterProject] = useState<VideoProject | null>(null);
 
@@ -169,7 +169,7 @@ function MainApp() {
     };
   }, []);
 
-  const [activeWorkTab, setActiveWorkTab] = useState<'all' | 'showreels' | 'design'>('all');
+  const [activeWorkTab, setActiveWorkTab] = useState<WorkSectionTab>('videos');
 
   const navigateToAdmin = () => {
     window.location.hash = 'admin';
@@ -218,13 +218,18 @@ function MainApp() {
       scrollToWork();
       return;
     }
+    if (sectionId === 'shorts') {
+      setActiveWorkTab('shorts');
+      scrollToWork();
+      return;
+    }
     if (sectionId === 'graphic-design' || sectionId === 'design') {
       setActiveWorkTab('design');
       scrollToWork();
       return;
     }
     if (sectionId === 'work') {
-      setActiveWorkTab('all');
+      setActiveWorkTab('videos');
       scrollToWork();
       return;
     }

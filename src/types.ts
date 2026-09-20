@@ -1,4 +1,13 @@
-export type VideoCategory = 'all' | 'commercial' | 'narrative' | 'short-form' | 'motion';
+export type VideoCategory =
+  | 'all'
+  | 'commercial'
+  | 'narrative'
+  | 'short-form'
+  | 'motion'
+  | 'documentary'
+  | 'motion-graphics';
+
+export type WorkSectionTab = 'videos' | 'showreels' | 'shorts' | 'design';
 
 export interface VideoProject {
   id: string;

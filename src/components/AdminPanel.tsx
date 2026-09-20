@@ -26,6 +26,7 @@ import {
   RefreshCw,
   GitBranch,
   Mail,
+  Smartphone,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -38,6 +39,7 @@ import {
   SecurityLogEntry,
 } from '../types';
 import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '../lib/youtube';
+import { parseVideoUrl, isShortFormVideo } from '../lib/videoEmbed';
 import { cleanImageUrl, detectImgbbFormat, resolveImgbbViewerUrl } from '../lib/imageUtils';
 import {
   addShowreel,
@@ -107,8 +109,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 }) => {
   const { user, logout, isConfigured } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    'showreels' | 'graphics' | 'site-copy' | 'inquiries' | 'github-sync' | 'security'
-  >('showreels');
+    'videos' | 'graphics' | 'site-copy' | 'inquiries' | 'github-sync' | 'security'
+  >('videos');
+
+  // Protect local edit session from background sync overwrites
+  useEffect(() => {
+    localStorage.setItem('zolepto_admin_editing_active', 'true');
+    return () => {
+      localStorage.removeItem('zolepto_admin_editing_active');
+    };
+  }, []);
 
   // Site Copy State
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
@@ -261,16 +271,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     await logout();
   };
 
-  // --- Showreel Handlers ---
+  // --- Video Handlers ---
   const handleOpenEditVideo = (video: VideoProject) => {
     setEditingVideo(video);
     setIsAddingVideo(false);
+    const existingUrl = video.youtubeId
+      ? `https://www.youtube.com/watch?v=${video.youtubeId}`
+      : (video as any).youtubeUrl || video.embedUrl || '';
     setVideoFormData({
-      title: video.title,
-      client: video.client,
-      category: video.category,
+      title: video.title || '',
+      client: video.client || '',
+      category: video.category || 'commercial',
       categoryLabel: video.categoryLabel || '',
-      youtubeUrl: video.youtubeId ? `https://www.youtube.com/watch?v=${video.youtubeId}` : '',
+      youtubeUrl: existingUrl,
       duration: video.duration || '',
       year: video.year || '2026',
       role: video.role || 'Lead Editor',
@@ -302,19 +315,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const handleSaveVideo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!videoFormData.title.trim() || !videoFormData.youtubeUrl.trim()) {
-      setVideoFormStatus({ type: 'error', text: 'Title and YouTube URL are required' });
+    const title = videoFormData.title.trim();
+    if (!title) {
+      setVideoFormStatus({ type: 'error', text: 'Title is required' });
       return;
     }
 
-    const extracted = extractYouTubeId(videoFormData.youtubeUrl);
-    if (!extracted) {
-      setVideoFormStatus({ type: 'error', text: 'Please enter a valid YouTube video link or ID' });
+    const inputUrl = videoFormData.youtubeUrl.trim();
+    if (!editingVideo && !inputUrl) {
+      setVideoFormStatus({ type: 'error', text: 'Video URL is required' });
+      return;
+    }
+
+    const parsed = inputUrl ? parseVideoUrl(inputUrl) : null;
+    if (inputUrl && !parsed?.embedUrl && !parsed?.videoId && !editingVideo) {
+      setVideoFormStatus({
+        type: 'error',
+        text: 'Please enter a valid video link (YouTube, Shorts, IG Reels, TikTok, or FB Reels)',
+      });
       return;
     }
 
     setIsSavingVideo(true);
     setVideoFormStatus(null);
+
+    const isShort = parsed
+      ? (parsed.isShortForm || videoFormData.category === 'short-form')
+      : (editingVideo ? (editingVideo.aspectRatio === '9/16' || videoFormData.category === 'short-form') : videoFormData.category === 'short-form');
+
+    const category: VideoCategory = isShort && (!videoFormData.category || videoFormData.category === 'commercial')
+      ? 'short-form'
+      : videoFormData.category;
 
     const tagList = videoFormData.tags
       .split(',')
@@ -324,31 +355,35 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     try {
       if (editingVideo) {
         await updateShowreel(editingVideo.id, {
-          title: videoFormData.title.trim(),
-          client: videoFormData.client.trim() || 'Client Project',
-          category: videoFormData.category,
-          categoryLabel: videoFormData.categoryLabel.trim() || undefined,
-          youtubeUrl: videoFormData.youtubeUrl.trim(),
-          duration: videoFormData.duration.trim() || '1:00',
-          year: videoFormData.year.trim() || '2026',
-          role: videoFormData.role.trim() || 'Lead Editor',
+          title,
+          client: videoFormData.client.trim() || editingVideo.client || 'Client Project',
+          category,
+          categoryLabel: videoFormData.categoryLabel.trim() || (isShort ? 'Short-Form' : undefined),
+          ...(inputUrl ? { youtubeUrl: inputUrl } : {}),
+          aspectRatio: isShort ? '9/16' : '16/9',
+          duration: videoFormData.duration.trim() || editingVideo.duration || (isShort ? '0:30' : '1:00'),
+          year: videoFormData.year.trim() || editingVideo.year || '2026',
+          role: videoFormData.role.trim() || editingVideo.role || (isShort ? 'Retention Edit & Hook' : 'Lead Editor'),
           description: videoFormData.description.trim(),
-          tags: tagList.length > 0 ? tagList : ['Editing'],
+          tags: tagList.length > 0 ? tagList : (editingVideo.tags || (isShort ? ['Short-Form', 'Reels'] : ['Editing'])),
           metrics: videoFormData.metrics.trim(),
         });
-        appendSecurityLog(`Updated Showreel: ${videoFormData.title}`, `ID: ${editingVideo.id}`);
-        setVideoFormStatus({ type: 'success', text: 'Showreel updated and synchronized globally!' });
+        appendSecurityLog(`Updated Video: ${title}`, `ID: ${editingVideo.id}`);
+        setVideoFormStatus({ type: 'success', text: 'Video project updated and synchronized globally!' });
       } else {
         await addShowreel({
-          title: videoFormData.title.trim(),
+          title,
           client: videoFormData.client.trim() || 'Client Project',
-          category: videoFormData.category,
-          youtubeUrl: videoFormData.youtubeUrl.trim(),
-          duration: videoFormData.duration.trim() || '1:00',
+          category,
+          categoryLabel: videoFormData.categoryLabel.trim() || (isShort ? 'Short-Form' : undefined),
+          youtubeUrl: inputUrl,
+          duration: videoFormData.duration.trim() || (isShort ? '0:30' : '1:00'),
           description: videoFormData.description.trim(),
+          role: videoFormData.role.trim() || (isShort ? 'Retention Edit & Hook' : 'Lead Editor'),
+          tags: tagList.length > 0 ? tagList : (isShort ? ['Short-Form', 'Reels'] : ['Commercial', 'Editing']),
         });
-        appendSecurityLog(`Created New Showreel: ${videoFormData.title}`, 'Added to portfolio');
-        setVideoFormStatus({ type: 'success', text: 'New showreel published and saved to portfolio!' });
+        appendSecurityLog(`Created New Video: ${title}`, 'Added to portfolio');
+        setVideoFormStatus({ type: 'success', text: 'New video published and saved to portfolio!' });
       }
 
       setTimeout(() => {
@@ -356,7 +391,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         setIsAddingVideo(false);
       }, 900);
     } catch (err: any) {
-      setVideoFormStatus({ type: 'error', text: err?.message || 'Failed to save showreel' });
+      setVideoFormStatus({ type: 'error', text: err?.message || 'Failed to save video' });
     } finally {
       setIsSavingVideo(false);
     }
@@ -365,7 +400,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const handleDeleteVideo = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to remove "${title}" from the portfolio?`)) {
       await deleteShowreel(id);
-      appendSecurityLog(`Deleted Showreel: ${title}`, `ID: ${id}`);
+      appendSecurityLog(`Deleted Video: ${title}`, `ID: ${id}`);
     }
   };
 
@@ -441,11 +476,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const handleSaveGraphic = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!graphicFormData.title.trim()) {
+    const title = graphicFormData.title.trim();
+    if (!title) {
       setGraphicFormStatus({ type: 'error', text: 'Title is required' });
       return;
     }
-    if (!graphicFile && !graphicFormData.imageUrl && !graphicPreviewUrl) {
+    if (!graphicFile && !graphicFormData.imageUrl && !graphicPreviewUrl && !editingGraphic) {
       setGraphicFormStatus({ type: 'error', text: 'Please provide an image file or image URL' });
       return;
     }
@@ -459,26 +495,27 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       .filter(Boolean);
 
     try {
-      const sanitizedImageUrl = cleanImageUrl(graphicFormData.imageUrl);
+      const inputImgUrl = graphicFormData.imageUrl?.trim() || '';
+      const sanitizedImageUrl = cleanImageUrl(inputImgUrl) || inputImgUrl || (editingGraphic ? editingGraphic.imageUrl : '');
 
       if (editingGraphic) {
         await updateGraphicDesign(editingGraphic.id, {
-          title: graphicFormData.title.trim(),
-          client: graphicFormData.client.trim() || 'Studio Art',
+          title,
+          client: graphicFormData.client.trim() || editingGraphic.client || 'Studio Art',
           category: graphicFormData.category,
           categoryLabel: graphicFormData.categoryLabel.trim() || undefined,
           imageUrl: sanitizedImageUrl,
           aspect: graphicFormData.aspect,
-          year: graphicFormData.year.trim() || '2026',
+          year: graphicFormData.year.trim() || editingGraphic.year || '2026',
           description: graphicFormData.description.trim(),
-          tools: toolsList.length > 0 ? toolsList : ['Photoshop'],
+          tools: toolsList.length > 0 ? toolsList : (editingGraphic.tools || ['Photoshop']),
           file: graphicFile,
         });
-        appendSecurityLog(`Updated Graphic Design: ${graphicFormData.title}`, `ID: ${editingGraphic.id}`);
+        appendSecurityLog(`Updated Graphic Design: ${title}`, `ID: ${editingGraphic.id}`);
         setGraphicFormStatus({ type: 'success', text: 'Graphic design updated and synchronized!' });
       } else {
         await addGraphicDesign({
-          title: graphicFormData.title.trim(),
+          title,
           client: graphicFormData.client.trim() || 'Studio Art',
           category: graphicFormData.category,
           categoryLabel: graphicFormData.categoryLabel.trim() || undefined,
@@ -488,7 +525,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           imageUrl: sanitizedImageUrl,
           file: graphicFile,
         });
-        appendSecurityLog(`Created New Graphic: ${graphicFormData.title}`, 'Added to portfolio');
+        appendSecurityLog(`Created New Graphic: ${title}`, 'Added to portfolio');
         setGraphicFormStatus({ type: 'success', text: 'Graphic design published and saved to portfolio!' });
       }
 
@@ -551,8 +588,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   // Video preview in editor
-  const editVideoId = extractYouTubeId(videoFormData.youtubeUrl);
-  const editVideoThumb = editVideoId ? getYouTubeThumbnailUrl(editVideoId) : null;
+  const parsedVideoInput = parseVideoUrl(videoFormData.youtubeUrl);
+  const editVideoId = parsedVideoInput.videoId || extractYouTubeId(videoFormData.youtubeUrl);
+  const editVideoThumb =
+    parsedVideoInput.thumbnailUrl || (editVideoId ? getYouTubeThumbnailUrl(editVideoId) : null);
 
   // Filter lists
   const filteredVideos = showreels.filter(
@@ -665,16 +704,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 border-b border-zinc-200 mb-8 scrollbar-none">
           <button
-            id="tab-btn-showreels"
-            onClick={() => setActiveTab('showreels')}
+            id="tab-btn-videos"
+            onClick={() => setActiveTab('videos')}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === 'showreels'
+              activeTab === 'videos'
                 ? 'bg-zinc-950 text-white shadow-xs'
                 : 'bg-white text-zinc-600 hover:text-zinc-900 border border-zinc-200'
             }`}
           >
             <Film className="w-4 h-4" />
-            <span>Showreels ({showreels.length})</span>
+            <span>Videos ({showreels.length})</span>
           </button>
 
           <button
@@ -743,34 +782,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </button>
         </div>
 
-        {/* TAB 1: SHOWREELS MANAGER */}
-        {activeTab === 'showreels' && (
+        {/* TAB 1: VIDEOS MANAGER */}
+        {activeTab === 'videos' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="font-display text-2xl font-bold text-zinc-900">
-                  Video Showreels & Commercial Cuts
+                  Video Projects & Commercial Cuts
                 </h2>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Manage, edit, or add projects. Changes update seamlessly across your portfolio.
+                  Manage, edit, or add video projects. Changes update seamlessly across your portfolio.
                 </p>
               </div>
 
               <div className="flex items-center gap-3">
                 <input
                   type="text"
-                  placeholder="Search showreels..."
+                  placeholder="Search videos..."
                   value={videoSearch}
                   onChange={(e) => setVideoSearch(e.target.value)}
                   className="px-3.5 py-2 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
                 />
                 <button
-                  id="add-showreel-btn"
+                  id="add-video-btn"
                   onClick={handleOpenAddVideo}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-xs shrink-0"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Showreel</span>
+                  <span>Add Video</span>
                 </button>
               </div>
             </div>
@@ -790,9 +829,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         alt={video.title}
                         className="w-full h-full object-cover"
                       />
-                      <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-black/75 backdrop-blur-xs text-[10px] font-mono text-white">
-                        {video.categoryLabel || video.category}
-                      </span>
+                      <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 rounded bg-black/75 backdrop-blur-xs text-[10px] font-mono text-white">
+                          {video.categoryLabel || video.category}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="p-4 space-y-2">
@@ -1170,7 +1211,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             <div className="flex items-center justify-between pb-4 border-b border-zinc-200">
               <div>
                 <h3 className="font-display font-bold text-xl text-zinc-950">
-                  {editingVideo ? `Edit Showreel: ${editingVideo.title}` : 'Add New Showreel'}
+                  {editingVideo ? `Edit Video: ${editingVideo.title}` : 'Add New Video'}
                 </h3>
                 <p className="text-xs text-zinc-500 mt-0.5">
                   Metadata, YouTube video sync, and tags
@@ -1240,27 +1281,50 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                  YouTube Video Link or ID *
+                  Video Link (YouTube, Shorts, IG Reels, TikTok, FB Reels) *
                 </label>
                 <input
                   type="text"
                   required
                   value={videoFormData.youtubeUrl}
-                  onChange={(e) =>
-                    setVideoFormData((prev) => ({ ...prev, youtubeUrl: e.target.value }))
-                  }
-                  placeholder="https://www.youtube.com/watch?v=... or ID"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const parsed = parseVideoUrl(val);
+                    setVideoFormData((prev) => ({
+                      ...prev,
+                      youtubeUrl: val,
+                      ...(parsed.isShortForm && (!prev.category || prev.category === 'commercial')
+                        ? { category: 'short-form' as VideoCategory, categoryLabel: 'Short-Form' }
+                        : {}),
+                    }));
+                  }}
+                  placeholder="https://youtube.com/shorts/... or tiktok.com/@... or instagram.com/reel/..."
                   className="w-full px-3.5 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
                 {editVideoThumb && (
-                  <div className="mt-2 flex items-center gap-3 p-2 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="mt-2 flex items-center gap-3 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
                     <img
                       src={editVideoThumb}
                       alt="Thumbnail preview"
-                      className="w-20 h-12 object-cover rounded-lg"
+                      className={`object-cover rounded-lg ${
+                        parsedVideoInput.isShortForm ? 'w-10 h-16' : 'w-20 h-12'
+                      }`}
                     />
-                    <div className="text-[11px] font-mono text-zinc-500">
-                      Detected Video ID: <span className="text-zinc-900 font-bold">{editVideoId}</span>
+                    <div className="text-[11px] font-mono text-zinc-600 flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-900">
+                          {parsedVideoInput.platformLabel}
+                        </span>
+                        {parsedVideoInput.isShortForm && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-semibold">
+                            <Smartphone className="w-2.5 h-2.5" />
+                            Vertical Short
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-zinc-500 text-[10px] mt-0.5 truncate">
+                        {editVideoId ? `ID: ${editVideoId}` : 'Embed Ready'}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1281,9 +1345,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     }
                     className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                   >
-                    <option value="commercial">Commercial</option>
+                    <option value="commercial">Commercial Video</option>
+                    <option value="short-form">Shorts (Vertical Video)</option>
                     <option value="documentary">Documentary</option>
-                    <option value="short-form">Short-Form</option>
                     <option value="narrative">Narrative</option>
                     <option value="motion-graphics">Motion Graphics</option>
                   </select>
@@ -1368,7 +1432,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   disabled={isSavingVideo}
                   className="px-5 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold uppercase tracking-wider cursor-pointer shadow-xs disabled:opacity-50"
                 >
-                  {isSavingVideo ? 'Saving...' : editingVideo ? 'Save Changes' : 'Publish Showreel'}
+                  {isSavingVideo ? 'Saving...' : editingVideo ? 'Save Changes' : 'Publish Video'}
                 </button>
               </div>
             </form>

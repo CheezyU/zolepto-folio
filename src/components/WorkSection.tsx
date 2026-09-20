@@ -120,6 +120,300 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
   const fallbackGraphic =
     'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
 
+  const renderMobileCard = (item: UnifiedItem, uniqueKey: string) => {
+    if (item.type === 'video') {
+      const video = item.data;
+      const isShort = isShortFormVideo(video);
+
+      // If viewing dedicated Shorts tab: render vertical card
+      if (currentTab === 'shorts') {
+        const verticalFallback = createShortsPlaceholderSvg(video.title, video.client);
+        const displayThumb =
+          video.thumbnailUrl ||
+          (video.youtubeId ? `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg` : '') ||
+          verticalFallback;
+
+        return (
+          <div
+            key={`mob-vid-${uniqueKey}-${video.id}`}
+            id={`mob-video-card-${video.id}`}
+            onClick={() => onOpenVideoModal(video)}
+            className="group w-full aspect-[9/16] flex flex-col rounded-2xl bg-zinc-950 border border-zinc-200/80 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer relative select-none"
+          >
+            <img
+              src={displayThumb}
+              alt={video.title}
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              onError={(e) => handleThumbnailImageError(e, verticalFallback)}
+              onLoad={handleThumbnailImageLoad}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+
+            {/* Top Badges */}
+            <div className="absolute top-0 inset-x-0 p-3 bg-gradient-to-b from-black/80 via-black/30 to-transparent flex items-center justify-end z-10 pointer-events-none">
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-mono text-zinc-300 border border-white/15 truncate max-w-[120px]">
+                {video.categoryLabel || 'Shorts'}
+              </span>
+            </div>
+
+            {/* Center Play Button */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-11 h-11 rounded-full bg-white/95 text-zinc-950 flex items-center justify-center shadow-lg">
+                <Play className="w-4 h-4 fill-current ml-0.5 text-zinc-950" />
+              </div>
+            </div>
+
+            {/* Bottom Details Overlay */}
+            <div className="absolute bottom-0 inset-x-0 p-3.5 pt-12 bg-gradient-to-t from-black/95 via-black/75 to-transparent z-10 pointer-events-none flex flex-col gap-1">
+              <h4
+                title={video.title}
+                className="font-display font-semibold text-xs sm:text-[13px] text-white line-clamp-2 leading-snug"
+              >
+                {video.title}
+              </h4>
+              <div className="flex items-center justify-between gap-2 mt-0.5">
+                <span
+                  title={video.client}
+                  className="text-[10px] font-mono text-zinc-300 uppercase tracking-wider truncate font-medium"
+                >
+                  {video.client}
+                </span>
+              </div>
+              {Array.isArray(video.tags) && video.tags.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1 mt-1">
+                  {video.tags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-block px-1.5 py-0.5 rounded bg-white/15 backdrop-blur-xs text-[9px] font-mono text-zinc-200 border border-white/10 leading-none truncate max-w-[90px]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // Otherwise (mixed in All Work or Videos): force vertical into standard landscape size card matching long form
+      if (isShort) {
+        return (
+          <div
+            key={`mob-vid-${uniqueKey}-${video.id}`}
+            id={`mob-video-card-${video.id}`}
+            onClick={() => onOpenVideoModal(video)}
+            className="group w-full flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer shadow-xs"
+          >
+            <div className="relative overflow-hidden bg-zinc-950 aspect-video w-full flex items-center justify-center">
+              {/* Ambient blurred backdrop */}
+              <img
+                src={video.thumbnailUrl || fallbackThumbnail}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-30 pointer-events-none"
+              />
+              <div className="absolute inset-0 bg-black/40" />
+
+              {/* Centered vertical 9:16 poster */}
+              <img
+                src={video.thumbnailUrl || fallbackThumbnail}
+                alt={video.title}
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                onLoad={handleThumbnailImageLoad}
+                className="h-full aspect-[9/16] object-cover relative rounded shadow-xl border-x border-white/10"
+              />
+
+              <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/55 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
+                  {video.categoryLabel || 'Shorts'}
+                </span>
+              </div>
+
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-10 h-10 rounded-full bg-white/95 text-zinc-950 flex items-center justify-center shadow-lg">
+                  <Play className="w-4 h-4 fill-current ml-0.5 text-zinc-950" />
+                </div>
+              </div>
+            </div>
+
+            <div className="px-3.5 py-2 sm:px-4 sm:py-2.5 flex flex-col gap-0.5 min-w-0">
+              <div className="flex items-center justify-between gap-2.5 min-w-0">
+                <h4
+                  title={video.title}
+                  className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
+                >
+                  {video.title}
+                </h4>
+                <span
+                  title={video.client}
+                  className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+                >
+                  {video.client}
+                </span>
+              </div>
+              {Array.isArray(video.tags) && video.tags.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                  {video.tags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // Standard landscape card on mobile for longform video
+      return (
+        <div
+          key={`mob-vid-${uniqueKey}-${video.id}`}
+          id={`mob-video-card-${video.id}`}
+          onClick={() => onOpenVideoModal(video)}
+          className="group w-full flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer shadow-xs"
+        >
+          <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
+            <img
+              src={video.thumbnailUrl || fallbackThumbnail}
+              alt={video.title}
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+              onLoad={handleThumbnailImageLoad}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/5" />
+            <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
+                {video.categoryLabel || video.category}
+              </span>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center opacity-90">
+              <div className="w-10 h-10 rounded-full bg-white/95 text-zinc-950 flex items-center justify-center shadow-lg">
+                <Play className="w-4 h-4 fill-current ml-0.5 text-zinc-950" />
+              </div>
+            </div>
+          </div>
+
+          <div className="px-3.5 py-2 sm:px-4 sm:py-2.5 flex flex-col gap-0.5 min-w-0">
+            <div className="flex items-center justify-between gap-2.5 min-w-0">
+              <h4
+                title={video.title}
+                className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
+              >
+                {video.title}
+              </h4>
+              <span
+                title={video.client}
+                className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+              >
+                {video.client}
+              </span>
+            </div>
+            {Array.isArray(video.tags) && video.tags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                {video.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    } else {
+      const graphic = item.data;
+      const rawGraphicSrc = (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
+      const graphicSrc = getOptimizedImageUrl(rawGraphicSrc, {
+        width: 700,
+        quality: 80,
+        format: 'webp',
+      });
+      const graphicSrcSet = getResponsiveSrcSet(rawGraphicSrc, [360, 700], 80);
+      const graphicTags =
+        Array.isArray(graphic.tools) && graphic.tools.length > 0
+          ? graphic.tools
+          : Array.isArray((graphic as any).tags) && (graphic as any).tags.length > 0
+          ? (graphic as any).tags
+          : [];
+
+      return (
+        <div
+          key={`mob-graph-${uniqueKey}-${graphic.id}`}
+          id={`mob-graphic-card-${graphic.id}`}
+          onClick={() => setSelectedGraphic(graphic)}
+          className="group w-full flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer shadow-xs"
+        >
+          <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
+            <div className="absolute inset-0 bg-zinc-200/80 animate-pulse pointer-events-none" />
+            <img
+              src={graphicSrc}
+              srcSet={graphicSrcSet}
+              sizes="(max-width: 640px) 84vw, 380px"
+              alt={graphic.title}
+              loading="eager"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                handleOptimizedImageError(e, rawGraphicSrc, fallbackGraphic);
+              }}
+              className="relative w-full h-full object-cover"
+            />
+            <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
+                {graphic.categoryLabel || graphic.category}
+              </span>
+            </div>
+          </div>
+
+          <div className="px-3.5 py-2 sm:px-4 sm:py-2.5 flex flex-col gap-0.5 min-w-0">
+            <div className="flex items-center justify-between gap-2.5 min-w-0">
+              <h4
+                title={graphic.title}
+                className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
+              >
+                {graphic.title}
+              </h4>
+              <span
+                title={graphic.client}
+                className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
+              >
+                {graphic.client}
+              </span>
+            </div>
+            {graphicTags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                {graphicTags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -230,309 +524,57 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
               initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none -mx-4 sm:-mx-6 px-4 sm:px-6 scroll-pl-4 sm:scroll-pl-6"
+              className={`flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none -mx-4 sm:-mx-6 px-4 sm:px-6 scroll-px-4 sm:scroll-px-6 ${
+                (currentTab === 'shorts' && unifiedItems.length === 1) ||
+                (currentTab !== 'shorts' && unifiedItems.length <= 2)
+                  ? 'justify-center'
+                  : ''
+              }`}
             >
               {unifiedItems.length === 0 ? (
                 <div className="w-full text-center py-12 text-zinc-500 text-xs font-mono">
                   No projects available in this category yet.
                 </div>
+              ) : currentTab === 'shorts' ? (
+                /* Shorts: Keep it ONE card per slide, with centered alignment */
+                unifiedItems.map((item, idx) => (
+                  <div
+                    key={`mob-short-slide-${item.data.id || idx}`}
+                    className={`shrink-0 w-[72vw] sm:w-[260px] max-w-[280px] snap-center flex flex-col ${
+                      unifiedItems.length === 1 ? 'mx-auto' : ''
+                    }`}
+                  >
+                    {renderMobileCard(item, `short-${idx}`)}
+                  </div>
+                ))
               ) : (
-                unifiedItems.map((item) => {
-                  if (item.type === 'video') {
-                    const video = item.data;
-                    const isShort = isShortFormVideo(video);
-
-                    // If viewing dedicated Shorts tab: render vertical card
-                    if (currentTab === 'shorts') {
-                      const verticalFallback = createShortsPlaceholderSvg(video.title, video.client);
-                      const displayThumb =
-                        video.thumbnailUrl ||
-                        (video.youtubeId ? `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg` : '') ||
-                        verticalFallback;
-
-                      return (
-                        <div
-                          key={`mob-vid-${video.id}`}
-                          id={`mob-video-card-${video.id}`}
-                          onClick={() => onOpenVideoModal(video)}
-                          className="group shrink-0 w-[65vw] sm:w-[240px] aspect-[9/16] snap-start flex flex-col rounded-2xl bg-zinc-950 border border-zinc-200/80 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer relative select-none"
-                        >
-                          <img
-                            src={displayThumb}
-                            alt={video.title}
-                            loading="lazy"
-                            decoding="async"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => handleThumbnailImageError(e, verticalFallback)}
-                            onLoad={handleThumbnailImageLoad}
-                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                          />
-
-                          {/* Top Badges */}
-                          <div className="absolute top-0 inset-x-0 p-3 bg-gradient-to-b from-black/80 via-black/30 to-transparent flex items-center justify-end z-10 pointer-events-none">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-mono text-zinc-300 border border-white/15 truncate max-w-[120px]">
-                              {video.categoryLabel || 'Shorts'}
-                            </span>
-                          </div>
-
-                          {/* Center Play Button */}
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="w-11 h-11 rounded-full bg-white/95 text-zinc-950 flex items-center justify-center shadow-lg">
-                              <Play className="w-4 h-4 fill-current ml-0.5 text-zinc-950" />
-                            </div>
-                          </div>
-
-                          {/* Bottom Details Overlay */}
-                          <div className="absolute bottom-0 inset-x-0 p-3.5 pt-12 bg-gradient-to-t from-black/95 via-black/75 to-transparent z-10 pointer-events-none flex flex-col gap-1">
-                            <h4
-                              title={video.title}
-                              className="font-display font-semibold text-xs sm:text-[13px] text-white line-clamp-2 leading-snug"
-                            >
-                              {video.title}
-                            </h4>
-                            <div className="flex items-center justify-between gap-2 mt-0.5">
-                              <span
-                                title={video.client}
-                                className="text-[10px] font-mono text-zinc-300 uppercase tracking-wider truncate font-medium"
-                              >
-                                {video.client}
-                              </span>
-                            </div>
-                            {Array.isArray(video.tags) && video.tags.length > 0 && (
-                              <div className="flex flex-wrap items-center gap-1 mt-1">
-                                {video.tags.map((tag, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="inline-block px-1.5 py-0.5 rounded bg-white/15 backdrop-blur-xs text-[9px] font-mono text-zinc-200 border border-white/10 leading-none truncate max-w-[90px]"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    // Otherwise (mixed in All Work or Videos): force vertical into standard landscape size card matching long form
-                    if (isShort) {
-                      return (
-                        <div
-                          key={`mob-vid-${video.id}`}
-                          id={`mob-video-card-${video.id}`}
-                          onClick={() => onOpenVideoModal(video)}
-                          className="group shrink-0 w-[84vw] sm:w-[380px] snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer"
-                        >
-                          <div className="relative overflow-hidden bg-zinc-950 aspect-video w-full flex items-center justify-center">
-                            {/* Ambient blurred backdrop */}
-                            <img
-                              src={video.thumbnailUrl || fallbackThumbnail}
-                              alt=""
-                              aria-hidden="true"
-                              className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-30 pointer-events-none"
-                            />
-                            <div className="absolute inset-0 bg-black/40" />
-
-                            {/* Centered vertical 9:16 poster */}
-                            <img
-                              src={video.thumbnailUrl || fallbackThumbnail}
-                              alt={video.title}
-                              loading="lazy"
-                              decoding="async"
-                              referrerPolicy="no-referrer"
-                              onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
-                              onLoad={handleThumbnailImageLoad}
-                              className="h-full aspect-[9/16] object-cover relative rounded shadow-xl border-x border-white/10"
-                            />
-
-                            <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
-                              <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/55 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
-                                {video.categoryLabel || 'Shorts'}
-                              </span>
-                            </div>
-
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="w-11 h-11 rounded-full bg-white/95 text-zinc-950 flex items-center justify-center shadow-lg">
-                                <Play className="w-4 h-4 fill-current ml-0.5 text-zinc-950" />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2.5 min-w-0">
-                              <h4
-                                title={video.title}
-                                className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
-                              >
-                                {video.title}
-                              </h4>
-                              <span
-                                title={video.client}
-                                className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                              >
-                                {video.client}
-                              </span>
-                            </div>
-                            {Array.isArray(video.tags) && video.tags.length > 0 && (
-                              <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                                {video.tags.map((tag, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    // Standard landscape card on mobile for longform video
-                    return (
-                      <div
-                        key={`mob-vid-${video.id}`}
-                        id={`mob-video-card-${video.id}`}
-                        onClick={() => onOpenVideoModal(video)}
-                        className="group shrink-0 w-[84vw] sm:w-[380px] snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer"
-                      >
-                        <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
-                          <img
-                            src={video.thumbnailUrl || fallbackThumbnail}
-                            alt={video.title}
-                            loading="lazy"
-                            decoding="async"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
-                            onLoad={handleThumbnailImageLoad}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/5" />
-                          <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
-                              {video.categoryLabel || video.category}
-                            </span>
-                          </div>
-                          <div className="absolute inset-0 flex items-center justify-center opacity-90">
-                            <div className="w-11 h-11 rounded-full bg-white/95 text-zinc-950 flex items-center justify-center shadow-lg">
-                              <Play className="w-4 h-4 fill-current ml-0.5 text-zinc-950" />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2.5 min-w-0">
-                            <h4
-                              title={video.title}
-                              className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
-                            >
-                              {video.title}
-                            </h4>
-                            <span
-                              title={video.client}
-                              className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                            >
-                              {video.client}
-                            </span>
-                          </div>
-                          {Array.isArray(video.tags) && video.tags.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                              {video.tags.map((tag, idx) => (
-                                <span
-                                  key={idx}
-                                  className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    const graphic = item.data;
-                    const rawGraphicSrc =
-                      (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
-                    const graphicSrc = getOptimizedImageUrl(rawGraphicSrc, {
-                      width: 700,
-                      quality: 80,
-                      format: 'webp',
-                    });
-                    const graphicSrcSet = getResponsiveSrcSet(rawGraphicSrc, [360, 700], 80);
-                    const graphicTags = Array.isArray(graphic.tools) && graphic.tools.length > 0
-                      ? graphic.tools
-                      : Array.isArray((graphic as any).tags) && (graphic as any).tags.length > 0
-                      ? (graphic as any).tags
-                      : [];
-
-                    return (
-                      <div
-                        key={`mob-graph-${graphic.id}`}
-                        id={`mob-graphic-card-${graphic.id}`}
-                        onClick={() => setSelectedGraphic(graphic)}
-                        className="group shrink-0 w-[84vw] sm:w-[380px] snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer"
-                      >
-                        <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
-                          <div className="absolute inset-0 bg-zinc-200/80 animate-pulse pointer-events-none" />
-                          <img
-                            src={graphicSrc}
-                            srcSet={graphicSrcSet}
-                            sizes="(max-width: 640px) 84vw, 380px"
-                            alt={graphic.title}
-                            loading="eager"
-                            decoding="async"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              handleOptimizedImageError(e, rawGraphicSrc, fallbackGraphic);
-                            }}
-                            className="relative w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/5" />
-                          <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
-                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
-                              {graphic.categoryLabel || graphic.category}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2.5 min-w-0">
-                            <h4
-                              title={graphic.title}
-                              className="font-display font-semibold text-xs sm:text-[13px] text-zinc-900 truncate min-w-0 flex-1 leading-snug"
-                            >
-                              {graphic.title}
-                            </h4>
-                            <span
-                              title={graphic.client}
-                              className="text-[10px] sm:text-[11px] font-mono text-zinc-400 uppercase tracking-wider shrink-0 max-w-[38%] truncate text-right font-medium"
-                            >
-                              {graphic.client}
-                            </span>
-                          </div>
-                          {graphicTags.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                              {graphicTags.map((tag, idx) => (
-                                <span
-                                  key={idx}
-                                  className="inline-block px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[10px] font-mono font-medium border border-zinc-200/60 leading-none"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
+                /* Videos & Graphics: 2 cards stacking (one top and bottom) per slide */
+                (() => {
+                  const slides: UnifiedItem[][] = [];
+                  for (let i = 0; i < unifiedItems.length; i += 2) {
+                    slides.push(unifiedItems.slice(i, i + 2));
                   }
-                })
+
+                  return slides.map((slide, slideIdx) => (
+                    <div
+                      key={`mob-slide-${slideIdx}`}
+                      className={`shrink-0 w-[84vw] sm:w-[380px] snap-center flex flex-col gap-3.5 ${
+                        slides.length === 1 ? 'mx-auto' : ''
+                      }`}
+                    >
+                      {/* Top Card */}
+                      {renderMobileCard(slide[0], `${slideIdx}-top`)}
+
+                      {/* Bottom Card */}
+                      {slide[1] && renderMobileCard(slide[1], `${slideIdx}-bottom`)}
+                    </div>
+                  ));
+                })()
               )}
-              <div className="w-4 shrink-0 pointer-events-none" aria-hidden="true" />
+              {((currentTab === 'shorts' && unifiedItems.length > 1) ||
+                (currentTab !== 'shorts' && unifiedItems.length > 2)) && (
+                <div className="w-4 shrink-0 pointer-events-none" aria-hidden="true" />
+              )}
             </motion.div>
           </div>
 
@@ -629,12 +671,12 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                   }}
                   className={`${
                     currentTab === 'shorts'
-                      ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6'
-                      : 'grid grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-start'
+                      ? 'flex flex-wrap justify-center gap-4 sm:gap-6'
+                      : 'flex flex-wrap justify-center gap-5 sm:gap-6 items-start'
                   } ${totalPages > 1 ? 'cursor-grab active:cursor-grabbing' : ''}`}
                 >
                   {visibleItems.length === 0 ? (
-                    <div className="col-span-full text-center py-16 text-zinc-500 text-xs font-mono">
+                    <div className="w-full text-center py-16 text-zinc-500 text-xs font-mono">
                       No projects available in this category yet.
                     </div>
                   ) : (
@@ -659,7 +701,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                 if (isDraggingRef.current) return;
                                 onOpenVideoModal(video);
                               }}
-                              className="group relative flex flex-col rounded-2xl bg-zinc-950 text-white border border-zinc-200/80 hover:border-zinc-400 hover:shadow-[0_20px_45px_-12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden cursor-pointer select-none aspect-[9/16]"
+                              className="group relative flex flex-col rounded-2xl bg-zinc-950 text-white border border-zinc-200/80 hover:border-zinc-400 hover:shadow-[0_20px_45px_-12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden cursor-pointer select-none aspect-[9/16] w-[calc(50%-12px)] sm:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-[200px] max-w-[280px] shrink-0"
                             >
                               <img
                                 src={displayThumb}
@@ -729,7 +771,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                 if (isDraggingRef.current) return;
                                 onOpenVideoModal(video);
                               }}
-                              className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none"
+                              className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-[390px] shrink-0"
                             >
                               <div className="relative overflow-hidden bg-zinc-950 aspect-video w-full pointer-events-none flex items-center justify-center">
                                 {/* Ambient blurred backdrop */}
@@ -807,7 +849,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               if (isDraggingRef.current) return;
                               onOpenVideoModal(video);
                             }}
-                            className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none"
+                            className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-[390px] shrink-0"
                           >
                             <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full pointer-events-none">
                               <img
@@ -890,7 +932,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               if (isDraggingRef.current) return;
                               setSelectedGraphic(graphic);
                             }}
-                            className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none"
+                            className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-[390px] shrink-0"
                           >
                             <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full pointer-events-none">
                               <div className="absolute inset-0 bg-zinc-200/80 animate-pulse pointer-events-none" />
@@ -907,8 +949,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                 }}
                                 className="relative w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />
-                              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-300" />
-
                               <div className="absolute top-2.5 right-2.5 z-10">
                                 <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/45 backdrop-blur-md text-white/95 text-[10px] font-mono font-medium tracking-wide border border-white/20 shadow-xs">
                                   {graphic.categoryLabel || graphic.category}

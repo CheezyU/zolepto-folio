@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:47:38.079Z",
+  "lastUpdated": "2026-09-20T22:47:40.453Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -65,25 +65,6 @@
   },
   "showreels": [
     {
-      "id": "reel-1789944458078",
-      "title": "Montage Fast Pace",
-      "client": "HelixGr4nd",
-      "category": "commercial",
-      "categoryLabel": "Entertainment",
-      "duration": "1:00",
-      "year": "2026",
-      "youtubeId": "Jamf1izAZso",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/Jamf1izAZso?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/Jamf1izAZso/maxresdefault.jpg",
-      "aspectRatio": "16/9",
-      "description": "Classic 2020 style editing roblox. Really fast paced. Buur style.",
-      "role": "Creator",
-      "tags": [
-        "Full Production",
-        "Fast Pace"
-      ]
-    },
-    {
       "id": "vid-2",
       "title": "Re-visting a Classic Game",
       "client": "HelixGr4nd",
@@ -130,28 +111,6 @@
       "aspectRatio": "16/9"
     },
     {
-      "id": "vid-3",
-      "title": "Game Bug Discovery",
-      "client": "SleekToast",
-      "category": "short-form",
-      "categoryLabel": "Entertainment",
-      "duration": "0:50",
-      "year": "2026",
-      "youtubeId": "pgxS2qs_hUI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
-      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
-      "role": "Creator",
-      "tags": [
-        "Short-Form",
-        "Storytelling"
-      ],
-      "metrics": "8.7M Combined Views",
-      "views": "8.7M views",
-      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
-      "aspectRatio": "9/16"
-    },
-    {
       "id": "vid-1",
       "title": "Traps for Players",
       "client": "HelixGr4nd",
@@ -172,6 +131,28 @@
       "views": "1.4M views",
       "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI",
       "aspectRatio": "16/9"
+    },
+    {
+      "id": "vid-3",
+      "title": "Game Bug Discovery",
+      "client": "SleekToast",
+      "category": "short-form",
+      "categoryLabel": "Entertainment",
+      "duration": "0:50",
+      "year": "2026",
+      "youtubeId": "pgxS2qs_hUI",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
+      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
+      "role": "Creator",
+      "tags": [
+        "Short-Form",
+        "Storytelling"
+      ],
+      "metrics": "8.7M Combined Views",
+      "views": "8.7M views",
+      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
+      "aspectRatio": "9/16"
     },
     {
       "id": "vid-5",
@@ -217,6 +198,25 @@
       "views": "2.1M views",
       "youtubeUrl": "https://www.youtube.com/watch?v=Y_xR6RDbIVI",
       "aspectRatio": "16/9"
+    },
+    {
+      "id": "reel-1789944458078",
+      "title": "Montage Fast Pace",
+      "client": "HelixGr4nd",
+      "category": "commercial",
+      "categoryLabel": "Entertainment",
+      "duration": "1:00",
+      "year": "2026",
+      "youtubeId": "Jamf1izAZso",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/Jamf1izAZso?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/Jamf1izAZso/maxresdefault.jpg",
+      "aspectRatio": "16/9",
+      "description": "Classic 2020 style editing roblox. Really fast paced. Buur style.",
+      "role": "Creator",
+      "tags": [
+        "Full Production",
+        "Fast Pace"
+      ]
     }
   ],
   "graphics": [

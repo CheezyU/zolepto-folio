@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Play, ArrowUpRight } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { cleanImageUrl, isImgbbViewerUrl, resolveImgbbViewerUrl } from '../lib/imageUtils';
+import { getOptimizedImageUrl, handleOptimizedImageError } from '../lib/imageOptimizer';
 import { ROTATING_ROLES } from '../data/portfolioData';
 
 interface HeroSectionProps {
@@ -249,13 +250,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {/* Custom uploaded/embedded profile picture with ImgBB support & media protection */}
                   {resolvedPic && !imgError ? (
                     <img
-                      src={resolvedPic}
+                      src={getOptimizedImageUrl(resolvedPic, { width: 600, quality: 85, format: 'webp' })}
                       alt="Zolepto Hiraya — Director"
                       draggable={false}
                       data-protected-media="true"
                       onContextMenu={(e) => e.preventDefault()}
                       referrerPolicy="no-referrer"
-                      onError={async () => {
+                      onError={async (e) => {
+                        handleOptimizedImageError(e, resolvedPic);
                         if (resolvedPic && isImgbbViewerUrl(resolvedPic)) {
                           const direct = await resolveImgbbViewerUrl(resolvedPic);
                           if (direct && direct !== resolvedPic) {

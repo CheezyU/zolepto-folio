@@ -17,9 +17,52 @@ export function extractYouTubeId(url: string): string | null {
   return match && match[2].length === 11 ? match[2] : null;
 }
 
-export function buildYouTubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
+export function buildYouTubeEmbedUrl(
+  videoId: string,
+  options: { autoplay?: boolean } = {}
+): string {
+  const params = new URLSearchParams({
+    rel: '0',
+    modestbranding: '1',
+    enablejsapi: '1',
+    vq: 'hd1080',
+    hd: '1',
+    playsinline: '1',
+  });
+  if (options.autoplay) {
+    params.set('autoplay', '1');
+  }
+  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
 }
+
+/**
+ * Dispatches postMessage commands to YouTube IFrame API to force the player
+ * to buffer and stream at the highest available resolution (1080p, 1440p, or 4K)
+ * instead of defaulting to 360p.
+ */
+export function forceYouTubeHighestQuality(iframe: HTMLIFrameElement | null) {
+  if (!iframe || !iframe.contentWindow) return;
+  try {
+    const qualities = ['highres', 'hd2160', 'hd1440', 'hd1080'];
+    qualities.forEach((q) => {
+      iframe.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'setPlaybackQuality', args: [q] }),
+        '*'
+      );
+    });
+    iframe.contentWindow?.postMessage(
+      JSON.stringify({
+        event: 'command',
+        func: 'setPlaybackQualityRange',
+        args: ['hd1080', 'highres'],
+      }),
+      '*'
+    );
+  } catch {
+    // ignore cross-origin postMessage errors
+  }
+}
+
 
 /**
  * Returns the highest resolution YouTube thumbnail available.

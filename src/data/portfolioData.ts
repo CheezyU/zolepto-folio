@@ -55,7 +55,6 @@ export const MAIN_SHOWREEL: VideoProject = {
   role: 'Lead Editor, Sound Design, Color Grading',
   tags: ['Editing', 'Sound Foley', 'Color Grading'],
   metrics: 'Featured Master Reel',
-  views: '1.2M views',
   featured: true,
 };
 
@@ -69,13 +68,12 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     duration: '0:45',
     year: '2026',
     youtubeId: '5FnQs_sy5iI',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1',
     thumbnailUrl: 'https://i.ytimg.com/vi/5FnQs_sy5iI/maxresdefault.jpg',
     description: 'Zolepto creative edit demonstrating pacing, sound design, and narrative clarity.',
     role: 'Editorial Pacing & Cut',
     tags: ['Video Editing', 'Sound Design', 'Color'],
     metrics: '94% Client Brand Recall',
-    views: '1.4M views',
   },
   {
     id: 'vid-2',
@@ -92,7 +90,6 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Assembly & Rhythm',
     tags: ['Narrative', 'Pacing', 'Sound Foley'],
     metrics: 'Featured Narrative Cut',
-    views: '820K views',
   },
   {
     id: 'vid-3',
@@ -103,13 +100,11 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     duration: '0:50',
     year: '2026',
     youtubeId: 'pgxS2qs_hUI',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1',
     thumbnailUrl: 'https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg',
     description: 'Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.',
     role: 'Creator',
     tags: ['Short-Form', 'Storytelling'],
-    metrics: '8.7M Combined Views',
-    views: '8.7M views',
     youtubeUrl: 'https://www.youtube.com/watch?v=pgxS2qs_hUI',
     aspectRatio: '9/16',
   },
@@ -128,7 +123,6 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Motion Graphics & Animation',
     tags: ['Motion Graphics', 'Typography', 'Visuals'],
     metrics: 'Official Brand Identity',
-    views: '1.2M views',
   },
   {
     id: 'vid-5',
@@ -145,7 +139,6 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Commercial Assembly & Grade',
     tags: ['Commercial', 'Color Grade', 'Audio'],
     metrics: 'National Campaign Cut',
-    views: '640K views',
   },
   {
     id: 'vid-6',
@@ -162,7 +155,6 @@ export const VIDEO_PROJECTS: VideoProject[] = [
     role: 'Documentary Cut & Pacing',
     tags: ['Documentary', 'Soundscape', 'Timeline'],
     metrics: 'Festival Selection Cut',
-    views: '2.1M views',
   },
 ];
 

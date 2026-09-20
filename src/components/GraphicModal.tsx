@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ExternalLink } from 'lucide-react';
 import { GraphicProject } from '../types';
+import {
+  getOptimizedImageUrl,
+  getResponsiveSrcSet,
+  handleOptimizedImageError,
+} from '../lib/imageOptimizer';
+import { cleanImageUrl } from '../lib/imageUtils';
 
 interface GraphicModalProps {
   graphic: GraphicProject | null;
@@ -13,18 +19,14 @@ const FALLBACK_GRAPHIC =
 
 export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imgSrc, setImgSrc] = useState<string>(() =>
-    graphic?.imageUrl?.trim() ? graphic.imageUrl.trim() : FALLBACK_GRAPHIC
-  );
+
+  const rawUrl = graphic?.imageUrl?.trim() ? cleanImageUrl(graphic.imageUrl.trim()) : '';
+  const displaySrc = rawUrl
+    ? getOptimizedImageUrl(rawUrl, { width: 1600, quality: 85, format: 'webp' })
+    : FALLBACK_GRAPHIC;
 
   useEffect(() => {
-    if (graphic?.imageUrl?.trim()) {
-      setImageLoaded(false);
-      setImgSrc(graphic.imageUrl.trim());
-    } else if (graphic) {
-      setImageLoaded(false);
-      setImgSrc(FALLBACK_GRAPHIC);
-    }
+    setImageLoaded(false);
   }, [graphic]);
 
   // Lock body scroll and register escape hotkey
@@ -97,16 +99,18 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
             </div>
           )}
 
-          {imgSrc ? (
+          {displaySrc ? (
             <img
-              src={imgSrc}
+              src={displaySrc}
+              srcSet={rawUrl ? getResponsiveSrcSet(rawUrl, [600, 1000, 1600], 85) : undefined}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
               alt={graphic.title || 'Graphic artwork'}
               referrerPolicy="no-referrer"
+              loading="eager"
+              decoding="async"
               onLoad={() => setImageLoaded(true)}
-              onError={() => {
-                if (imgSrc !== FALLBACK_GRAPHIC) {
-                  setImgSrc(FALLBACK_GRAPHIC);
-                }
+              onError={(e) => {
+                handleOptimizedImageError(e, rawUrl, FALLBACK_GRAPHIC);
                 setImageLoaded(true);
               }}
               className={`max-h-full max-w-full object-contain rounded-lg shadow-xs transition-opacity duration-300 ${
@@ -153,7 +157,7 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
 
           <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-100 self-end sm:self-center">
             <a
-              href={imgSrc || graphic.imageUrl || FALLBACK_GRAPHIC}
+              href={rawUrl || FALLBACK_GRAPHIC}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold shadow-xs transition-colors"

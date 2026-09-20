@@ -1,273 +1,266 @@
 {
-  "version": "1.0.0",
-  "lastUpdated": "2026-09-20T17:24:20.528Z",
-  "repoSource": {
-    "owner": "CheezyU",
-    "repo": "zolepto-folio",
-    "branch": "main",
-    "filePath": "public/content.json"
-  },
-  "siteSettings": {
-    "headerLogoUrl": "https://i.ibb.co/F49NG9JT/whitemelogo1million.png",
-    "headerLogoDarkUrl": "https://i.ibb.co/F49NG9JT/whitemelogo1million.png",
-    "headerLogoLightUrl": "https://i.ibb.co/xtZbcgMY/melogo1million.png",
-    "heroTitleLine1": "Editing is just the start.",
-    "heroTitleLine2": "I care what happens after you hit post.",
-    "heroSubtitle": "I team up with creators and brands to build videos worth staying for, and an audience that actually comes back, not just views.",
-    "availabilityStatus": "Available for incoming projects!",
-    "showAvailabilityDot": true,
-    "aboutHeading": "Background & Approach",
-    "aboutBio1": "I'm Zolepto. Six years ago, I started a channel with zero knowledge and grew it from the ground up. Every mistake became a building block, and along the way I picked up video editing, motion design, thumbnails, and branding.",
-    "aboutBio2": "Because I've built a channel myself, I don't see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.",
-    "aboutBio3": "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.",
-    "aboutDirectorNote": "I grew my own channel from zero, then stepped away from it to help other creators grow further from wherever they are now.",
-    "aboutChannelUrl": "https://www.youtube.com/@HelixGr4nd",
-    "aboutChannelTag": "@HelixGr4nd",
-    "aboutTools": [
-      "Premiere Pro",
-      "After Effects",
-      "Photoshop",
-      "YouTube Studio"
+    "version": "1.0.0",
+    "lastUpdated": "2026-09-20T03:47:04.263Z",
+    "repoSource": {
+        "owner": "CheezyU",
+        "repo": "zolepto-folio",
+        "branch": "main",
+        "filePath": "public/content.json"
+    },
+    "siteSettings": {
+        "headerLogoUrl": "https://i.ibb.co/F49NG9JT/whitemelogo1million.png",
+        "headerLogoDarkUrl": "https://i.ibb.co/F49NG9JT/whitemelogo1million.png",
+        "headerLogoLightUrl": "https://i.ibb.co/xtZbcgMY/melogo1million.png",
+        "heroTitleLine1": "Editing is just the start.",
+        "heroTitleLine2": "I care what happens after you hit post.",
+        "heroSubtitle": "I team up with creators and brands to build videos worth staying for, and an audience that actually comes back, not just views.",
+        "availabilityStatus": "Available for incoming projects!",
+        "showAvailabilityDot": true,
+        "aboutHeading": "Background & Approach",
+        "aboutBio1": "I'm Zolepto. Six years ago, I started a channel with zero knowledge and grew it from the ground up. Every mistake became a building block, and along the way I picked up video editing, motion design, thumbnails, and branding.",
+        "aboutBio2": "Because I've built a channel myself, I don't see your project as just another editing gig. I see it the way a content strategist would: what makes people click, stay, and come back.",
+        "aboutBio3": "I keep my ego out of the room. I'm still hungry, still learning, and always adapting, so your brand keeps moving forward.",
+        "aboutDirectorNote": "I grew my own channel from zero, then stepped away from it to help other creators grow further from wherever they are now.",
+        "aboutChannelUrl": "https://www.youtube.com/@HelixGr4nd",
+        "aboutChannelTag": "@HelixGr4nd",
+        "aboutTools": [
+            "Premiere Pro",
+            "After Effects",
+            "Photoshop",
+            "YouTube Studio"
+        ],
+        "contactEmail": "zolepto@gmail.com",
+        "profilePictureUrl": "https://i.ibb.co/99MTLF44/rmbg-result-4.png",
+        "featuredReelYoutubeId": "aqz-KE-bpKQ",
+        "featuredReelTitle": "ZOLEPTO \u2014 2026 Director & Editing Master Showreel",
+        "heroStat1Value": "14M+",
+        "heroStat1Label": "Organic Views",
+        "heroStat2Value": "5+ years",
+        "heroStat2Label": "Multimedia & Content Creation",
+        "heroStat3Value": "1-on-1",
+        "heroStat3Label": "Direct Direction",
+        "workshopHeading": "Four steps from your idea to your audience.",
+        "workshopSubtitle": "No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet\u2014breaking things down to discover what truly resonates.",
+        "step1Title": "Identifying YOU",
+        "step1Subtitle": "",
+        "step1Description": "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage.",
+        "step1Note": "",
+        "step2Title": "Dissecting the Narrative",
+        "step2Subtitle": "",
+        "step2Description": "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video.",
+        "step2Note": "",
+        "step3Title": "Look Beyond the Process",
+        "step3Subtitle": "",
+        "step3Description": "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified.",
+        "step3Note": "",
+        "step4Title": "Official Drop",
+        "step4Subtitle": "",
+        "step4Description": "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration.",
+        "step4Note": "",
+        "socialInstagram": "https://www.instagram.com/zoleptos.motion/",
+        "socialLinkedin": "https://www.linkedin.com/in/zolepto-haraya-936b622b7/",
+        "socialX": "https://x.com/Zolep138657",
+        "socialGmail": "zolepto@gmail.com",
+        "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
+    },
+    "showreels": [
+        {
+            "id": "vid-1",
+            "title": "Video 1",
+            "client": "Client One",
+            "category": "commercial",
+            "categoryLabel": "Commercial / Brand",
+            "duration": "0:45",
+            "year": "2026",
+            "youtubeId": "5FnQs_sy5iI",
+            "embedUrl": "https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1",
+            "thumbnailUrl": "https://i.ytimg.com/vi/5FnQs_sy5iI/maxresdefault.jpg",
+            "description": "Zolepto creative edit demonstrating pacing, sound design, and narrative clarity.",
+            "role": "Editorial Pacing & Cut",
+            "tags": [
+                "Video Editing",
+                "Sound Design",
+                "Color"
+            ],
+            "metrics": "94% Client Brand Recall",
+            "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI&t=44s"
+        },
+        {
+            "id": "vid-2",
+            "title": "Video 2",
+            "client": "Client Two",
+            "category": "narrative",
+            "categoryLabel": "Cinematic Narrative",
+            "duration": "1:30",
+            "year": "2026",
+            "youtubeId": "",
+            "embedUrl": "",
+            "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+            "description": "Zolepto storytelling edit highlighting cinematic rhythm, dialogue balance, and visual structure.",
+            "role": "Assembly & Rhythm",
+            "tags": [
+                "Narrative",
+                "Pacing",
+                "Sound Foley"
+            ],
+            "metrics": "Featured Narrative Cut"
+        },
+        {
+            "id": "vid-3",
+            "title": "Game Bug Discovery",
+            "client": "SleekToast",
+            "category": "short-form",
+            "categoryLabel": "Entertainment",
+            "duration": "0:50",
+            "year": "2026",
+            "youtubeId": "pgxS2qs_hUI",
+            "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1",
+            "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
+            "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
+            "role": "Creator",
+            "tags": [
+                "Short-Form",
+                "Storytelling"
+            ],
+            "youtubeUrl": "https://www.youtube.com/watch?v=pgxS2qs_hUI",
+            "aspectRatio": "9/16"
+        },
+        {
+            "id": "vid-4",
+            "title": "Video 4",
+            "client": "Client Four",
+            "category": "motion",
+            "categoryLabel": "Motion & Visuals",
+            "duration": "1:15",
+            "year": "2025",
+            "youtubeId": "",
+            "embedUrl": "",
+            "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%204%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+            "description": "Zolepto motion project exploring typography animation, kinetic layouts, and rhythm.",
+            "role": "Motion Graphics & Animation",
+            "tags": [
+                "Motion Graphics",
+                "Typography",
+                "Visuals"
+            ],
+            "metrics": "Official Brand Identity"
+        },
+        {
+            "id": "vid-5",
+            "title": "Video 5",
+            "client": "Client Five",
+            "category": "commercial",
+            "categoryLabel": "Commercial / Brand",
+            "duration": "1:00",
+            "year": "2025",
+            "youtubeId": "",
+            "embedUrl": "",
+            "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%205%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+            "description": "Zolepto commercial project featuring modern framing, sound design, and color finishing.",
+            "role": "Commercial Assembly & Grade",
+            "tags": [
+                "Commercial",
+                "Color Grade",
+                "Audio"
+            ],
+            "metrics": "National Campaign Cut"
+        },
+        {
+            "id": "vid-6",
+            "title": "Video 6",
+            "client": "Client Six",
+            "category": "narrative",
+            "categoryLabel": "Cinematic Narrative",
+            "duration": "1:45",
+            "year": "2025",
+            "youtubeId": "",
+            "embedUrl": "",
+            "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%206%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
+            "description": "Zolepto documentary sequence showcasing authentic interviews, environmental sound, and pacing.",
+            "role": "Documentary Cut & Pacing",
+            "tags": [
+                "Documentary",
+                "Soundscape",
+                "Timeline"
+            ],
+            "metrics": "Festival Selection Cut"
+        }
     ],
-    "contactEmail": "zolepto@gmail.com",
-    "profilePictureUrl": "https://i.ibb.co/99MTLF44/rmbg-result-4.png",
-    "featuredReelYoutubeId": "aqz-KE-bpKQ",
-    "featuredReelTitle": "ZOLEPTO — 2026 Director & Editing Master Showreel",
-    "heroStat1Value": "14M+",
-    "heroStat1Label": "Organic Views",
-    "heroStat2Value": "5+ years",
-    "heroStat2Label": "Multimedia & Content Creation",
-    "heroStat3Value": "1-on-1",
-    "heroStat3Label": "Direct Direction",
-    "workshopHeading": "Four steps from your idea to your audience.",
-    "workshopSubtitle": "No rigid agency steps or generic templates. A deliberate, human creative process mapped out like a workshop drafting sheet—breaking things down to discover what truly resonates.",
-    "step1Title": "Identifying YOU",
-    "step1Subtitle": "",
-    "step1Description": "I start with you: your authentic side, what your content stands for, and who you're actually trying to reach. Your content and ideas come first, before I touch the footage.",
-    "step1Note": "",
-    "step2Title": "Dissecting the Narrative",
-    "step2Subtitle": "",
-    "step2Description": "The value of your content matters more than flashy edits. I lift your story in the style you envision, and every cut, effect, and transition has to serve the progression of the video.",
-    "step2Note": "",
-    "step3Title": "Look Beyond the Process",
-    "step3Subtitle": "",
-    "step3Description": "I step out of editing mode and actually watch it as your own viewer would. Does the edit elevate the story? Was it worth watching? Every second has to be justified.",
-    "step3Note": "",
-    "step4Title": "Official Drop",
-    "step4Subtitle": "",
-    "step4Description": "Multiple passes, with every cut, layer, and effect double-checked, then delivered on the promised date. Total transparency, zero ghosting, and easy collaboration.",
-    "step4Note": "",
-    "socialInstagram": "https://www.instagram.com/zoleptos.motion/",
-    "socialLinkedin": "https://www.linkedin.com/in/zolepto-haraya-936b622b7/",
-    "socialX": "https://x.com/Zolep138657",
-    "socialGmail": "zolepto@gmail.com",
-    "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
-  },
-  "showreels": [
-    {
-      "id": "vid-1",
-      "title": "Video 1",
-      "client": "Client One",
-      "category": "commercial",
-      "categoryLabel": "Commercial / Brand",
-      "duration": "0:45",
-      "year": "2026",
-      "youtubeId": "5FnQs_sy5iI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/5FnQs_sy5iI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/5FnQs_sy5iI/maxresdefault.jpg",
-      "description": "Zolepto creative edit demonstrating pacing, sound design, and narrative clarity.",
-      "role": "Editorial Pacing & Cut",
-      "tags": [
-        "Video Editing",
-        "Sound Design",
-        "Color"
-      ],
-      "metrics": "94% Client Brand Recall",
-      "views": "1.4M views",
-      "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI&t=44s"
-    },
-    {
-      "id": "vid-2",
-      "title": "Video 2",
-      "client": "Client Two",
-      "category": "narrative",
-      "categoryLabel": "Cinematic Narrative",
-      "duration": "1:30",
-      "year": "2026",
-      "youtubeId": "",
-      "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "description": "Zolepto storytelling edit highlighting cinematic rhythm, dialogue balance, and visual structure.",
-      "role": "Assembly & Rhythm",
-      "tags": [
-        "Narrative",
-        "Pacing",
-        "Sound Foley"
-      ],
-      "metrics": "Featured Narrative Cut",
-      "views": "820K views"
-    },
-    {
-      "id": "vid-3",
-      "title": "Game Bug Discovery",
-      "client": "SleekToast",
-      "category": "short-form",
-      "categoryLabel": "Entertainment",
-      "duration": "0:50",
-      "year": "2026",
-      "youtubeId": "pgxS2qs_hUI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
-      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
-      "role": "Creator",
-      "tags": [
-        "Short-Form",
-        "Storytelling"
-      ],
-      "metrics": "8.7M Combined Views",
-      "views": "8.7M views",
-      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
-      "aspectRatio": "9/16"
-    },
-    {
-      "id": "vid-4",
-      "title": "Video 4",
-      "client": "Client Four",
-      "category": "motion",
-      "categoryLabel": "Motion & Visuals",
-      "duration": "1:15",
-      "year": "2025",
-      "youtubeId": "",
-      "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%204%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "description": "Zolepto motion project exploring typography animation, kinetic layouts, and rhythm.",
-      "role": "Motion Graphics & Animation",
-      "tags": [
-        "Motion Graphics",
-        "Typography",
-        "Visuals"
-      ],
-      "metrics": "Official Brand Identity",
-      "views": "1.2M views"
-    },
-    {
-      "id": "vid-5",
-      "title": "Video 5",
-      "client": "Client Five",
-      "category": "commercial",
-      "categoryLabel": "Commercial / Brand",
-      "duration": "1:00",
-      "year": "2025",
-      "youtubeId": "",
-      "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%205%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "description": "Zolepto commercial project featuring modern framing, sound design, and color finishing.",
-      "role": "Commercial Assembly & Grade",
-      "tags": [
-        "Commercial",
-        "Color Grade",
-        "Audio"
-      ],
-      "metrics": "National Campaign Cut",
-      "views": "640K views"
-    },
-    {
-      "id": "vid-6",
-      "title": "Video 6",
-      "client": "Client Six",
-      "category": "narrative",
-      "categoryLabel": "Cinematic Narrative",
-      "duration": "1:45",
-      "year": "2025",
-      "youtubeId": "",
-      "embedUrl": "",
-      "thumbnailUrl": "data:image/svg+xml;utf8,%0A%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221280%22%20height%3D%22720%22%20viewBox%3D%220%200%201280%20720%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22%2318181b%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2224%22%20y%3D%2224%22%20width%3D%221232%22%20height%3D%22672%22%20rx%3D%2220%22%20stroke%3D%22%2327272a%22%20stroke-width%3D%222%22%20stroke-dasharray%3D%2210%2010%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22640%22%20cy%3D%22330%22%20r%3D%2244%22%20fill%3D%22%2327272a%22%2F%3E%0A%20%20%20%20%20%20%3Cpolygon%20points%3D%22634%2C316%20654%2C330%20634%2C344%22%20fill%3D%22%23d4d4d8%22%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22420%22%20font-family%3D%22system-ui%2C%20-apple-system%2C%20sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22600%22%20fill%3D%22%23f4f4f5%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EVideo%206%3C%2Ftext%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22640%22%20y%3D%22454%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20fill%3D%22%2371717a%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3EZOLEPTO%20STUDIO%20%E2%80%A2%20WORK%20PLACEHOLDER%3C%2Ftext%3E%0A%20%20%20%20%3C%2Fsvg%3E%0A%20%20",
-      "description": "Zolepto documentary sequence showcasing authentic interviews, environmental sound, and pacing.",
-      "role": "Documentary Cut & Pacing",
-      "tags": [
-        "Documentary",
-        "Soundscape",
-        "Timeline"
-      ],
-      "metrics": "Festival Selection Cut",
-      "views": "2.1M views"
-    }
-  ],
-  "graphics": [
-    {
-      "id": "graph-2",
-      "title": "Sleek's banner",
-      "client": "SleekToast",
-      "category": "styleframe",
-      "categoryLabel": "Digital Thumbnail",
-      "imageUrl": "https://i.ibb.co/JWN6yRBd/New-BLue-Banner.png",
-      "aspect": "landscape",
-      "year": "2026",
-      "description": "A classic 3d render ugc for roblox content creators with cinematic lighting",
-      "tools": [
-        "Photoshop",
-        "Blender"
-      ],
-      "file": null
-    },
-    {
-      "id": "graph-4",
-      "title": "MotionGrind Concept",
-      "client": "MotionGrind",
-      "category": "styleframe",
-      "categoryLabel": "Cover Art & Packaging",
-      "imageUrl": "https://i.ibb.co/21FL2QRq/MG-12.png",
-      "aspect": "portrait",
-      "year": "2025",
-      "description": "The concept for personal brands building connections from viewers into high ticket customers.",
-      "tools": [
-        "Photoshop",
-        "Typography"
-      ],
-      "file": null
-    },
-    {
-      "id": "graph-3",
-      "title": "Koza's Banner",
-      "client": "KozaEyes",
-      "category": "styleframe",
-      "categoryLabel": "Styleframe Design",
-      "imageUrl": "https://i.ibb.co/xt6nCpwr/Kazo-Eyes-banner.png",
-      "aspect": "landscape",
-      "year": "2025",
-      "description": "Modern clean and simple banner for a storytelling clipper.",
-      "tools": [
-        "Photoshop"
-      ],
-      "file": null
-    },
-    {
-      "id": "graphic-1789874511012",
-      "title": "WestWard's Banner",
-      "client": "Blood Barrel",
-      "category": "key-art",
-      "categoryLabel": "KEY-ART",
-      "imageUrl": "https://i.ibb.co/twszZPcp/loleq3.jpg",
-      "aspect": "portrait",
-      "year": "2026",
-      "description": "Features heavy graphics and effects with the iconic Mike Tyson shot and a progress bar for engagement",
-      "tools": [
-        "Photoshop"
-      ]
-    },
-    {
-      "id": "graphic-1789874407223",
-      "title": "Simple Banner",
-      "client": "Studio Art",
-      "category": "styleframe",
-      "categoryLabel": "STYLEFRAME",
-      "imageUrl": "https://i.ibb.co/JWHppkwY/1-WHO-SAID-I-CNAT.jpg",
-      "aspect": "portrait",
-      "year": "2026",
-      "description": "",
-      "tools": [
-        "Photoshop"
-      ]
-    }
-  ]
+    "graphics": [
+        {
+            "id": "graph-2",
+            "title": "Sleek's banner",
+            "client": "SleekToast",
+            "category": "styleframe",
+            "categoryLabel": "Digital Thumbnail",
+            "imageUrl": "https://i.ibb.co/JWN6yRBd/New-BLue-Banner.png",
+            "aspect": "landscape",
+            "year": "2026",
+            "description": "A classic 3d render ugc for roblox content creators with cinematic lighting",
+            "tools": [
+                "Photoshop",
+                "Blender"
+            ],
+            "file": null
+        },
+        {
+            "id": "graph-4",
+            "title": "MotionGrind Concept",
+            "client": "MotionGrind",
+            "category": "styleframe",
+            "categoryLabel": "Cover Art & Packaging",
+            "imageUrl": "https://i.ibb.co/21FL2QRq/MG-12.png",
+            "aspect": "portrait",
+            "year": "2025",
+            "description": "The concept for personal brands building connections from viewers into high ticket customers.",
+            "tools": [
+                "Photoshop",
+                "Typography"
+            ],
+            "file": null
+        },
+        {
+            "id": "graph-3",
+            "title": "Koza's Banner",
+            "client": "KozaEyes",
+            "category": "styleframe",
+            "categoryLabel": "Styleframe Design",
+            "imageUrl": "https://i.ibb.co/xt6nCpwr/Kazo-Eyes-banner.png",
+            "aspect": "landscape",
+            "year": "2025",
+            "description": "Modern clean and simple banner for a storytelling clipper.",
+            "tools": [
+                "Photoshop"
+            ],
+            "file": null
+        },
+        {
+            "id": "graphic-1789874511012",
+            "title": "WestWard's Banner",
+            "client": "Blood Barrel",
+            "category": "key-art",
+            "categoryLabel": "KEY-ART",
+            "imageUrl": "https://i.ibb.co/twszZPcp/loleq3.jpg",
+            "aspect": "portrait",
+            "year": "2026",
+            "description": "Features heavy graphics and effects with the iconic Mike Tyson shot and a progress bar for engagement",
+            "tools": [
+                "Photoshop"
+            ]
+        },
+        {
+            "id": "graphic-1789874407223",
+            "title": "Simple Banner",
+            "client": "Studio Art",
+            "category": "styleframe",
+            "categoryLabel": "STYLEFRAME",
+            "imageUrl": "https://i.ibb.co/JWHppkwY/1-WHO-SAID-I-CNAT.jpg",
+            "aspect": "portrait",
+            "year": "2026",
+            "description": "",
+            "tools": [
+                "Photoshop"
+            ]
+        }
+    ]
 }

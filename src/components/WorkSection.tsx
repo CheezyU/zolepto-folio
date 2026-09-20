@@ -5,6 +5,11 @@ import { VideoProject, GraphicProject, WorkSectionTab } from '../types';
 import { GraphicModal } from './GraphicModal';
 import { isShortFormVideo, createShortsPlaceholderSvg } from '../lib/videoEmbed';
 import { handleThumbnailImageError, handleThumbnailImageLoad } from '../lib/youtube';
+import {
+  getOptimizedImageUrl,
+  getResponsiveSrcSet,
+  handleOptimizedImageError,
+} from '../lib/imageOptimizer';
 
 interface WorkSectionProps {
   showreels: VideoProject[];
@@ -455,8 +460,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                     );
                   } else {
                     const graphic = item.data;
-                    const graphicSrc =
+                    const rawGraphicSrc =
                       (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
+                    const graphicSrc = getOptimizedImageUrl(rawGraphicSrc, {
+                      width: 700,
+                      quality: 80,
+                      format: 'webp',
+                    });
+                    const graphicSrcSet = getResponsiveSrcSet(rawGraphicSrc, [360, 700], 80);
                     const graphicTags = Array.isArray(graphic.tools) && graphic.tools.length > 0
                       ? graphic.tools
                       : Array.isArray((graphic as any).tags) && (graphic as any).tags.length > 0
@@ -473,12 +484,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
                           <img
                             src={graphicSrc}
+                            srcSet={graphicSrcSet}
+                            sizes="(max-width: 640px) 84vw, 380px"
                             alt={graphic.title}
                             loading="lazy"
                             decoding="async"
                             referrerPolicy="no-referrer"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = fallbackGraphic;
+                              handleOptimizedImageError(e, rawGraphicSrc, fallbackGraphic);
                             }}
                             className="w-full h-full object-cover"
                           />
@@ -864,8 +877,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                       } else {
                         // Graphic Design Card
                         const graphic = item.data;
-                        const graphicSrc =
+                        const rawGraphicSrc =
                           (graphic.imageUrl && graphic.imageUrl.trim()) || fallbackGraphic;
+                        const graphicSrc = getOptimizedImageUrl(rawGraphicSrc, {
+                          width: 800,
+                          quality: 80,
+                          format: 'webp',
+                        });
+                        const graphicSrcSet = getResponsiveSrcSet(rawGraphicSrc, [400, 800], 80);
                         const graphicTags = Array.isArray(graphic.tools) && graphic.tools.length > 0
                           ? graphic.tools
                           : Array.isArray((graphic as any).tags) && (graphic as any).tags.length > 0
@@ -885,12 +904,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                             <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full pointer-events-none">
                               <img
                                 src={graphicSrc}
+                                srcSet={graphicSrcSet}
+                                sizes="(max-width: 1024px) 50vw, 380px"
                                 alt={graphic.title}
                                 loading="lazy"
                                 decoding="async"
                                 referrerPolicy="no-referrer"
                                 onError={(e) => {
-                                  (e.target as HTMLImageElement).src = fallbackGraphic;
+                                  handleOptimizedImageError(e, rawGraphicSrc, fallbackGraphic);
                                 }}
                                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />

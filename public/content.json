@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T23:19:08.182Z",
+  "lastUpdated": "2026-09-20T23:19:09.322Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -65,6 +65,28 @@
   },
   "showreels": [
     {
+      "id": "vid-3",
+      "title": "Game Bug Discovery",
+      "client": "SleekToast",
+      "category": "short-form",
+      "categoryLabel": "Entertainment",
+      "duration": "0:50",
+      "year": "2026",
+      "youtubeId": "pgxS2qs_hUI",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
+      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
+      "role": "Creator",
+      "tags": [
+        "Short-Form",
+        "Storytelling"
+      ],
+      "metrics": "8.7M Combined Views",
+      "views": "8.7M views",
+      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
+      "aspectRatio": "9/16"
+    },
+    {
       "id": "short-1789946147197",
       "title": "Murder Mystery",
       "client": "SleekToast",
@@ -81,24 +103,6 @@
       "tags": [
         "Visuals",
         "Funny"
-      ]
-    },
-    {
-      "id": "short-1789946025173",
-      "title": "Tricking Players",
-      "client": "HelixGr4nd",
-      "category": "short-form",
-      "categoryLabel": "Gaming",
-      "duration": "0:30",
-      "year": "2026",
-      "youtubeId": "cUjzrteeaWk",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/cUjzrteeaWk?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/cUjzrteeaWk/maxresdefault.jpg",
-      "aspectRatio": "9/16",
-      "description": "",
-      "role": "Creator",
-      "tags": [
-        "Storytelling"
       ]
     },
     {
@@ -170,26 +174,22 @@
       "aspectRatio": "16/9"
     },
     {
-      "id": "vid-3",
-      "title": "Game Bug Discovery",
-      "client": "SleekToast",
+      "id": "short-1789946025173",
+      "title": "Tricking Players",
+      "client": "HelixGr4nd",
       "category": "short-form",
-      "categoryLabel": "Entertainment",
-      "duration": "0:50",
+      "categoryLabel": "Gaming",
+      "duration": "0:30",
       "year": "2026",
-      "youtubeId": "pgxS2qs_hUI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
-      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
+      "youtubeId": "cUjzrteeaWk",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/cUjzrteeaWk?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/cUjzrteeaWk/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
       "role": "Creator",
       "tags": [
-        "Short-Form",
         "Storytelling"
-      ],
-      "metrics": "8.7M Combined Views",
-      "views": "8.7M views",
-      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
-      "aspectRatio": "9/16"
+      ]
     },
     {
       "id": "vid-5",

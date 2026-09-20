@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T03:15:11.991Z",
+  "lastUpdated": "2026-09-20T03:21:57.679Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -193,6 +193,34 @@
     }
   ],
   "graphics": [
+    {
+      "id": "graphic-1789874511012",
+      "title": "WestWard's Banner",
+      "client": "Blood Barrel",
+      "category": "key-art",
+      "categoryLabel": "KEY-ART",
+      "imageUrl": "https://i.ibb.co/twszZPcp/loleq3.jpg",
+      "aspect": "portrait",
+      "year": "2026",
+      "description": "Features heavy graphics and effects with the iconic Mike Tyson shot and a progress bar for engagement",
+      "tools": [
+        "Photoshop"
+      ]
+    },
+    {
+      "id": "graphic-1789874407223",
+      "title": "Simple Banner",
+      "client": "Studio Art",
+      "category": "styleframe",
+      "categoryLabel": "STYLEFRAME",
+      "imageUrl": "https://i.ibb.co/JWHppkwY/1-WHO-SAID-I-CNAT.jpg",
+      "aspect": "portrait",
+      "year": "2026",
+      "description": "",
+      "tools": [
+        "Photoshop"
+      ]
+    },
     {
       "id": "graph-2",
       "title": "Sleek's banner",

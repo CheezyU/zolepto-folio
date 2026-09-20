@@ -255,6 +255,56 @@ export function saveLocalGraphics(items: GraphicProject[], dispatch = true) {
 }
 
 /**
+ * Reorders projects within a specific category subset of showreels (e.g. horizontal videos or vertical shorts)
+ * while strictly preserving all other items in their existing relative positions.
+ */
+export function reorderCategoryInVideos(
+  fullList: VideoProject[],
+  isTargetPredicate: (item: VideoProject) => boolean,
+  fromId: string,
+  toId: string
+): VideoProject[] {
+  const matching = fullList.filter(isTargetPredicate);
+  const fromIndex = matching.findIndex((m) => m.id === fromId);
+  const toIndex = matching.findIndex((m) => m.id === toId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return fullList;
+
+  const [moved] = matching.splice(fromIndex, 1);
+  matching.splice(toIndex, 0, moved);
+
+  let matchingPtr = 0;
+  const updated = fullList.map((item) => {
+    if (isTargetPredicate(item)) {
+      return matching[matchingPtr++];
+    }
+    return item;
+  });
+
+  saveLocalShowreels(updated);
+  return updated;
+}
+
+/**
+ * Reorders graphics projects list and persists the result.
+ */
+export function reorderGraphicsList(
+  list: GraphicProject[],
+  fromId: string,
+  toId: string
+): GraphicProject[] {
+  const fromIndex = list.findIndex((i) => i.id === fromId);
+  const toIndex = list.findIndex((i) => i.id === toId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return list;
+
+  const next = [...list];
+  const [moved] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, moved);
+
+  saveLocalGraphics(next);
+  return next;
+}
+
+/**
  * Subscribes to real-time Showreels list with authoritative global synchronization.
  */
 export function subscribeToShowreels(callback: (projects: VideoProject[]) => void): () => void {

@@ -27,6 +27,7 @@ import {
   GitBranch,
   Mail,
   Smartphone,
+  GripVertical,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -48,6 +49,8 @@ import {
   addGraphicDesign,
   updateGraphicDesign,
   deleteGraphicDesign,
+  reorderCategoryInVideos,
+  reorderGraphicsList,
 } from '../services/portfolioService';
 import {
   subscribeToInquiries,
@@ -109,7 +112,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 }) => {
   const { user, logout, isConfigured } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    'videos' | 'graphics' | 'site-copy' | 'inquiries' | 'github-sync' | 'security'
+    'videos' | 'shorts' | 'graphics' | 'site-copy' | 'inquiries' | 'github-sync' | 'security'
   >('videos');
 
   // Protect local edit session from background sync overwrites
@@ -213,7 +216,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   // Search & Filters for management tables
   const [videoSearch, setVideoSearch] = useState('');
+  const [shortSearch, setShortSearch] = useState('');
   const [graphicSearch, setGraphicSearch] = useState('');
+
+  // Drag-and-drop hold-to-reorder state
+  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+  const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
+  const [reorderStatus, setReorderStatus] = useState<string | null>(null);
 
   // 1. Subscribe to Inquiries
   useEffect(() => {
@@ -311,6 +320,68 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       metrics: '',
     });
     setVideoFormStatus(null);
+  };
+
+  const handleOpenAddShort = () => {
+    setEditingVideo(null);
+    setIsAddingVideo(true);
+    setVideoFormData({
+      title: '',
+      client: '',
+      category: 'short-form',
+      categoryLabel: 'Short-Form',
+      youtubeUrl: '',
+      duration: '0:30',
+      year: '2026',
+      role: 'Retention Edit & Hook',
+      description: '',
+      tags: 'Short-Form, Reels, TikTok, Viral',
+      metrics: '',
+    });
+    setVideoFormStatus(null);
+  };
+
+  // Reorder drop handlers
+  const handleDropVideo = (targetId: string) => {
+    if (!draggedItemId || draggedItemId === targetId) {
+      setDraggedItemId(null);
+      setDragOverItemId(null);
+      return;
+    }
+    reorderCategoryInVideos(showreels, (v) => !isShortFormVideo(v), draggedItemId, targetId);
+    appendSecurityLog('Reordered Videos', `Moved project in order`);
+    setReorderStatus('Video order updated');
+    setTimeout(() => setReorderStatus(null), 2500);
+    setDraggedItemId(null);
+    setDragOverItemId(null);
+  };
+
+  const handleDropShort = (targetId: string) => {
+    if (!draggedItemId || draggedItemId === targetId) {
+      setDraggedItemId(null);
+      setDragOverItemId(null);
+      return;
+    }
+    reorderCategoryInVideos(showreels, (v) => isShortFormVideo(v), draggedItemId, targetId);
+    appendSecurityLog('Reordered Shorts', `Moved project in order`);
+    setReorderStatus('Shorts order updated');
+    setTimeout(() => setReorderStatus(null), 2500);
+    setDraggedItemId(null);
+    setDragOverItemId(null);
+  };
+
+  const handleDropGraphic = (targetId: string) => {
+    if (!draggedItemId || draggedItemId === targetId) {
+      setDraggedItemId(null);
+      setDragOverItemId(null);
+      return;
+    }
+    reorderGraphicsList(graphics, draggedItemId, targetId);
+    appendSecurityLog('Reordered Graphics', `Moved project in order`);
+    setReorderStatus('Graphic design order updated');
+    setTimeout(() => setReorderStatus(null), 2500);
+    setDraggedItemId(null);
+    setDragOverItemId(null);
   };
 
   const handleSaveVideo = async (e: React.FormEvent) => {
@@ -593,12 +664,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const editVideoThumb =
     parsedVideoInput.thumbnailUrl || (editVideoId ? getYouTubeThumbnailUrl(editVideoId) : null);
 
-  // Filter lists
-  const filteredVideos = showreels.filter(
+  // Filter lists: separate horizontal videos from vertical shorts
+  const horizontalVideos = showreels.filter((v) => !isShortFormVideo(v));
+  const shortsVideos = showreels.filter((v) => isShortFormVideo(v));
+
+  const filteredVideos = horizontalVideos.filter(
     (v) =>
       v.title.toLowerCase().includes(videoSearch.toLowerCase()) ||
       v.client.toLowerCase().includes(videoSearch.toLowerCase()) ||
       v.category.toLowerCase().includes(videoSearch.toLowerCase())
+  );
+
+  const filteredShorts = shortsVideos.filter(
+    (v) =>
+      v.title.toLowerCase().includes(shortSearch.toLowerCase()) ||
+      v.client.toLowerCase().includes(shortSearch.toLowerCase()) ||
+      v.category.toLowerCase().includes(shortSearch.toLowerCase())
   );
 
   const filteredGraphics = graphics.filter(
@@ -713,7 +794,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             }`}
           >
             <Film className="w-4 h-4" />
-            <span>Videos ({showreels.length})</span>
+            <span>Videos ({horizontalVideos.length})</span>
+          </button>
+
+          <button
+            id="tab-btn-shorts"
+            onClick={() => setActiveTab('shorts')}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'shorts'
+                ? 'bg-zinc-950 text-white shadow-xs'
+                : 'bg-white text-zinc-600 hover:text-zinc-900 border border-zinc-200'
+            }`}
+          >
+            <Smartphone className="w-4 h-4 text-rose-500" />
+            <span>Shorts ({shortsVideos.length})</span>
           </button>
 
           <button
@@ -790,8 +884,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <h2 className="font-display text-2xl font-bold text-zinc-900">
                   Video Projects & Commercial Cuts
                 </h2>
-                <p className="text-xs text-zinc-500 mt-1">
-                  Manage, edit, or add video projects. Changes update seamlessly across your portfolio.
+                <p className="text-xs text-zinc-500 mt-1 flex flex-wrap items-center gap-2">
+                  <span>Manage, edit, or add video projects.</span>
+                  <span className="text-zinc-300">•</span>
+                  <span className="inline-flex items-center gap-1 text-zinc-700 font-mono font-medium bg-zinc-100 px-2 py-0.5 rounded">
+                    <GripVertical className="w-3.5 h-3.5 text-zinc-500" /> Hold & drag any card to reorder
+                  </span>
                 </p>
               </div>
 
@@ -819,7 +917,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               {filteredVideos.map((video) => (
                 <div
                   key={video.id}
-                  className="rounded-2xl bg-white border border-zinc-200/90 overflow-hidden shadow-2xs flex flex-col justify-between"
+                  draggable={true}
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', video.id);
+                    setDraggedItemId(video.id);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (dragOverItemId !== video.id) setDragOverItemId(video.id);
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverItemId === video.id) setDragOverItemId(null);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    handleDropVideo(video.id);
+                  }}
+                  onDragEnd={() => {
+                    setDraggedItemId(null);
+                    setDragOverItemId(null);
+                  }}
+                  className={`rounded-2xl bg-white border border-zinc-200/90 overflow-hidden shadow-2xs flex flex-col justify-between cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                    draggedItemId === video.id
+                      ? 'opacity-30 scale-[0.98] border-dashed border-zinc-400'
+                      : ''
+                  } ${
+                    dragOverItemId === video.id
+                      ? 'ring-2 ring-zinc-950 ring-offset-2 scale-[1.01]'
+                      : 'hover:shadow-md'
+                  }`}
                 >
                   <div>
                     {/* Thumbnail */}
@@ -833,6 +961,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         <span className="px-2 py-0.5 rounded bg-black/75 backdrop-blur-xs text-[10px] font-mono text-white">
                           {video.categoryLabel || video.category}
                         </span>
+                      </div>
+                      <div
+                        className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-black/60 backdrop-blur-xs text-white/80 hover:text-white"
+                        title="Hold and drag anywhere to reorder"
+                      >
+                        <GripVertical className="w-4 h-4" />
                       </div>
                     </div>
 
@@ -876,10 +1010,201 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </div>
               ))}
             </div>
+
+            {filteredVideos.length === 0 && (
+              <div className="py-16 text-center rounded-2xl bg-white border border-zinc-200/80 p-8">
+                <Film className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
+                <h3 className="text-sm font-semibold text-zinc-900">No videos found</h3>
+                <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                  {videoSearch ? 'Try clearing your search query.' : 'Add your first video project to showcase in your portfolio.'}
+                </p>
+                <button
+                  onClick={handleOpenAddVideo}
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 text-white text-xs font-semibold"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Video</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* TAB 2: GRAPHIC DESIGN MANAGER */}
+        {/* TAB 2: SHORTS & VERTICAL VIDEO MANAGER */}
+        {activeTab === 'shorts' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h2 className="font-display text-2xl font-bold text-zinc-900">
+                    Vertical Shorts & Reels
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-xs font-mono font-semibold border border-rose-200">
+                    9:16 Aspect
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-500 mt-1 flex flex-wrap items-center gap-2">
+                  <span>Manage vertical cuts, YouTube Shorts, IG Reels, and TikToks.</span>
+                  <span className="text-zinc-300">•</span>
+                  <span className="inline-flex items-center gap-1 text-zinc-700 font-mono font-medium bg-zinc-100 px-2 py-0.5 rounded">
+                    <GripVertical className="w-3.5 h-3.5 text-zinc-500" /> Hold & drag any card to reorder
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  placeholder="Search shorts..."
+                  value={shortSearch}
+                  onChange={(e) => setShortSearch(e.target.value)}
+                  className="px-3.5 py-2 rounded-xl bg-white border border-zinc-200 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
+                />
+                <button
+                  id="add-short-btn"
+                  onClick={handleOpenAddShort}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-xs shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Short</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Shorts Cards Grid (Vertical 9:16 Preview) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {filteredShorts.map((short) => (
+                <div
+                  key={short.id}
+                  draggable={true}
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', short.id);
+                    setDraggedItemId(short.id);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (dragOverItemId !== short.id) setDragOverItemId(short.id);
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverItemId === short.id) setDragOverItemId(null);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    handleDropShort(short.id);
+                  }}
+                  onDragEnd={() => {
+                    setDraggedItemId(null);
+                    setDragOverItemId(null);
+                  }}
+                  className={`rounded-2xl bg-white border border-zinc-200/90 overflow-hidden shadow-2xs flex flex-col justify-between cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                    draggedItemId === short.id
+                      ? 'opacity-30 scale-[0.98] border-dashed border-zinc-400'
+                      : ''
+                  } ${
+                    dragOverItemId === short.id
+                      ? 'ring-2 ring-zinc-950 ring-offset-2 scale-[1.01]'
+                      : 'hover:shadow-md'
+                  }`}
+                >
+                  <div>
+                    {/* Vertical 9:16 Aspect Thumbnail Container */}
+                    <div className="relative aspect-[9/16] max-h-[300px] bg-zinc-950 overflow-hidden">
+                      <img
+                        src={short.thumbnailUrl || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80'}
+                        alt={short.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+                      
+                      <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 rounded-full bg-rose-600/90 backdrop-blur-xs text-[10px] font-mono text-white flex items-center gap-1">
+                          <Smartphone className="w-2.5 h-2.5" />
+                          <span>9:16</span>
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-black/75 backdrop-blur-xs text-[10px] font-mono text-white">
+                          {short.categoryLabel || short.category}
+                        </span>
+                      </div>
+
+                      <div
+                        className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-black/60 backdrop-blur-xs text-white/80 hover:text-white"
+                        title="Hold and drag anywhere to reorder"
+                      >
+                        <GripVertical className="w-4 h-4" />
+                      </div>
+
+                      <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-mono text-zinc-300">
+                        <span>{short.client}</span>
+                        <span>{short.duration || '0:30'}</span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 space-y-2">
+                      <h3 className="font-display font-semibold text-sm text-zinc-950 line-clamp-2">
+                        {short.title}
+                      </h3>
+                      {short.metrics && (
+                        <div className="text-[11px] font-mono text-emerald-600 font-semibold truncate">
+                          {short.metrics}
+                        </div>
+                      )}
+                      {short.description && (
+                        <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+                          {short.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="px-4 py-3 bg-zinc-50/70 border-t border-zinc-100 flex items-center justify-between">
+                    <span className="text-[11px] font-mono text-zinc-400 truncate max-w-[120px]">
+                      {short.role || 'Short-Form Editor'}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => handleOpenEditVideo(short)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-zinc-100 border border-zinc-200 text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-3 h-3 text-zinc-600" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteVideo(short.id, short.title)}
+                        className="p-1.5 rounded-lg hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors cursor-pointer"
+                        title="Delete short"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {filteredShorts.length === 0 && (
+              <div className="py-16 text-center rounded-2xl bg-white border border-zinc-200/80 p-8">
+                <Smartphone className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
+                <h3 className="text-sm font-semibold text-zinc-900">No vertical shorts found</h3>
+                <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                  {shortSearch
+                    ? 'Try clearing your search query.'
+                    : 'Add YouTube Shorts, Instagram Reels, or TikTok vertical edits to showcase in your Shorts tab.'}
+                </p>
+                <button
+                  onClick={handleOpenAddShort}
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 text-white text-xs font-semibold"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add First Short</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 3: GRAPHIC DESIGN MANAGER */}
         {activeTab === 'graphics' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -887,8 +1212,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <h2 className="font-display text-2xl font-bold text-zinc-900">
                   Graphic Design & Key-Art Packaging
                 </h2>
-                <p className="text-xs text-zinc-500 mt-1">
-                  Upload, replace, and edit visual assets, posters, thumbnails, and brand stills.
+                <p className="text-xs text-zinc-500 mt-1 flex flex-wrap items-center gap-2">
+                  <span>Upload, replace, and edit visual assets, posters, thumbnails, and brand stills.</span>
+                  <span className="text-zinc-300">•</span>
+                  <span className="inline-flex items-center gap-1 text-zinc-700 font-mono font-medium bg-zinc-100 px-2 py-0.5 rounded">
+                    <GripVertical className="w-3.5 h-3.5 text-zinc-500" /> Hold & drag any card to reorder
+                  </span>
                 </p>
               </div>
 
@@ -915,7 +1244,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               {filteredGraphics.map((graphic) => (
                 <div
                   key={graphic.id}
-                  className="rounded-2xl bg-white border border-zinc-200/90 overflow-hidden shadow-2xs flex flex-col justify-between"
+                  draggable={true}
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', graphic.id);
+                    setDraggedItemId(graphic.id);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (dragOverItemId !== graphic.id) setDragOverItemId(graphic.id);
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverItemId === graphic.id) setDragOverItemId(null);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    handleDropGraphic(graphic.id);
+                  }}
+                  onDragEnd={() => {
+                    setDraggedItemId(null);
+                    setDragOverItemId(null);
+                  }}
+                  className={`rounded-2xl bg-white border border-zinc-200/90 overflow-hidden shadow-2xs flex flex-col justify-between cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                    draggedItemId === graphic.id
+                      ? 'opacity-30 scale-[0.98] border-dashed border-zinc-400'
+                      : ''
+                  } ${
+                    dragOverItemId === graphic.id
+                      ? 'ring-2 ring-zinc-950 ring-offset-2 scale-[1.01]'
+                      : 'hover:shadow-md'
+                  }`}
                 >
                   <div>
                     <div className="relative aspect-video bg-zinc-100 overflow-hidden">
@@ -930,6 +1289,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-white/90 backdrop-blur-xs text-[10px] font-semibold text-zinc-900">
                         {graphic.categoryLabel || graphic.category}
                       </span>
+                      <div
+                        className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-black/60 backdrop-blur-xs text-white/80 hover:text-white"
+                        title="Hold and drag anywhere to reorder"
+                      >
+                        <GripVertical className="w-4 h-4" />
+                      </div>
                     </div>
 
                     <div className="p-4 space-y-2">
@@ -972,6 +1337,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </div>
               ))}
             </div>
+
+            {filteredGraphics.length === 0 && (
+              <div className="py-16 text-center rounded-2xl bg-white border border-zinc-200/80 p-8">
+                <ImageIcon className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
+                <h3 className="text-sm font-semibold text-zinc-900">No graphic design items found</h3>
+                <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                  {graphicSearch ? 'Try clearing your search query.' : 'Add your first visual asset or key-art design.'}
+                </p>
+                <button
+                  onClick={handleOpenAddGraphic}
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 text-white text-xs font-semibold"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Graphic</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -1668,6 +2050,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </div>
             </form>
           </div>
+        </div>
+      )}
+      {/* Reorder Status Notification */}
+      {reorderStatus && (
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-zinc-950 text-white text-xs font-semibold shadow-xl flex items-center gap-2 border border-zinc-800">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{reorderStatus}</span>
         </div>
       )}
     </div>

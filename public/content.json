@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T22:29:54.010Z",
+  "lastUpdated": "2026-09-20T22:30:01.199Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -247,13 +247,14 @@
       "client": "Blood Barrel",
       "category": "key-art",
       "categoryLabel": "KEY-ART",
-      "imageUrl": "https://i.ibb.co/twszZPcp/loleq3.jpg",
+      "imageUrl": "https://i.ibb.co/fVp98Gtd/loleq3.jpg",
       "aspect": "portrait",
       "year": "2026",
       "description": "Features heavy graphics and effects with the iconic Mike Tyson shot and a progress bar for engagement",
       "tools": [
         "Photoshop"
-      ]
+      ],
+      "file": null
     },
     {
       "id": "graphic-1789874407223",

@@ -126,10 +126,18 @@ export function startSmartUpdateMonitor(options: SmartMonitorOptions = {}): () =
       const liveFingerprint = computeContentFingerprint(live);
       const liveTimestamp = live.lastUpdated || '';
 
-      // If initial baseline was empty, establish it now
+      // If initial baseline was empty, establish it now and broadcast freshest payload
       if (!currentFingerprint) {
         currentFingerprint = liveFingerprint;
         currentTimestamp = liveTimestamp;
+        if (options.onContentUpdated) {
+          options.onContentUpdated(live);
+        }
+        window.dispatchEvent(
+          new CustomEvent('zolepto:content-published', {
+            detail: live,
+          })
+        );
         return;
       }
 
@@ -142,23 +150,31 @@ export function startSmartUpdateMonitor(options: SmartMonitorOptions = {}): () =
         new Date(liveTimestamp).getTime() > new Date(currentTimestamp).getTime();
 
       if (hasContentChanged || isNewerTimestamp) {
-        // Guard: If admin is active or user has newer local edits, do not overwrite state
+        // Guard: If admin is active or user has newer local edits in admin panel, do not overwrite state
         if (options.isAdminActive && options.isAdminActive()) return;
-        try {
-          const lastPortfolioEdit = parseInt(
-            localStorage.getItem('zolepto_portfolio_last_edit_time') || '0',
-            10
-          );
-          const lastSettingsEdit = parseInt(
-            localStorage.getItem('zolepto_settings_last_edit_time') || '0',
-            10
-          );
-          const lastEdit = Math.max(lastPortfolioEdit, lastSettingsEdit);
-          const remoteTime = live.lastUpdated ? new Date(live.lastUpdated).getTime() : 0;
-          if (lastEdit > 0 && remoteTime <= lastEdit) {
-            return;
-          }
-        } catch {}
+        const isAdminEditing =
+          typeof window !== 'undefined' &&
+          (localStorage.getItem('zolepto_admin_editing_active') === 'true' ||
+            window.location.hash.toLowerCase().includes('admin') ||
+            window.location.pathname.toLowerCase().includes('admin'));
+
+        if (isAdminEditing) {
+          try {
+            const lastPortfolioEdit = parseInt(
+              localStorage.getItem('zolepto_portfolio_last_edit_time') || '0',
+              10
+            );
+            const lastSettingsEdit = parseInt(
+              localStorage.getItem('zolepto_settings_last_edit_time') || '0',
+              10
+            );
+            const lastEdit = Math.max(lastPortfolioEdit, lastSettingsEdit);
+            const remoteTime = live.lastUpdated ? new Date(live.lastUpdated).getTime() : 0;
+            if (lastEdit > 0 && remoteTime <= lastEdit) {
+              return;
+            }
+          } catch {}
+        }
 
         // Update in-memory reference
         currentFingerprint = liveFingerprint;

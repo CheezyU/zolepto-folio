@@ -105,36 +105,26 @@ function isLegacyDummyItem(item: { title?: string }): boolean {
 let authoritativeShowreels: VideoProject[] | null = null;
 let authoritativeGraphics: GraphicProject[] | null = null;
 
-function sanitizeAndUpgradeVideo(item: VideoProject): VideoProject {
-  const cleaned: any = { ...item };
-  // Strip views completely
-  delete cleaned.views;
-  // If metrics contains 'view', remove it
-  if (cleaned.metrics && cleaned.metrics.toLowerCase().includes('view')) {
-    cleaned.metrics = '';
-  }
-  // Strip year
-  delete cleaned.year;
-
-  let thumb = cleaned.thumbnailUrl;
-  const yId =
-    cleaned.youtubeId ||
-    extractYouTubeId(cleaned.embedUrl || '') ||
-    extractYouTubeId(cleaned.youtubeUrl || '') ||
-    extractYouTubeId(thumb || '');
-
-  if (yId) {
-    thumb = getYouTubeThumbnailUrl(yId, 'maxres');
-  } else if (thumb) {
-    thumb = upgradeYouTubeThumbnailUrl(thumb);
-  }
-
-  cleaned.thumbnailUrl = thumb;
-  return cleaned as VideoProject;
-}
-
 function upgradeVideoThumbnails(items: VideoProject[]): VideoProject[] {
-  return items.map((item) => sanitizeAndUpgradeVideo(item));
+  return items.map((item) => {
+    let thumb = item.thumbnailUrl;
+    const yId =
+      item.youtubeId ||
+      extractYouTubeId(item.embedUrl || '') ||
+      extractYouTubeId((item as any).youtubeUrl || '') ||
+      extractYouTubeId(thumb || '');
+
+    if (yId) {
+      thumb = getYouTubeThumbnailUrl(yId, 'maxres');
+    } else if (thumb) {
+      thumb = upgradeYouTubeThumbnailUrl(thumb);
+    }
+
+    if (thumb !== item.thumbnailUrl) {
+      return { ...item, thumbnailUrl: thumb };
+    }
+    return item;
+  });
 }
 
 export function getAuthoritativeShowreels(): VideoProject[] {
@@ -212,11 +202,13 @@ export function getLocalShowreels(): VideoProject[] {
   }
 }
 
-export function saveLocalShowreels(items: VideoProject[], dispatch = true) {
+export function saveLocalShowreels(items: VideoProject[], dispatch = true, isUserAdminEdit = false) {
   try {
     authoritativeShowreels = items;
     localStorage.setItem(LOCAL_SHOWREELS_KEY, JSON.stringify(items));
-    localStorage.setItem('zolepto_portfolio_last_edit_time', Date.now().toString());
+    if (isUserAdminEdit) {
+      localStorage.setItem('zolepto_portfolio_last_edit_time', Date.now().toString());
+    }
 
     let fullPayload: any = null;
     try {
@@ -238,7 +230,7 @@ export function saveLocalShowreels(items: VideoProject[], dispatch = true) {
     }
 
     // Seamless background global cloud sync so KVDB immediately reflects user's edits
-    if (fullPayload) {
+    if (isUserAdminEdit && fullPayload) {
       publishToGlobalCloud(fullPayload).catch(() => {});
     }
   } catch (err) {
@@ -255,11 +247,13 @@ export function getLocalGraphics(): GraphicProject[] {
   }
 }
 
-export function saveLocalGraphics(items: GraphicProject[], dispatch = true) {
+export function saveLocalGraphics(items: GraphicProject[], dispatch = true, isUserAdminEdit = false) {
   try {
     authoritativeGraphics = items;
     localStorage.setItem(LOCAL_GRAPHICS_KEY, JSON.stringify(items));
-    localStorage.setItem('zolepto_portfolio_last_edit_time', Date.now().toString());
+    if (isUserAdminEdit) {
+      localStorage.setItem('zolepto_portfolio_last_edit_time', Date.now().toString());
+    }
 
     let fullPayload: any = null;
     try {
@@ -281,7 +275,7 @@ export function saveLocalGraphics(items: GraphicProject[], dispatch = true) {
     }
 
     // Seamless background global cloud sync so KVDB immediately reflects user's edits
-    if (fullPayload) {
+    if (isUserAdminEdit && fullPayload) {
       publishToGlobalCloud(fullPayload).catch(() => {});
     }
   } catch (err) {
@@ -375,6 +369,7 @@ export function subscribeToShowreels(callback: (projects: VideoProject[]) => voi
         } catch {}
 
         authoritativeShowreels = deployed.showreels;
+        saveLocalShowreels(deployed.showreels, false, false);
         callback(deployed.showreels);
       })
       .catch(() => {});
@@ -443,6 +438,7 @@ export function subscribeToGraphics(callback: (projects: GraphicProject[]) => vo
         } catch {}
 
         authoritativeGraphics = deployed.graphics;
+        saveLocalGraphics(deployed.graphics, false, false);
         callback(deployed.graphics);
       })
       .catch(() => {});

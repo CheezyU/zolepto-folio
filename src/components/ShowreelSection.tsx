@@ -184,10 +184,10 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                 </div>
                 <div>
                   <span className="text-xs font-mono uppercase text-zinc-400 font-semibold tracking-wider">
-                    Focus
+                    Performance Metric
                   </span>
                   <p className="text-xs font-semibold text-zinc-900 mt-0.5">
-                    {MAIN_SHOWREEL.categoryLabel || 'Master Reel'}
+                    {MAIN_SHOWREEL.metrics}
                   </p>
                 </div>
               </div>
@@ -279,10 +279,10 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                   </p>
                 </div>
 
-                {/* Footer of Card with Role & YouTube Link */}
+                {/* Footer of Card with Metric & YouTube Link */}
                 <div className="pt-3 border-t border-zinc-100 flex items-center justify-between gap-2">
                   <span className="text-xs font-medium text-zinc-700 truncate max-w-[170px]">
-                    {video.role || video.categoryLabel}
+                    {video.metrics || video.role}
                   </span>
 
                   <a

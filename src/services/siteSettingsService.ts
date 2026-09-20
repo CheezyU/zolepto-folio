@@ -6,9 +6,9 @@ const DRAFT_SETTINGS_KEY = 'zolepto_site_settings_draft';
 const SETTINGS_EVENT = 'zolepto:site-settings-changed';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  headerLogoUrl: '',
-  headerLogoDarkUrl: '',
-  headerLogoLightUrl: '',
+  headerLogoUrl: 'https://i.ibb.co/F49NG9JT/whitemelogo1million.png',
+  headerLogoDarkUrl: 'https://i.ibb.co/F49NG9JT/whitemelogo1million.png',
+  headerLogoLightUrl: 'https://i.ibb.co/xtZbcgMY/melogo1million.png',
   heroTitleLine1: 'Editing is just the start.',
   heroTitleLine2: 'I care what happens after you hit post.',
   heroSubtitle:
@@ -28,7 +28,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   aboutChannelTag: '@HelixGr4nd',
   aboutTools: ['Premiere Pro', 'After Effects', 'Photoshop', 'YouTube Studio'],
   contactEmail: 'zolepto@gmail.com',
-  profilePictureUrl: '',
+  profilePictureUrl: 'https://i.ibb.co/99MTLF44/rmbg-result-4.png',
   featuredReelYoutubeId: 'aqz-KE-bpKQ',
   featuredReelTitle: 'ZOLEPTO — 2026 Director & Editing Master Showreel',
   // Hero Credibility Metrics
@@ -245,11 +245,13 @@ export function getLocalSettings(): SiteSettings {
   }
 }
 
-export function saveLocalSettings(settings: SiteSettings, dispatch = true) {
+export function saveLocalSettings(settings: SiteSettings, dispatch = true, isUserAdminEdit = false) {
   try {
     const sanitized = sanitizeSiteSettings(settings);
     localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(sanitized));
-    localStorage.setItem('zolepto_settings_last_edit_time', Date.now().toString());
+    if (isUserAdminEdit) {
+      localStorage.setItem('zolepto_settings_last_edit_time', Date.now().toString());
+    }
 
     // Update merged payload cache so local edits are always preserved
     try {
@@ -342,8 +344,8 @@ export function subscribeToSiteSettings(callback: (settings: SiteSettings) => vo
           ...deployed.siteSettings,
         });
 
-        // Cache so reloads and offline stay fully updated
-        saveLocalSettings(finalSettings, false);
+        // Cache without marking as user local edit so reloads and offline stay fully updated
+        saveLocalSettings(finalSettings, false, false);
         callback(finalSettings);
       })
       .catch((err) => {

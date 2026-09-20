@@ -3,7 +3,7 @@ import { Play, ChevronLeft, ChevronRight, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { VideoProject, GraphicProject, WorkSectionTab } from '../types';
 import { GraphicModal } from './GraphicModal';
-import { isShortFormVideo } from '../lib/videoEmbed';
+import { isShortFormVideo, createShortsPlaceholderSvg } from '../lib/videoEmbed';
 import { handleThumbnailImageError, handleThumbnailImageLoad } from '../lib/youtube';
 
 interface WorkSectionProps {
@@ -34,7 +34,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
   const isDraggingRef = useRef(false);
   const dragDistanceRef = useRef(0);
   const sectionRef = useRef<HTMLElement>(null);
-  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   // Synchronize internal tab state when activeTab prop changes
   useEffect(() => {
@@ -42,9 +41,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       setCurrentTab(activeTab);
       setCurrentPage(0);
       setDirection(0);
-      if (mobileScrollRef.current) {
-        mobileScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      }
     }
   }, [activeTab]);
 
@@ -54,10 +50,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
     setCurrentPage(0);
     setDirection(0);
     if (onTabChange) onTabChange(tab);
-
-    if (mobileScrollRef.current) {
-      mobileScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-    }
 
     if (sectionRef.current) {
       const headerOffset = 80;
@@ -137,8 +129,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
       <div id="work" className="absolute -top-24 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Centered Minimalist Section Header - Guaranteed visible, never hidden by animation traps */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 relative">
+        {/* Centered Minimalist Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 relative"
+        >
           {/* Centered Title */}
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
             What I Build
@@ -149,63 +147,65 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
             See what your story could look and feel like when brought to life. Every project here was crafted hand-in-hand with creators—and yours can be next.
           </p>
 
-          {/* Category Tabs Pill Bar: Videos | Vertical | Graphic Design */}
-          <div className="mt-7 sm:mt-8 flex justify-center w-full px-2">
-            <div
-              role="tablist"
-              aria-label="Portfolio categories"
-              className="w-full max-w-sm sm:max-w-md grid grid-cols-3 p-1 rounded-2xl sm:rounded-full bg-zinc-200/80 border border-zinc-300/70 shadow-2xs gap-1"
-            >
+          {/* Category Tabs Pill Bar: Videos | Shorts | Graphic Design */}
+          <div className="mt-8 flex justify-center">
+            <div className="relative inline-flex flex-wrap sm:flex-nowrap items-center p-1 rounded-full bg-zinc-200/70 border border-zinc-300/60 shadow-2xs gap-0.5">
               <button
                 id="work-tab-videos"
                 type="button"
-                role="tab"
-                aria-selected={currentTab === 'videos' || currentTab === 'showreels'}
                 onClick={() => handleTabClick('videos')}
-                className={`relative py-2.5 sm:py-2 px-1 sm:px-4 rounded-xl sm:rounded-full text-xs font-semibold tracking-tight transition-all duration-200 cursor-pointer text-center flex items-center justify-center select-none ${
-                  currentTab === 'videos' || currentTab === 'showreels'
-                    ? 'bg-zinc-950 text-white shadow-xs'
-                    : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-300/40'
+                className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+                  currentTab === 'videos' || currentTab === 'showreels' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
                 }`}
               >
+                {(currentTab === 'videos' || currentTab === 'showreels') && (
+                  <motion.div
+                    layoutId="activeWorkTabPill"
+                    className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                  />
+                )}
                 Videos
               </button>
 
               <button
                 id="work-tab-shorts"
                 type="button"
-                role="tab"
-                aria-selected={currentTab === 'shorts'}
                 onClick={() => handleTabClick('shorts')}
-                className={`relative py-2.5 sm:py-2 px-1 sm:px-4 rounded-xl sm:rounded-full text-xs font-semibold tracking-tight transition-all duration-200 cursor-pointer text-center flex items-center justify-center select-none ${
-                  currentTab === 'shorts'
-                    ? 'bg-zinc-950 text-white shadow-xs'
-                    : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-300/40'
+                className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+                  currentTab === 'shorts' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
                 }`}
               >
-                <span>Vertical</span>
-                <span className="hidden sm:inline text-[10px] opacity-75 ml-1 font-normal font-mono">
-                  (Shorts)
-                </span>
+                {currentTab === 'shorts' && (
+                  <motion.div
+                    layoutId="activeWorkTabPill"
+                    className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                  />
+                )}
+                Shorts
               </button>
 
               <button
                 id="work-tab-design"
                 type="button"
-                role="tab"
-                aria-selected={currentTab === 'design'}
                 onClick={() => handleTabClick('design')}
-                className={`relative py-2.5 sm:py-2 px-1 sm:px-4 rounded-xl sm:rounded-full text-xs font-semibold tracking-tight transition-all duration-200 cursor-pointer text-center flex items-center justify-center select-none ${
-                  currentTab === 'design'
-                    ? 'bg-zinc-950 text-white shadow-xs'
-                    : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-300/40'
+                className={`relative px-4 sm:px-5 py-2 rounded-full text-xs font-semibold tracking-tight transition-colors duration-200 cursor-pointer z-10 ${
+                  currentTab === 'design' ? 'text-white' : 'text-zinc-600 hover:text-zinc-950'
                 }`}
               >
-                <span className="truncate">Graphic Design</span>
+                {currentTab === 'design' && (
+                  <motion.div
+                    layoutId="activeWorkTabPill"
+                    className="absolute inset-0 rounded-full bg-zinc-950 shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                  />
+                )}
+                Graphic Design
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Responsive Container */}
         <div className="relative">
@@ -222,10 +222,9 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
 
             <motion.div
               key={`mobile-${currentTab}`}
-              ref={mobileScrollRef}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.25 }}
+              initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none -mx-4 sm:-mx-6 px-4 sm:px-6 scroll-pl-4 sm:scroll-pl-6"
             >
               {unifiedItems.length === 0 ? (
@@ -240,6 +239,12 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
 
                     // If viewing dedicated Shorts tab: render vertical card
                     if (currentTab === 'shorts') {
+                      const verticalFallback = createShortsPlaceholderSvg(video.title, video.client);
+                      const displayThumb =
+                        video.thumbnailUrl ||
+                        (video.youtubeId ? `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg` : '') ||
+                        verticalFallback;
+
                       return (
                         <div
                           key={`mob-vid-${video.id}`}
@@ -248,12 +253,12 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                           className="group shrink-0 w-[65vw] sm:w-[240px] aspect-[9/16] snap-start flex flex-col rounded-2xl bg-zinc-950 border border-zinc-200/80 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer relative select-none"
                         >
                           <img
-                            src={video.thumbnailUrl || fallbackThumbnail}
+                            src={displayThumb}
                             alt={video.title}
                             loading="lazy"
                             decoding="async"
                             referrerPolicy="no-referrer"
-                            onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                            onError={(e) => handleThumbnailImageError(e, verticalFallback)}
                             onLoad={handleThumbnailImageLoad}
                             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                           />
@@ -631,6 +636,12 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
 
                         // 1. If viewing dedicated Shorts tab: Render Full Vertical Show Card
                         if (currentTab === 'shorts') {
+                          const verticalFallback = createShortsPlaceholderSvg(video.title, video.client);
+                          const displayThumb =
+                            video.thumbnailUrl ||
+                            (video.youtubeId ? `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg` : '') ||
+                            verticalFallback;
+
                           return (
                             <div
                               key={`vid-short-${video.id}`}
@@ -642,12 +653,12 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               className="group relative flex flex-col rounded-2xl bg-zinc-950 text-white border border-zinc-200/80 hover:border-zinc-400 hover:shadow-[0_20px_45px_-12px_rgba(0,0,0,0.35)] transition-all duration-300 overflow-hidden cursor-pointer select-none aspect-[9/16]"
                             >
                               <img
-                                src={video.thumbnailUrl || fallbackThumbnail}
+                                src={displayThumb}
                                 alt={video.title}
                                 loading="lazy"
                                 decoding="async"
                                 referrerPolicy="no-referrer"
-                                onError={(e) => handleThumbnailImageError(e, fallbackThumbnail)}
+                                onError={(e) => handleThumbnailImageError(e, verticalFallback)}
                                 onLoad={handleThumbnailImageLoad}
                                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />

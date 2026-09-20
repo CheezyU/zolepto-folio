@@ -188,37 +188,15 @@ export const Header: React.FC<HeaderProps> = ({
               : 'bg-[#0d0e12]/92 border-white/10 text-white'
           }`}
         >
-          <div className="space-y-0.5">
-            <button
-              id="mobile-nav-portfolio"
-              onClick={() => handleLinkClick('work')}
-              className={`block w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                isScrolled ? 'text-zinc-900 hover:bg-zinc-100' : 'text-white hover:bg-white/10'
-              }`}
-            >
-              Portfolio
-            </button>
-            <div className="pl-3 grid grid-cols-2 gap-1 pb-1">
-              <button
-                id="mobile-nav-shorts"
-                onClick={() => handleLinkClick('shorts')}
-                className={`text-left px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  isScrolled ? 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-400 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                ↳ Vertical / Shorts
-              </button>
-              <button
-                id="mobile-nav-design"
-                onClick={() => handleLinkClick('design')}
-                className={`text-left px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                  isScrolled ? 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-400 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                ↳ Graphic Design
-              </button>
-            </div>
-          </div>
+          <button
+            id="mobile-nav-portfolio"
+            onClick={() => handleLinkClick('work')}
+            className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isScrolled ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950' : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            Portfolio
+          </button>
           <button
             id="mobile-nav-blueprint"
             onClick={() => handleLinkClick('process')}

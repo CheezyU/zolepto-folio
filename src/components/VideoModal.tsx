@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Play } from 'lucide-react';
 import { VideoProject } from '../types';
-import { isShortFormVideo } from '../lib/videoEmbed';
+import { isShortFormVideo, parseVideoUrl } from '../lib/videoEmbed';
+import { extractYouTubeId } from '../lib/youtube';
 
 interface VideoModalProps {
   project: VideoProject | null;
@@ -29,10 +30,27 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
   if (!project) return null;
 
   const isVertical = isShortFormVideo(project);
-  const validEmbedUrl = project?.embedUrl?.trim();
-  const iframeSrc = validEmbedUrl
-    ? `${validEmbedUrl}${validEmbedUrl.includes('?') ? '&' : '?'}autoplay=1&enablejsapi=1`
-    : null;
+  
+  // Resolve guaranteed working embed URL for YouTube videos/shorts and external embeds
+  let iframeSrc: string | null = null;
+  const ytId =
+    project.youtubeId?.trim() ||
+    extractYouTubeId(project.embedUrl || '') ||
+    extractYouTubeId((project as any).youtubeUrl || '');
+
+  if (ytId) {
+    iframeSrc = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`;
+  } else if (project.embedUrl?.trim()) {
+    const raw = project.embedUrl.trim();
+    const parsed = parseVideoUrl(raw);
+    if (parsed.embedUrl) {
+      const sep = parsed.embedUrl.includes('?') ? '&' : '?';
+      iframeSrc = `${parsed.embedUrl}${sep}autoplay=1&enablejsapi=1`;
+    } else {
+      const sep = raw.includes('?') ? '&' : '?';
+      iframeSrc = `${raw}${sep}autoplay=1&enablejsapi=1`;
+    }
+  }
 
   const tags = (project.tags || [])
     .map((t) => t.replace(/^#/, '').trim())
@@ -47,12 +65,12 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
       {isVertical ? (
         /* Vertical Video Layout: Side-by-side on sm+ screens so info card is beside the video without fighting for vertical space */
         <div
-          className="relative w-full max-w-lg sm:max-w-3xl md:max-w-4xl max-h-[92vh] sm:max-h-[85vh] bg-white border border-zinc-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-auto flex flex-col sm:flex-row transition-all duration-300"
+          className="relative w-full max-w-lg sm:max-w-3xl md:max-w-4xl max-h-[94vh] sm:max-h-[85vh] bg-white border border-zinc-200/90 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-auto flex flex-col sm:flex-row transition-all duration-300"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Vertical Video Frame: On mobile, rendered in standard landscape size (aspect-video) like a long form; on sm+, placed beside info card in 9:16 */}
+          {/* Vertical Video Frame: On mobile, rendered with authentic 9:16 vertical proportions and height */}
           <div className="relative bg-zinc-950 flex items-center justify-center shrink-0 w-full sm:w-[310px] md:w-[350px] lg:w-[390px] overflow-hidden border-b sm:border-b-0 sm:border-r border-zinc-200/80">
-            <div className="w-full aspect-video sm:aspect-[9/16] sm:max-h-[85vh] flex items-center justify-center mx-auto bg-black">
+            <div className="w-full h-[50vh] min-h-[320px] max-h-[460px] sm:h-auto sm:aspect-[9/16] sm:max-h-[85vh] flex items-center justify-center mx-auto bg-black">
               {iframeSrc ? (
                 <iframe
                   src={iframeSrc}
@@ -128,9 +146,12 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
             </div>
 
             {/* Bottom Meta Bar */}
-            {(project.duration || project.role) && (
+            {(project.duration || project.role || project.views) && (
               <div className="pt-4 mt-6 border-t border-zinc-100 flex items-center justify-between text-[11px] font-mono text-zinc-500">
                 <span>{project.role || 'Short-Form Editor'}</span>
+                {project.views && (
+                  <span className="text-emerald-600 font-semibold">{project.views}</span>
+                )}
                 {project.duration && <span>{project.duration}</span>}
               </div>
             )}

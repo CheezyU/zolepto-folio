@@ -183,11 +183,32 @@ export function parseVideoUrl(inputUrl: string): ParsedVideoInfo {
   };
 }
 
+function escapeXml(unsafe: string): string {
+  return (unsafe || '').replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case '\'':
+        return '&apos;';
+      case '"':
+        return '&quot;';
+      default:
+        return c;
+    }
+  });
+}
+
 /**
  * Creates an elegant SVG placeholder with 9:16 vertical smartphone proportions
  * for short-form video cards.
  */
 export function createShortsPlaceholderSvg(title: string, platform = 'SHORT-FORM'): string {
+  const safeTitle = escapeXml(title || 'Short-Form Reel');
+  const safePlatform = escapeXml((platform || 'SHORT-FORM').toUpperCase());
   return `data:image/svg+xml;utf8,${encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280" fill="none">
       <defs>
@@ -217,8 +238,8 @@ export function createShortsPlaceholderSvg(title: string, platform = 'SHORT-FORM
       <polygon points="352,538 384,560 352,582" fill="#fafafa"/>
 
       <!-- Title & Details -->
-      <text x="360" y="690" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="700" fill="#f4f4f5" text-anchor="middle" letter-spacing="0.5">${title}</text>
-      <text x="360" y="730" font-family="monospace" font-size="16" fill="#a1a1aa" text-anchor="middle" letter-spacing="2.5">${platform.toUpperCase()}</text>
+      <text x="360" y="690" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="700" fill="#f4f4f5" text-anchor="middle" letter-spacing="0.5">${safeTitle}</text>
+      <text x="360" y="730" font-family="monospace" font-size="16" fill="#a1a1aa" text-anchor="middle" letter-spacing="2.5">${safePlatform}</text>
       <text x="360" y="768" font-family="monospace" font-size="13" fill="#71717a" text-anchor="middle" letter-spacing="1">HIGH-RETENTION VERTICAL CUT</text>
 
       <!-- Bottom Audio / Engagement Wave indicator -->

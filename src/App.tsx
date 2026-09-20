@@ -21,7 +21,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { VideoProject, GraphicProject, SiteSettings, WorkSectionTab } from './types';
 import { MAIN_SHOWREEL, VIDEO_PROJECTS, GRAPHIC_PROJECTS } from './data/portfolioData';
 import { subscribeToShowreels, subscribeToGraphics, getAuthoritativeShowreels, getAuthoritativeGraphics } from './services/portfolioService';
-import { subscribeToSiteSettings, DEFAULT_SITE_SETTINGS } from './services/siteSettingsService';
+import { subscribeToSiteSettings, DEFAULT_SITE_SETTINGS, getLocalSettings } from './services/siteSettingsService';
 import { startSmartUpdateMonitor } from './services/smartUpdateMonitor';
 import { SmartUpdateBanner } from './components/SmartUpdateBanner';
 
@@ -39,7 +39,7 @@ function MainApp() {
   });
   const [showreels, setShowreels] = useState<VideoProject[]>(() => getAuthoritativeShowreels());
   const [graphics, setGraphics] = useState<GraphicProject[]>(() => getAuthoritativeGraphics());
-  const [siteSettings, setSiteSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => getLocalSettings());
   const [activeTheaterProject, setActiveTheaterProject] = useState<VideoProject | null>(null);
 
   // Sync route with window pathname & hash

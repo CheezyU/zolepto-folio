@@ -16,9 +16,10 @@ export interface VideoProject {
   category: VideoCategory;
   categoryLabel: string;
   duration?: string;
-  year?: string;
+  year: string;
   youtubeId: string;
   embedUrl: string;
+  youtubeUrl?: string;
   thumbnailUrl: string;
   description: string;
   role: string;
@@ -29,7 +30,7 @@ export interface VideoProject {
   featured?: boolean;
 }
 
-export type GraphicCategory = 'all' | 'key-art' | 'thumbnails' | 'branding' | 'styleframes';
+export type GraphicCategory = 'all' | 'key-art' | 'thumbnails' | 'branding' | 'styleframes' | 'styleframe';
 
 export interface GraphicProject {
   id: string;
@@ -39,7 +40,7 @@ export interface GraphicProject {
   categoryLabel: string;
   imageUrl: string;
   aspect: 'portrait' | 'landscape' | 'square';
-  year?: string;
+  year: string;
   description: string;
   tools: string[];
 }

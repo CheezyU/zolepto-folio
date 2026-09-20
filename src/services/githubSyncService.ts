@@ -657,13 +657,13 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
   const newest = candidates[0];
   const newestTime = newest.lastUpdated ? new Date(newest.lastUpdated).getTime() : 0;
 
-  // If admin is actively editing or local edit is newer or equal to newest remote, do not overwrite local cache with older data
+  // Only protect local edits if the user is ACTUALLY in the admin editing panel with unsaved drafts
   const isAdminEditing = typeof window !== 'undefined' && (
     localStorage.getItem('zolepto_admin_editing_active') === 'true' ||
     window.location.hash.toLowerCase().includes('admin') ||
     window.location.pathname.toLowerCase().includes('admin')
   );
-  if (isAdminEditing || (lastLocalEditTime > 0 && newestTime <= lastLocalEditTime)) {
+  if (isAdminEditing && lastLocalEditTime > 0 && newestTime <= lastLocalEditTime) {
     try {
       const cached = localStorage.getItem(LAST_PUSHED_PAYLOAD_KEY);
       if (cached) return JSON.parse(cached);
@@ -671,9 +671,18 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
     return null;
   }
 
-  // Persist freshest payload to local storage
+  // Persist freshest payload to local storage and sync local cache collections
   try {
     localStorage.setItem(LAST_PUSHED_PAYLOAD_KEY, JSON.stringify(newest));
+    if (newest.showreels && Array.isArray(newest.showreels)) {
+      localStorage.setItem('zolepto_portfolio_showreels', JSON.stringify(newest.showreels));
+    }
+    if (newest.graphics && Array.isArray(newest.graphics)) {
+      localStorage.setItem('zolepto_portfolio_graphics', JSON.stringify(newest.graphics));
+    }
+    if (newest.siteSettings && typeof newest.siteSettings === 'object') {
+      localStorage.setItem('zolepto_site_settings', JSON.stringify(newest.siteSettings));
+    }
   } catch {}
 
   return newest;

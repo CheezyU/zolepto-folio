@@ -675,10 +675,10 @@ export async function loadLivePortfolioContent(): Promise<PortfolioContentPayloa
   try {
     localStorage.setItem(LAST_PUSHED_PAYLOAD_KEY, JSON.stringify(newest));
     if (newest.showreels && Array.isArray(newest.showreels)) {
-      localStorage.setItem('zolepto_portfolio_showreels', JSON.stringify(newest.showreels));
+      localStorage.setItem('zolepto_custom_showreels', JSON.stringify(newest.showreels));
     }
     if (newest.graphics && Array.isArray(newest.graphics)) {
-      localStorage.setItem('zolepto_portfolio_graphics', JSON.stringify(newest.graphics));
+      localStorage.setItem('zolepto_custom_graphics', JSON.stringify(newest.graphics));
     }
     if (newest.siteSettings && typeof newest.siteSettings === 'object') {
       localStorage.setItem('zolepto_site_settings', JSON.stringify(newest.siteSettings));

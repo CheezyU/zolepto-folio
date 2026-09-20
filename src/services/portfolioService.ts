@@ -2,7 +2,13 @@ import { VideoProject, GraphicProject, VideoCategory, GraphicCategory } from '..
 import { VIDEO_PROJECTS as DEFAULT_VIDEOS, GRAPHIC_PROJECTS as DEFAULT_GRAPHICS } from '../data/portfolioData';
 import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnailUrl, upgradeYouTubeThumbnailUrl } from '../lib/youtube';
 import { parseVideoUrl, isShortFormVideo, createShortsPlaceholderSvg } from '../lib/videoEmbed';
-import { loadLivePortfolioContent, publishToGlobalCloud } from './githubSyncService';
+import {
+  loadLivePortfolioContent,
+  publishToGlobalCloud,
+  pushPortfolioToGitHub,
+  getGitHubConfig,
+  markCurrentAsPublishedBaseline,
+} from './githubSyncService';
 import { getLocalSettings } from './siteSettingsService';
 
 const LOCAL_SHOWREELS_KEY = 'zolepto_custom_showreels';
@@ -206,32 +212,40 @@ export function saveLocalShowreels(items: VideoProject[], dispatch = true, isUse
   try {
     authoritativeShowreels = items;
     localStorage.setItem(LOCAL_SHOWREELS_KEY, JSON.stringify(items));
+
     if (isUserAdminEdit) {
       localStorage.setItem('zolepto_portfolio_last_edit_time', Date.now().toString());
-    }
 
-    let fullPayload: any = null;
-    try {
-      const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
-      const existing = existingRaw ? JSON.parse(existingRaw) : {};
-      fullPayload = {
-        ...existing,
-        siteSettings: existing.siteSettings || getLocalSettings(),
-        showreels: items,
-        graphics: existing.graphics || getLocalGraphics(),
-        lastUpdated: new Date().toISOString(),
-      };
-      localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
-    } catch {}
+      let fullPayload: any = null;
+      try {
+        const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+        const existing = existingRaw ? JSON.parse(existingRaw) : {};
+        fullPayload = {
+          ...existing,
+          siteSettings: existing.siteSettings || getLocalSettings(),
+          showreels: items,
+          graphics: existing.graphics || getLocalGraphics(),
+          lastUpdated: new Date().toISOString(),
+        };
+        localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
+        markCurrentAsPublishedBaseline(fullPayload);
+      } catch {}
+
+      // Instant global sync to KVDB and background GitHub push
+      if (fullPayload) {
+        publishToGlobalCloud(fullPayload).catch((err) => {
+          console.warn('Background global cloud sync error:', err);
+        });
+        const ghConfig = getGitHubConfig();
+        if (ghConfig.token && ghConfig.owner && ghConfig.repo) {
+          pushPortfolioToGitHub(fullPayload, ghConfig, { force: true }).catch(() => {});
+        }
+      }
+    }
 
     if (dispatch) {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
-    }
-
-    // Seamless background global cloud sync so KVDB immediately reflects user's edits
-    if (isUserAdminEdit && fullPayload) {
-      publishToGlobalCloud(fullPayload).catch(() => {});
     }
   } catch (err) {
     console.warn('Failed to save to local storage', err);
@@ -251,32 +265,40 @@ export function saveLocalGraphics(items: GraphicProject[], dispatch = true, isUs
   try {
     authoritativeGraphics = items;
     localStorage.setItem(LOCAL_GRAPHICS_KEY, JSON.stringify(items));
+
     if (isUserAdminEdit) {
       localStorage.setItem('zolepto_portfolio_last_edit_time', Date.now().toString());
-    }
 
-    let fullPayload: any = null;
-    try {
-      const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
-      const existing = existingRaw ? JSON.parse(existingRaw) : {};
-      fullPayload = {
-        ...existing,
-        siteSettings: existing.siteSettings || getLocalSettings(),
-        showreels: existing.showreels || getLocalShowreels(),
-        graphics: items,
-        lastUpdated: new Date().toISOString(),
-      };
-      localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
-    } catch {}
+      let fullPayload: any = null;
+      try {
+        const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+        const existing = existingRaw ? JSON.parse(existingRaw) : {};
+        fullPayload = {
+          ...existing,
+          siteSettings: existing.siteSettings || getLocalSettings(),
+          showreels: existing.showreels || getLocalShowreels(),
+          graphics: items,
+          lastUpdated: new Date().toISOString(),
+        };
+        localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
+        markCurrentAsPublishedBaseline(fullPayload);
+      } catch {}
+
+      // Instant global sync to KVDB and background GitHub push
+      if (fullPayload) {
+        publishToGlobalCloud(fullPayload).catch((err) => {
+          console.warn('Background global cloud sync error:', err);
+        });
+        const ghConfig = getGitHubConfig();
+        if (ghConfig.token && ghConfig.owner && ghConfig.repo) {
+          pushPortfolioToGitHub(fullPayload, ghConfig, { force: true }).catch(() => {});
+        }
+      }
+    }
 
     if (dispatch) {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent(PORTFOLIO_EVENT));
-    }
-
-    // Seamless background global cloud sync so KVDB immediately reflects user's edits
-    if (isUserAdminEdit && fullPayload) {
-      publishToGlobalCloud(fullPayload).catch(() => {});
     }
   } catch (err) {
     console.warn('Failed to save to local storage', err);
@@ -309,7 +331,7 @@ export function reorderCategoryInVideos(
     return item;
   });
 
-  saveLocalShowreels(updated);
+  saveLocalShowreels(updated, true, true);
   return updated;
 }
 
@@ -329,7 +351,7 @@ export function reorderGraphicsList(
   const [moved] = next.splice(fromIndex, 1);
   next.splice(toIndex, 0, moved);
 
-  saveLocalGraphics(next);
+  saveLocalGraphics(next, true, true);
   return next;
 }
 
@@ -529,7 +551,7 @@ export async function addShowreel(input: NewShowreelInput): Promise<PortfolioOpe
   };
 
   const currentList = getAuthoritativeShowreels();
-  saveLocalShowreels([newDoc, ...currentList]);
+  saveLocalShowreels([newDoc, ...currentList], true, true);
 
   return { id: newId, isCloudSynced: true };
 }
@@ -541,7 +563,7 @@ export async function deleteShowreel(id: string): Promise<void> {
   hideProjectId(id);
   const currentList = getAuthoritativeShowreels();
   const updatedList = currentList.filter((item) => item.id !== id);
-  saveLocalShowreels(updatedList);
+  saveLocalShowreels(updatedList, true, true);
 }
 
 /**
@@ -623,7 +645,7 @@ export async function updateShowreel(
     updatedList = [updatedDoc, ...currentList];
   }
 
-  saveLocalShowreels(updatedList);
+  saveLocalShowreels(updatedList, true, true);
 
   return { id, isCloudSynced: true };
 }
@@ -657,7 +679,7 @@ export async function addGraphicDesign(input: NewGraphicInput): Promise<Portfoli
   };
 
   const currentList = getAuthoritativeGraphics();
-  saveLocalGraphics([newDoc, ...currentList]);
+  saveLocalGraphics([newDoc, ...currentList], true, true);
 
   return {
     id: newId,
@@ -672,7 +694,7 @@ export async function deleteGraphicDesign(id: string, _imageUrl?: string): Promi
   hideProjectId(id);
   const currentList = getAuthoritativeGraphics();
   const updatedList = currentList.filter((item) => item.id !== id);
-  saveLocalGraphics(updatedList);
+  saveLocalGraphics(updatedList, true, true);
 }
 
 /**
@@ -718,7 +740,7 @@ export async function updateGraphicDesign(
     updatedList = [updatedDoc, ...currentList];
   }
 
-  saveLocalGraphics(updatedList);
+  saveLocalGraphics(updatedList, true, true);
 
   return { id, isCloudSynced: true };
 }

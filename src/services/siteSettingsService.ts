@@ -1,5 +1,12 @@
 import { SiteSettings } from '../types';
-import { loadLivePortfolioContent, CONTENT_PUBLISHED_EVENT } from './githubSyncService';
+import {
+  loadLivePortfolioContent,
+  publishToGlobalCloud,
+  pushPortfolioToGitHub,
+  getGitHubConfig,
+  markCurrentAsPublishedBaseline,
+  CONTENT_PUBLISHED_EVENT,
+} from './githubSyncService';
 
 const SITE_SETTINGS_KEY = 'zolepto_site_settings';
 const DRAFT_SETTINGS_KEY = 'zolepto_site_settings_draft';
@@ -249,23 +256,37 @@ export function saveLocalSettings(settings: SiteSettings, dispatch = true, isUse
   try {
     const sanitized = sanitizeSiteSettings(settings);
     localStorage.setItem(SITE_SETTINGS_KEY, JSON.stringify(sanitized));
+
     if (isUserAdminEdit) {
       localStorage.setItem('zolepto_settings_last_edit_time', Date.now().toString());
-    }
 
-    // Update merged payload cache so local edits are always preserved
-    try {
-      const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
-      const existing = existingRaw ? JSON.parse(existingRaw) : {};
-      localStorage.setItem(
-        'zolepto_last_pushed_payload',
-        JSON.stringify({
+      let fullPayload: any = null;
+      try {
+        const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
+        const existing = existingRaw ? JSON.parse(existingRaw) : {};
+        const showreelsRaw = localStorage.getItem('zolepto_custom_showreels');
+        const graphicsRaw = localStorage.getItem('zolepto_custom_graphics');
+        fullPayload = {
           ...existing,
           siteSettings: sanitized,
+          showreels: existing.showreels || (showreelsRaw ? JSON.parse(showreelsRaw) : []),
+          graphics: existing.graphics || (graphicsRaw ? JSON.parse(graphicsRaw) : []),
           lastUpdated: new Date().toISOString(),
-        })
-      );
-    } catch {}
+        };
+        localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
+        markCurrentAsPublishedBaseline(fullPayload);
+      } catch {}
+
+      if (fullPayload) {
+        publishToGlobalCloud(fullPayload).catch((err) => {
+          console.warn('Background global cloud sync error:', err);
+        });
+        const ghConfig = getGitHubConfig();
+        if (ghConfig.token && ghConfig.owner && ghConfig.repo) {
+          pushPortfolioToGitHub(fullPayload, ghConfig, { force: true }).catch(() => {});
+        }
+      }
+    }
 
     if (dispatch) {
       window.dispatchEvent(new Event('storage'));
@@ -403,20 +424,30 @@ export async function updateSiteSettings(
   const current = getLocalSettings();
   const updated: SiteSettings = sanitizeSiteSettings({ ...current, ...updates });
 
-  saveLocalSettings(updated, true);
+  saveLocalSettings(updated, true, true);
   clearDraftSettings();
 
-  // Also publish to global cloud in the background if possible
+  let cloudSynced = false;
   try {
     const existingRaw = localStorage.getItem('zolepto_last_pushed_payload');
     const existing = existingRaw ? JSON.parse(existingRaw) : {};
+    const showreelsRaw = localStorage.getItem('zolepto_custom_showreels');
+    const graphicsRaw = localStorage.getItem('zolepto_custom_graphics');
     const fullPayload = {
       ...existing,
       siteSettings: updated,
+      showreels: existing.showreels || (showreelsRaw ? JSON.parse(showreelsRaw) : []),
+      graphics: existing.graphics || (graphicsRaw ? JSON.parse(graphicsRaw) : []),
       lastUpdated: new Date().toISOString(),
     };
-    localStorage.setItem('zolepto_last_pushed_payload', JSON.stringify(fullPayload));
-  } catch {}
+    cloudSynced = await publishToGlobalCloud(fullPayload);
+    const ghConfig = getGitHubConfig();
+    if (ghConfig.token && ghConfig.owner && ghConfig.repo) {
+      await pushPortfolioToGitHub(fullPayload, ghConfig, { force: true }).catch(() => {});
+    }
+  } catch (err: any) {
+    console.warn('updateSiteSettings publish error:', err);
+  }
 
-  return { success: true, cloudSynced: true };
+  return { success: true, cloudSynced };
 }

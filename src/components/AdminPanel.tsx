@@ -142,20 +142,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const hasPendingChanges = hasPortfolioChangesToPublish({ siteSettings, showreels, graphics });
 
   const handleTopPushLive = async () => {
-    if (!hasPendingChanges) {
-      setTopPushStatus('Up to Date');
-      setTimeout(() => setTopPushStatus(null), 3000);
-      return;
-    }
-
     const cfg = getGitHubConfig();
     setIsPushingTop(true);
     setTopPushStatus('Publishing Live...');
     try {
-      const res = await pushPortfolioToGitHub({ siteSettings, showreels, graphics }, cfg);
-      if (res.noChanges) {
-        setTopPushStatus('Up to Date');
-      } else if (res.success) {
+      const res = await pushPortfolioToGitHub({ siteSettings, showreels, graphics }, cfg, { force: true });
+      if (res.success) {
         setTopPushStatus('Live Worldwide!');
         appendSecurityLog('Published Live Globally', res.commitUrl || 'Success');
       } else {
@@ -1479,7 +1471,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                 const pushRes = await pushPortfolioToGitHub(
                   { siteSettings: updated, showreels, graphics },
-                  cfg
+                  cfg,
+                  { force: true }
                 );
 
                 if (pushRes.success) {

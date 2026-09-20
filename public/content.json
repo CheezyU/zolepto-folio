@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-20T23:15:47.198Z",
+  "lastUpdated": "2026-09-20T23:19:03.399Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -64,6 +64,27 @@
     "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
   },
   "showreels": [
+    {
+      "id": "short-1789946343398",
+      "title": "Bug Discovery",
+      "client": "SleekToast",
+      "category": "short-form",
+      "categoryLabel": "Entertainment",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "pgxS2qs_hUI",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Creator",
+      "tags": [
+        "Short-Form",
+        "Reels",
+        "TikTok",
+        "Viral"
+      ]
+    },
     {
       "id": "short-1789946147197",
       "title": "Murder Mystery",

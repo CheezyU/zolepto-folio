@@ -3,8 +3,6 @@ import { createPortal } from 'react-dom';
 import {
   X,
   Play,
-  Maximize2,
-  Minimize2,
   ChevronUp,
   ChevronDown,
   ExternalLink,
@@ -20,7 +18,6 @@ interface VideoModalProps {
 
 export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
   const [showMobileInfo, setShowMobileInfo] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
@@ -28,45 +25,6 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
   useEffect(() => {
     setShowMobileInfo(false);
   }, [project]);
-
-  // Handle hardware fullscreen change events
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(Boolean(document.fullscreenElement));
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-    };
-  }, []);
-
-  const toggleNativeFullscreen = async (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    try {
-      if (!document.fullscreenElement) {
-        if (containerRef.current?.requestFullscreen) {
-          await containerRef.current.requestFullscreen();
-          setIsFullscreen(true);
-        } else if ((containerRef.current as any)?.webkitRequestFullscreen) {
-          await (containerRef.current as any).webkitRequestFullscreen();
-          setIsFullscreen(true);
-        }
-      } else {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-          setIsFullscreen(false);
-        } else if ((document as any)?.webkitExitFullscreen) {
-          await (document as any).webkitExitFullscreen();
-          setIsFullscreen(false);
-        }
-      }
-    } catch {
-      // Browser prevented fullscreen or not supported
-    }
-  };
 
   // Keyboard navigation & lock body scroll
   useEffect(() => {
@@ -177,22 +135,8 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
               </span>
             </div>
 
-            {/* Top Right Controls: Fullscreen Toggle & Close Button ONLY (No redundant Info button) */}
+            {/* Top Right Controls: Close Button ONLY */}
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={toggleNativeFullscreen}
-                className="p-2 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer shadow-xs"
-                aria-label={isFullscreen ? 'Exit full screen' : 'Enter full screen'}
-                title={isFullscreen ? 'Exit full screen' : 'Full screen'}
-              >
-                {isFullscreen ? (
-                  <Minimize2 className="w-4 h-4" />
-                ) : (
-                  <Maximize2 className="w-4 h-4" />
-                )}
-              </button>
-
               <button
                 id="close-video-modal-btn"
                 type="button"
@@ -414,20 +358,6 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={toggleNativeFullscreen}
-                className="p-2 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer shadow-xs"
-                aria-label={isFullscreen ? 'Exit full screen' : 'Enter full screen'}
-                title={isFullscreen ? 'Exit full screen' : 'Full screen'}
-              >
-                {isFullscreen ? (
-                  <Minimize2 className="w-4 h-4" />
-                ) : (
-                  <Maximize2 className="w-4 h-4" />
-                )}
-              </button>
-
               <button
                 id="close-video-modal-btn"
                 type="button"

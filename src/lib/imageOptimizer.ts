@@ -10,12 +10,10 @@ export interface ImageOptimizationOptions {
 }
 
 /**
- * Returns an edge-optimized, lightweight WebP/AVIF image URL for external images (2k/4k PNG/JPG)
- * using the global Cloudflare-backed wsrv.nl image proxy.
- *
- * Automatically reduces multi-megabyte 2K/4K raw uploads down to crisp,
- * lightweight (~20-40KB) WebP variants tailored to device resolution,
- * preventing mobile lag, memory exhaustion, and slow rendering on initial site visits.
+ * Returns an edge-optimized image URL.
+ * Direct hosts (ImgBB i.ibb.co, Unsplash images.unsplash.com, YouTube i.ytimg.com)
+ * are served directly from their native ultra-fast CDNs to avoid third-party proxy lag,
+ * rate-limiting, and compression artifacts.
  */
 export function getOptimizedImageUrl(
   rawUrl?: string,
@@ -24,24 +22,51 @@ export function getOptimizedImageUrl(
   if (!rawUrl) return '';
   const cleaned = cleanImageUrl(rawUrl).trim();
 
-  // Return data URIs and inline SVGs as-is without proxying
+  // Return data URIs, local assets, and inline SVGs as-is without proxying
   if (
     cleaned.startsWith('data:') ||
+    cleaned.startsWith('/') ||
     cleaned.endsWith('.svg') ||
     cleaned.includes('.svg?')
   ) {
     return cleaned;
   }
 
-  // Only optimize valid http/https URLs
+  // Only process valid http/https URLs
   if (!/^https?:\/\//i.test(cleaned)) {
     return cleaned;
+  }
+
+  // 1. ImgBB direct hosting: served directly via ImgBB's global edge CDN.
+  // Never route through wsrv.nl proxy because ImgBB rate-limits/blocks proxy bots, causing severe lag and blank images.
+  if (cleaned.includes('i.ibb.co') || cleaned.includes('ibb.co')) {
+    return cleaned;
+  }
+
+  // 2. YouTube thumbnails: native global Google CDN
+  if (cleaned.includes('ytimg.com') || cleaned.includes('youtube.com')) {
+    return cleaned;
+  }
+
+  // 3. Unsplash: Use Unsplash's native edge transformation parameters for instant load
+  if (cleaned.includes('images.unsplash.com')) {
+    try {
+      const u = new URL(cleaned);
+      const { width = 800, quality = 85 } = options;
+      if (width) u.searchParams.set('w', width.toString());
+      if (quality) u.searchParams.set('q', quality.toString());
+      u.searchParams.set('auto', 'format');
+      u.searchParams.set('fit', options.fit || 'crop');
+      return u.toString();
+    } catch {
+      return cleaned;
+    }
   }
 
   const {
     width = 800,
     height,
-    quality = 80,
+    quality = 85,
     format = 'webp',
     fit = 'cover',
   } = options;
@@ -58,23 +83,50 @@ export function getOptimizedImageUrl(
 }
 
 /**
- * Generates a responsive srcset string with multiple resolution variants (e.g. 400w, 800w, 1200w).
+ * Generates a responsive srcset string with multiple resolution variants.
+ * Omits proxy for direct CDN hosts (ImgBB, YouTube) so they load instantly without queuing.
  */
 export function getResponsiveSrcSet(
   rawUrl?: string,
   widths: number[] = [400, 800, 1200],
-  quality = 80
+  quality = 85
 ): string | undefined {
   if (!rawUrl) return undefined;
   const cleaned = cleanImageUrl(rawUrl).trim();
 
   if (
     cleaned.startsWith('data:') ||
+    cleaned.startsWith('/') ||
     cleaned.endsWith('.svg') ||
     cleaned.includes('.svg?') ||
     !/^https?:\/\//i.test(cleaned)
   ) {
     return undefined;
+  }
+
+  // Direct CDNs that already serve full quality without proxy
+  if (
+    cleaned.includes('i.ibb.co') ||
+    cleaned.includes('ibb.co') ||
+    cleaned.includes('ytimg.com')
+  ) {
+    return undefined;
+  }
+
+  if (cleaned.includes('images.unsplash.com')) {
+    try {
+      return widths
+        .map((w) => {
+          const u = new URL(cleaned);
+          u.searchParams.set('w', w.toString());
+          u.searchParams.set('q', quality.toString());
+          u.searchParams.set('auto', 'format');
+          return `${u.toString()} ${w}w`;
+        })
+        .join(', ');
+    } catch {
+      return undefined;
+    }
   }
 
   return widths

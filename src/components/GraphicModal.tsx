@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ExternalLink } from 'lucide-react';
 import { GraphicProject } from '../types';
-import {
-  getOptimizedImageUrl,
-  getResponsiveSrcSet,
-  handleOptimizedImageError,
-} from '../lib/imageOptimizer';
 import { cleanImageUrl } from '../lib/imageUtils';
 
 interface GraphicModalProps {
@@ -20,10 +15,9 @@ const FALLBACK_GRAPHIC =
 export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  // Full-resolution original artwork: Bypass compression proxies to ensure 100% crisp visual fidelity
   const rawUrl = graphic?.imageUrl?.trim() ? cleanImageUrl(graphic.imageUrl.trim()) : '';
-  const displaySrc = rawUrl
-    ? getOptimizedImageUrl(rawUrl, { width: 1600, quality: 85, format: 'webp' })
-    : FALLBACK_GRAPHIC;
+  const displaySrc = rawUrl || FALLBACK_GRAPHIC;
 
   useEffect(() => {
     setImageLoaded(false);
@@ -90,31 +84,42 @@ export const GraphicModal: React.FC<GraphicModalProps> = ({ graphic, onClose }) 
           </div>
         </div>
 
-        {/* Main Visual Canvas Frame: Height-capped on PC so bottom details have comfortable breathing room */}
-        <div className="relative bg-zinc-100/70 border-b border-zinc-200/70 flex items-center justify-center overflow-hidden h-[40vh] sm:h-[46vh] max-h-[48vh] p-3 sm:p-4 shrink-0">
+        {/* Main Visual Canvas Frame: High-contrast theater canvas providing generous viewport for full-fidelity artwork */}
+        <div className="relative bg-zinc-950 border-b border-zinc-800/80 flex items-center justify-center overflow-hidden min-h-[46vh] h-[54vh] sm:h-[64vh] md:h-[70vh] max-h-[74vh] p-3 sm:p-5 shrink-0">
           {!imageLoaded && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-100/80 z-10">
-              <div className="w-7 h-7 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin mb-2" />
-              <span className="text-[11px] font-mono text-zinc-500">Loading artwork...</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/95 z-10 px-6 text-center">
+              <div className="w-10 h-10 border-2 border-zinc-700 border-t-white rounded-full animate-spin mb-3 shadow-lg" />
+              <div className="flex flex-col items-center gap-1.5 max-w-xs">
+                <span className="text-xs font-mono font-medium text-white tracking-wide">
+                  Loading high-res artwork...
+                </span>
+                <span className="text-[10px] font-mono text-zinc-400">
+                  Rendering at uncompressed full fidelity
+                </span>
+                <div className="w-36 h-1.5 bg-zinc-800 rounded-full overflow-hidden mt-1.5">
+                  <div className="h-full bg-white rounded-full animate-pulse" style={{ width: '70%' }} />
+                </div>
+              </div>
             </div>
           )}
 
           {displaySrc ? (
             <img
               src={displaySrc}
-              srcSet={rawUrl ? getResponsiveSrcSet(rawUrl, [600, 1000, 1600], 85) : undefined}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
               alt={graphic.title || 'Graphic artwork'}
               referrerPolicy="no-referrer"
               loading="eager"
               decoding="async"
               onLoad={() => setImageLoaded(true)}
               onError={(e) => {
-                handleOptimizedImageError(e, rawUrl, FALLBACK_GRAPHIC);
+                const target = e.currentTarget;
+                if (target.src !== FALLBACK_GRAPHIC) {
+                  target.src = FALLBACK_GRAPHIC;
+                }
                 setImageLoaded(true);
               }}
-              className={`max-h-full max-w-full object-contain rounded-lg shadow-xs transition-opacity duration-300 ${
-                imageLoaded ? 'opacity-100' : 'opacity-0'
+              className={`max-h-full max-w-full object-contain rounded-md shadow-2xl transition-all duration-300 ${
+                imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-98'
               }`}
             />
           ) : null}

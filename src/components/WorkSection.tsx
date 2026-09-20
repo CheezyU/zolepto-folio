@@ -297,11 +297,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                               >
                                 {video.client}
                               </span>
-                              {video.duration && (
-                                <span className="text-[10px] font-mono text-zinc-400 font-medium shrink-0">
-                                  {video.duration}
-                                </span>
-                              )}
                             </div>
                             {Array.isArray(video.tags) && video.tags.length > 0 && (
                               <div className="flex flex-wrap items-center gap-1 mt-1">
@@ -482,18 +477,19 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                         className="group shrink-0 w-[84vw] sm:w-[380px] snap-start flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 transition-all duration-300 overflow-hidden cursor-pointer"
                       >
                         <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full">
+                          <div className="absolute inset-0 bg-zinc-200/80 animate-pulse pointer-events-none" />
                           <img
                             src={graphicSrc}
                             srcSet={graphicSrcSet}
                             sizes="(max-width: 640px) 84vw, 380px"
                             alt={graphic.title}
-                            loading="lazy"
+                            loading="eager"
                             decoding="async"
                             referrerPolicy="no-referrer"
                             onError={(e) => {
                               handleOptimizedImageError(e, rawGraphicSrc, fallbackGraphic);
                             }}
-                            className="w-full h-full object-cover"
+                            className="relative w-full h-full object-cover"
                           />
                           <div className="absolute inset-0 bg-black/5" />
                           <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
@@ -705,11 +701,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                                   >
                                     {video.client}
                                   </span>
-                                  {video.duration && (
-                                    <span className="text-[10px] font-mono text-zinc-400 font-medium shrink-0">
-                                      {video.duration}
-                                    </span>
-                                  )}
                                 </div>
                                 {Array.isArray(video.tags) && video.tags.length > 0 && (
                                   <div className="flex flex-wrap items-center gap-1 mt-1">
@@ -902,18 +893,19 @@ export const WorkSection: React.FC<WorkSectionProps> = ({
                             className="group flex flex-col rounded-2xl bg-white border border-zinc-200/80 hover:border-zinc-300 hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.12)] transition-all duration-300 overflow-hidden cursor-pointer select-none"
                           >
                             <div className="relative overflow-hidden bg-zinc-100 aspect-video w-full pointer-events-none">
+                              <div className="absolute inset-0 bg-zinc-200/80 animate-pulse pointer-events-none" />
                               <img
                                 src={graphicSrc}
                                 srcSet={graphicSrcSet}
                                 sizes="(max-width: 1024px) 50vw, 380px"
                                 alt={graphic.title}
-                                loading="lazy"
+                                loading="eager"
                                 decoding="async"
                                 referrerPolicy="no-referrer"
                                 onError={(e) => {
                                   handleOptimizedImageError(e, rawGraphicSrc, fallbackGraphic);
                                 }}
-                                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                className="relative w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />
                               <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-300" />
 

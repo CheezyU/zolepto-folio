@@ -453,7 +453,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           categoryLabel: resolvedCategoryLabel,
           ...(inputUrl ? { youtubeUrl: inputUrl } : {}),
           aspectRatio: isShort ? '9/16' : '16/9',
-          duration: videoFormData.duration.trim() || editingVideo.duration || (isShort ? '0:30' : '1:00'),
+          duration: videoFormData.duration.trim() || editingVideo.duration || '',
           year: videoFormData.year.trim() || editingVideo.year || '2026',
           role: videoFormData.role.trim() || editingVideo.role || (isShort ? 'Retention Edit & Hook' : 'Lead Editor'),
           description: videoFormData.description.trim(),
@@ -470,7 +470,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           category,
           categoryLabel: resolvedCategoryLabel,
           youtubeUrl: inputUrl,
-          duration: videoFormData.duration.trim() || (isShort ? '0:30' : '1:00'),
+          duration: videoFormData.duration.trim() || '',
           description: videoFormData.description.trim(),
           role: videoFormData.role.trim() || (isShort ? 'Retention Edit & Hook' : 'Lead Editor'),
           tags: tagList.length > 0 ? tagList : (isShort ? ['Short-Form', 'Reels'] : ['Commercial', 'Editing']),
@@ -1205,7 +1205,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                       <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-mono text-zinc-300">
                         <span>{short.client}</span>
-                        <span>{short.duration || '0:30'}</span>
+                        {short.duration ? <span>{short.duration}</span> : null}
                       </div>
                     </div>
 

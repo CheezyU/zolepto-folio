@@ -14,7 +14,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-[#fafafa] text-[#18181b] antialiased selection:bg-zinc-200 selection:text-zinc-900">
-    <div id="root"></div>
+    <div id="root">
+      <div id="initial-loading-surface" style="position:fixed;inset:0;background-color:#fafafa;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;z-index:99999;color:#18181b;padding:24px;">
+        <div style="display:flex;flex-direction:column;align-items:center;max-width:340px;width:100%;text-align:center;">
+          <div style="width:52px;height:52px;border-radius:16px;background-color:#09090b;color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;letter-spacing:-0.03em;margin-bottom:20px;box-shadow:0 12px 28px -6px rgba(0,0,0,0.18);">
+            Z
+          </div>
+          <div style="font-size:15px;font-weight:700;letter-spacing:-0.02em;text-transform:uppercase;color:#09090b;margin-bottom:4px;">
+            Zolepto Hiraya
+          </div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#71717a;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:24px;">
+            Video Editor &amp; Visual Storyteller
+          </div>
+          <div style="width:100%;height:3px;background-color:#e4e4e7;border-radius:9999px;overflow:hidden;position:relative;margin-bottom:14px;">
+            <div style="position:absolute;top:0;bottom:0;left:0;background:linear-gradient(90deg,#09090b,#3f3f46,#18181b);border-radius:9999px;animation:zoleptoLoadingSweep 1.6s cubic-bezier(0.16,1,0.3,1) infinite;"></div>
+          </div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#71717a;letter-spacing:0.03em;">
+            Loading portfolio &amp; showreels...
+          </div>
+        </div>
+      </div>
+      <style>
+        @keyframes zoleptoLoadingSweep {
+          0% { left: -35%; width: 35%; }
+          50% { left: 25%; width: 55%; }
+          100% { left: 100%; width: 30%; }
+        }
+      </style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -57,7 +57,7 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                   Featured 2026 Master Reel
                 </span>
                 <span className="text-xs font-mono text-zinc-500 font-medium">
-                  {MAIN_SHOWREEL.duration} • 4K ProRes Grade
+                  {MAIN_SHOWREEL.duration ? `${MAIN_SHOWREEL.duration} • 4K ProRes Grade` : '4K ProRes Grade'}
                 </span>
               </div>
 
@@ -139,7 +139,8 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                     </button>
                     <div className="text-center">
                       <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white font-mono text-xs tracking-wider uppercase font-semibold">
-                        {MAIN_SHOWREEL.embedUrl ? 'Click to Play Stream' : 'Click to View Reel Preview'} • {MAIN_SHOWREEL.duration}
+                        {MAIN_SHOWREEL.embedUrl ? 'Click to Play Stream' : 'Click to View Reel Preview'}
+                        {MAIN_SHOWREEL.duration ? ` • ${MAIN_SHOWREEL.duration}` : ''}
                       </span>
                     </div>
                   </div>
@@ -244,11 +245,6 @@ export const ShowreelSection: React.FC<ShowreelSectionProps> = ({
                   className="w-full h-full object-cover grayscale contrast-110 transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                {/* Runtime Badge */}
-                <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded bg-black/75 backdrop-blur-sm text-[11px] font-mono text-white font-medium">
-                  {video.duration}
-                </span>
 
                 {/* Client / Category Tag */}
                 <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-semibold uppercase tracking-wider text-zinc-900 shadow-sm">

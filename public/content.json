@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T02:01:40.934Z",
+  "lastUpdated": "2026-09-21T02:02:30.688Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -184,7 +184,7 @@
     {
       "id": "short-1789955945658",
       "title": "Heated player moment",
-      "client": "Client Project",
+      "client": "HelixGr4nd",
       "category": "short-form",
       "categoryLabel": "Short-Form",
       "duration": "0:30",
@@ -194,13 +194,14 @@
       "thumbnailUrl": "https://i.ytimg.com/vi/jRDl4xd2EEE/maxresdefault.jpg",
       "aspectRatio": "9/16",
       "description": "",
-      "role": "Retention Edit & Hook",
+      "role": "Creator",
       "tags": [
-        "Short-Form",
-        "Reels",
-        "TikTok",
-        "Viral"
-      ]
+        "Funny Moment",
+        "Editing",
+        "SFX"
+      ],
+      "youtubeUrl": "https://www.youtube.com/watch?v=jRDl4xd2EEE",
+      "metrics": ""
     },
     {
       "id": "short-1789954782671",

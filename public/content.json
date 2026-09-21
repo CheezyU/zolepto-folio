@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:44:49.173Z",
+  "lastUpdated": "2026-09-21T01:48:59.453Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -269,24 +269,6 @@
       "views": "1.4M views",
       "youtubeUrl": "https://www.youtube.com/watch?v=5FnQs_sy5iI",
       "aspectRatio": "16/9"
-    },
-    {
-      "id": "short-1789953717338",
-      "title": "Blind Deaf Mute",
-      "client": "SleekToast",
-      "category": "short-form",
-      "categoryLabel": "Short-Form",
-      "duration": "0:30",
-      "year": "2026",
-      "youtubeId": "7654540774452907271",
-      "embedUrl": "https://www.tiktok.com/embed/v2/7654540774452907271",
-      "thumbnailUrl": "https://i.ytimg.com/vi/7654540774452907271/maxresdefault.jpg",
-      "aspectRatio": "9/16",
-      "description": "",
-      "role": "Creator",
-      "tags": [
-        "Visual Effects"
-      ]
     },
     {
       "id": "vid-5",

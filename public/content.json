@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:59:39.082Z",
+  "lastUpdated": "2026-09-21T01:59:40.250Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -182,27 +182,6 @@
       ]
     },
     {
-      "id": "short-1789954782671",
-      "title": "Repititive Trolling",
-      "client": "Client Project",
-      "category": "short-form",
-      "categoryLabel": "Gaming",
-      "duration": "0:30",
-      "year": "2026",
-      "youtubeId": "zsFZ7NA9V-U",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/zsFZ7NA9V-U?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/zsFZ7NA9V-U/maxresdefault.jpg",
-      "aspectRatio": "9/16",
-      "description": "",
-      "role": "Creator",
-      "tags": [
-        "Editing",
-        "Sfx"
-      ],
-      "youtubeUrl": "https://www.youtube.com/watch?v=zsFZ7NA9V-U",
-      "metrics": ""
-    },
-    {
       "id": "short-1789955945658",
       "title": "Heated player moment",
       "client": "Client Project",
@@ -222,6 +201,27 @@
         "TikTok",
         "Viral"
       ]
+    },
+    {
+      "id": "short-1789954782671",
+      "title": "Repititive Trolling",
+      "client": "Client Project",
+      "category": "short-form",
+      "categoryLabel": "Gaming",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "zsFZ7NA9V-U",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/zsFZ7NA9V-U?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/zsFZ7NA9V-U/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Creator",
+      "tags": [
+        "Editing",
+        "Sfx"
+      ],
+      "youtubeUrl": "https://www.youtube.com/watch?v=zsFZ7NA9V-U",
+      "metrics": ""
     },
     {
       "id": "short-1789955839815",

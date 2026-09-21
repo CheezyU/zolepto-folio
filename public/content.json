@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:44:25.621Z",
+  "lastUpdated": "2026-09-21T01:44:29.631Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -182,21 +182,21 @@
       "metrics": ""
     },
     {
-      "id": "short-1789953717338",
-      "title": "Blind Deaf Mute",
+      "id": "short-1789946697596",
+      "title": "Strange Event",
       "client": "SleekToast",
       "category": "short-form",
       "categoryLabel": "Short-Form",
       "duration": "0:30",
       "year": "2026",
-      "youtubeId": "7654540774452907271",
-      "embedUrl": "https://www.tiktok.com/embed/v2/7654540774452907271",
-      "thumbnailUrl": "https://i.ytimg.com/vi/7654540774452907271/maxresdefault.jpg",
+      "youtubeId": "uDM39apAFHg",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/uDM39apAFHg?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/uDM39apAFHg/maxresdefault.jpg",
       "aspectRatio": "9/16",
       "description": "",
       "role": "Creator",
       "tags": [
-        "Visual Effects"
+        "Short-Form Storytelling"
       ]
     },
     {
@@ -268,21 +268,21 @@
       "aspectRatio": "16/9"
     },
     {
-      "id": "short-1789946697596",
-      "title": "Strange Event",
+      "id": "short-1789953717338",
+      "title": "Blind Deaf Mute",
       "client": "SleekToast",
       "category": "short-form",
       "categoryLabel": "Short-Form",
       "duration": "0:30",
       "year": "2026",
-      "youtubeId": "uDM39apAFHg",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/uDM39apAFHg?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/uDM39apAFHg/maxresdefault.jpg",
+      "youtubeId": "7654540774452907271",
+      "embedUrl": "https://www.tiktok.com/embed/v2/7654540774452907271",
+      "thumbnailUrl": "https://i.ytimg.com/vi/7654540774452907271/maxresdefault.jpg",
       "aspectRatio": "9/16",
       "description": "",
       "role": "Creator",
       "tags": [
-        "Short-Form Storytelling"
+        "Visual Effects"
       ]
     },
     {

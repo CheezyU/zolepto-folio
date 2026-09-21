@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:40:26.457Z",
+  "lastUpdated": "2026-09-21T01:43:41.231Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -64,6 +64,25 @@
     "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
   },
   "showreels": [
+    {
+      "id": "short-1789955021230",
+      "title": "Baiting Players!",
+      "client": "Client Project",
+      "category": "short-form",
+      "categoryLabel": "Gaming",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "SuyDAJz-cWw",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/SuyDAJz-cWw?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/SuyDAJz-cWw/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Retention Edit & Hook",
+      "tags": [
+        "Editing",
+        "Sfx"
+      ]
+    },
     {
       "id": "short-1789954782671",
       "title": "Repititive Trolling",

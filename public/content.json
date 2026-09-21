@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:59:21.235Z",
+  "lastUpdated": "2026-09-21T01:59:24.486Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -203,27 +203,6 @@
       ]
     },
     {
-      "id": "short-1789955858284",
-      "title": "Ezs",
-      "client": "Client Project",
-      "category": "short-form",
-      "categoryLabel": "Short-Form",
-      "duration": "0:30",
-      "year": "2026",
-      "youtubeId": "b8cOSTWGcYY",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/b8cOSTWGcYY?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/b8cOSTWGcYY/maxresdefault.jpg",
-      "aspectRatio": "9/16",
-      "description": "",
-      "role": "Retention Edit & Hook",
-      "tags": [
-        "Short-Form",
-        "Reels",
-        "TikTok",
-        "Viral"
-      ]
-    },
-    {
       "id": "short-1789954782671",
       "title": "Repititive Trolling",
       "client": "Client Project",
@@ -243,6 +222,27 @@
       ],
       "youtubeUrl": "https://www.youtube.com/watch?v=zsFZ7NA9V-U",
       "metrics": ""
+    },
+    {
+      "id": "short-1789955858284",
+      "title": "Ezs",
+      "client": "Client Project",
+      "category": "short-form",
+      "categoryLabel": "Short-Form",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "b8cOSTWGcYY",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/b8cOSTWGcYY?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/b8cOSTWGcYY/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Retention Edit & Hook",
+      "tags": [
+        "Short-Form",
+        "Reels",
+        "TikTok",
+        "Viral"
+      ]
     },
     {
       "id": "short-1789955945658",

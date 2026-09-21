@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:44:13.364Z",
+  "lastUpdated": "2026-09-21T01:44:19.209Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -85,6 +85,24 @@
       "views": "8.7M views",
       "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
       "aspectRatio": "9/16"
+    },
+    {
+      "id": "short-1789946025173",
+      "title": "Tricking Players",
+      "client": "HelixGr4nd",
+      "category": "short-form",
+      "categoryLabel": "Gaming",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "cUjzrteeaWk",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/cUjzrteeaWk?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/cUjzrteeaWk/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Creator",
+      "tags": [
+        "Storytelling"
+      ]
     },
     {
       "id": "short-1789955021230",
@@ -181,25 +199,6 @@
       ]
     },
     {
-      "id": "short-1789946147197",
-      "title": "Murder Mystery",
-      "client": "SleekToast",
-      "category": "short-form",
-      "categoryLabel": "Short-Form",
-      "duration": "0:30",
-      "year": "2026",
-      "youtubeId": "QZSaD3OY_Uc",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/QZSaD3OY_Uc?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/QZSaD3OY_Uc/maxresdefault.jpg",
-      "aspectRatio": "9/16",
-      "description": "",
-      "role": "Creator",
-      "tags": [
-        "Visuals",
-        "Funny"
-      ]
-    },
-    {
       "id": "vid-2",
       "title": "Re-visting a Classic Game",
       "client": "HelixGr4nd",
@@ -268,21 +267,22 @@
       "aspectRatio": "16/9"
     },
     {
-      "id": "short-1789946025173",
-      "title": "Tricking Players",
-      "client": "HelixGr4nd",
+      "id": "short-1789946147197",
+      "title": "Murder Mystery",
+      "client": "SleekToast",
       "category": "short-form",
-      "categoryLabel": "Gaming",
+      "categoryLabel": "Short-Form",
       "duration": "0:30",
       "year": "2026",
-      "youtubeId": "cUjzrteeaWk",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/cUjzrteeaWk?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/cUjzrteeaWk/maxresdefault.jpg",
+      "youtubeId": "QZSaD3OY_Uc",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/QZSaD3OY_Uc?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/QZSaD3OY_Uc/maxresdefault.jpg",
       "aspectRatio": "9/16",
       "description": "",
       "role": "Creator",
       "tags": [
-        "Storytelling"
+        "Visuals",
+        "Funny"
       ]
     },
     {

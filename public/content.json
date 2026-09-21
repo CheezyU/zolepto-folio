@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:44:29.631Z",
+  "lastUpdated": "2026-09-21T01:44:33.165Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -124,6 +124,24 @@
       ]
     },
     {
+      "id": "short-1789946697596",
+      "title": "Strange Event",
+      "client": "SleekToast",
+      "category": "short-form",
+      "categoryLabel": "Short-Form",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "uDM39apAFHg",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/uDM39apAFHg?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/uDM39apAFHg/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Creator",
+      "tags": [
+        "Short-Form Storytelling"
+      ]
+    },
+    {
       "id": "short-1789946773584",
       "title": "Trolling your friend",
       "client": "SleekToast",
@@ -180,24 +198,6 @@
       ],
       "youtubeUrl": "https://www.youtube.com/watch?v=zsFZ7NA9V-U",
       "metrics": ""
-    },
-    {
-      "id": "short-1789946697596",
-      "title": "Strange Event",
-      "client": "SleekToast",
-      "category": "short-form",
-      "categoryLabel": "Short-Form",
-      "duration": "0:30",
-      "year": "2026",
-      "youtubeId": "uDM39apAFHg",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/uDM39apAFHg?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/uDM39apAFHg/maxresdefault.jpg",
-      "aspectRatio": "9/16",
-      "description": "",
-      "role": "Creator",
-      "tags": [
-        "Short-Form Storytelling"
-      ]
     },
     {
       "id": "vid-2",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:57:38.285Z",
+  "lastUpdated": "2026-09-21T01:59:05.659Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -64,6 +64,27 @@
     "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
   },
   "showreels": [
+    {
+      "id": "short-1789955945658",
+      "title": "Heated player moment",
+      "client": "Client Project",
+      "category": "short-form",
+      "categoryLabel": "Short-Form",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "jRDl4xd2EEE",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/jRDl4xd2EEE?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/jRDl4xd2EEE/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Retention Edit & Hook",
+      "tags": [
+        "Short-Form",
+        "Reels",
+        "TikTok",
+        "Viral"
+      ]
+    },
     {
       "id": "short-1789955858284",
       "title": "Ezs",

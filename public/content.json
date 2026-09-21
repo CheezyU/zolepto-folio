@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:43:41.231Z",
+  "lastUpdated": "2026-09-21T01:44:13.364Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -64,6 +64,28 @@
     "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
   },
   "showreels": [
+    {
+      "id": "vid-3",
+      "title": "Game Bug Discovery",
+      "client": "SleekToast",
+      "category": "short-form",
+      "categoryLabel": "Entertainment",
+      "duration": "0:50",
+      "year": "2026",
+      "youtubeId": "pgxS2qs_hUI",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
+      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
+      "role": "Creator",
+      "tags": [
+        "Short-Form",
+        "Storytelling"
+      ],
+      "metrics": "8.7M Combined Views",
+      "views": "8.7M views",
+      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
+      "aspectRatio": "9/16"
+    },
     {
       "id": "short-1789955021230",
       "title": "Baiting Players!",
@@ -157,28 +179,6 @@
       "tags": [
         "Short-Form Storytelling"
       ]
-    },
-    {
-      "id": "vid-3",
-      "title": "Game Bug Discovery",
-      "client": "SleekToast",
-      "category": "short-form",
-      "categoryLabel": "Entertainment",
-      "duration": "0:50",
-      "year": "2026",
-      "youtubeId": "pgxS2qs_hUI",
-      "embedUrl": "https://www.youtube-nocookie.com/embed/pgxS2qs_hUI?rel=0&modestbranding=1",
-      "thumbnailUrl": "https://i.ytimg.com/vi/pgxS2qs_hUI/maxresdefault.jpg",
-      "description": "Inspired by Camman18, captivating visuals that are simple and lifts the progressive storytelling.",
-      "role": "Creator",
-      "tags": [
-        "Short-Form",
-        "Storytelling"
-      ],
-      "metrics": "8.7M Combined Views",
-      "views": "8.7M views",
-      "youtubeUrl": "https://www.youtube.com/shorts/pgxS2qs_hUI",
-      "aspectRatio": "9/16"
     },
     {
       "id": "short-1789946147197",

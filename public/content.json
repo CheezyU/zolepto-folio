@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:21:57.339Z",
+  "lastUpdated": "2026-09-21T01:39:42.672Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -64,6 +64,27 @@
     "web3formsAccessKey": "cce7d17a-a640-443a-b066-33c06020b08e"
   },
   "showreels": [
+    {
+      "id": "short-1789954782671",
+      "title": "Repititive Trolling",
+      "client": "Client Project",
+      "category": "short-form",
+      "categoryLabel": "Short-Form",
+      "duration": "0:30",
+      "year": "2026",
+      "youtubeId": "zsFZ7NA9V-U",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/zsFZ7NA9V-U?rel=0&modestbranding=1&enablejsapi=1&vq=hd1080&hd=1&playsinline=1",
+      "thumbnailUrl": "https://i.ytimg.com/vi/zsFZ7NA9V-U/maxresdefault.jpg",
+      "aspectRatio": "9/16",
+      "description": "",
+      "role": "Retention Edit & Hook",
+      "tags": [
+        "Short-Form",
+        "Reels",
+        "TikTok",
+        "Viral"
+      ]
+    },
     {
       "id": "short-1789953717338",
       "title": "Blind Deaf Mute",

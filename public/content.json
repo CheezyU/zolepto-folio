@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:39:42.672Z",
+  "lastUpdated": "2026-09-21T01:40:26.457Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -69,7 +69,7 @@
       "title": "Repititive Trolling",
       "client": "Client Project",
       "category": "short-form",
-      "categoryLabel": "Short-Form",
+      "categoryLabel": "Gaming",
       "duration": "0:30",
       "year": "2026",
       "youtubeId": "zsFZ7NA9V-U",
@@ -77,13 +77,13 @@
       "thumbnailUrl": "https://i.ytimg.com/vi/zsFZ7NA9V-U/maxresdefault.jpg",
       "aspectRatio": "9/16",
       "description": "",
-      "role": "Retention Edit & Hook",
+      "role": "Creator",
       "tags": [
-        "Short-Form",
-        "Reels",
-        "TikTok",
-        "Viral"
-      ]
+        "Editing",
+        "Sfx"
+      ],
+      "youtubeUrl": "https://www.youtube.com/watch?v=zsFZ7NA9V-U",
+      "metrics": ""
     },
     {
       "id": "short-1789953717338",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-09-21T01:44:33.165Z",
+  "lastUpdated": "2026-09-21T01:44:49.173Z",
   "repoSource": {
     "owner": "CheezyU",
     "repo": "zolepto-folio",
@@ -101,8 +101,11 @@
       "description": "",
       "role": "Creator",
       "tags": [
-        "Storytelling"
-      ]
+        "Storytelling",
+        "Sfx"
+      ],
+      "youtubeUrl": "https://www.youtube.com/watch?v=cUjzrteeaWk",
+      "metrics": ""
     },
     {
       "id": "short-1789946147197",
